@@ -1,0 +1,5 @@
+name = NEES Video Feeds 2
+description = Provides wrapper for NEES Video Feeds web app.
+core = 7.x
+version = 7.x-2.0
+package = NEES

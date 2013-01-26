@@ -1,0 +1,48 @@
+<?php
+
+/*function nvf2_permission() {
+	$perms = array();
+	$perms['view nees media'] = array(
+		'title' => 'View Nees Media',
+		'description' => 'Allows someone to view the video feeds on the telepresence page');
+	return $perms;
+}*/
+
+function nvf2_menu() {
+	$items = array();
+	$items['nvf2'] = array(
+		'title' => 'Telepresence',
+		'description' => 'Video feeds from NEES locations.',
+		'page callback' => 'nvf2_page',
+		'access arguments' => array('view nees media'),
+		'type' => MENU_NORMAL_ITEM);
+	return $items;
+}
+
+function nvf2_page() {
+	
+	drupal_add_library('system', 'ui.slider');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/handlebars-min.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/underscore-min.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/backbone-min.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Model.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/View.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Controller.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/App.js');
+
+	$page = theme('nvf2_template');
+	
+	return $page;
+}
+
+function nvf2_theme() {
+   $themes = array(
+      'nvf2_template' => array(
+          'template' => 'nvf2',
+      ),
+   );
+   return($themes);
+}
+function nvf2_js_alter(&$js) {
+	$js['misc/jquery.js']['data'] = 'http://code.jquery.com/jquery-1.8.3.js';
+}

@@ -1,7 +1,3 @@
-var FeedCollection = Backbone.Collection.extend({
-	model: FeedModel
-});
-
 var MenuCollection = Backbone.Collection.extend({
 	model: MenuModel,
 	initialize: function() {
@@ -16,17 +12,4 @@ var MenuCollection = Backbone.Collection.extend({
 
 var MenuElementCollection = Backbone.Collection.extend({
 	views: MenuElement
-});
-
-var TPSRoutes = Backbone.Router.extend({
-		routes: {
-			'': 'index',
-			'feed/:id': 'renderFeed',
-		},
-		renderFeed: function(id) {
-			console.log('rendered id ' + id);
-		},
-		index: function() {
-			console.log('routes initialized');
-		},
 });

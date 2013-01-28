@@ -13,5 +13,12 @@ var MenuModel = Backbone.Model.extend({
 		this.attributes.title;
 		this.attributes.loc;
 		this.attributes.type;
+		this.attributes.site_id;
 	},
+});
+var SiteModel = Backbone.Model.extend({
+	initialize: function() {
+		this.attributes.loc;
+		this.attributes.id;
+	}
 });

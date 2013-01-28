@@ -5,11 +5,19 @@ var App = Backbone.Router.extend({
 		routes: {
 			'': 'index',
 			'feed/:loc/:type': 'feed',
-			'map':'map'
+			'locations/': 'locs',
+			'locations/:loc': 'location',
+			'map':'map',
 		},
 		feed: function(loc, type) {
 			this.TPSView.frames = new FrameView({loc: loc, type: type});
 			this.TPSView.frames.render();
+		},
+		locs: function(loc) {
+			this.TPSView.sites.render();
+		},
+		location: function(loc) {
+			this.TPSView.renderSiteView(loc);
 		},
 		index: function() {
 			console.log('routes initialized');

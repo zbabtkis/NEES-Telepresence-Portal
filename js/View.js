@@ -1,12 +1,14 @@
 var MainView = Backbone.View.extend({
 	initialize: function() {
 		this.nav = new MenuListView();
+		this.sites = new SiteMenu();
 		this.controls = new ControlView();
 		this.render();
 		
 	},
 	events: {
-		'click #mapMaker':'renderMapView'
+		'click #mapMaker':'renderMapView',
+		'click #listMaker':'renderSites',
 	},
 	renderMapView: function() {
         var mapOptions = {
@@ -22,16 +24,41 @@ var MainView = Backbone.View.extend({
 		});
 		google.maps.event.addListener(marker, 'click', function() {
 	        var gm_id = marker.__gm_id;
+	        
 	    });
 	},
 	setControls: function() {
-		jQuery('#vnf-video-wrapper').append('<img src="' + this._requestAddr + '">');
+		var el = '<applet code="com.charliemouse.cambozola.Viewer" archive="cambozola.jar" width="352" height="400"><param name="url" value="' + this._requestAddr + '"></applet>';
+		jQuery('#vnf-video-wrapper').append(el);
 	},
 	render: function() {
 	    this.$el = jQuery("#TPS-Viewer");
-	    this.$el.nav = jQuery('#nav');
-	    this.$el.nav.html(this.nav.$el);
-	    this.$el.nav.tabs();
+	},
+	renderSiteView: function(loc) {
+		this.nav.render(loc);
+		nav = jQuery('#nav');
+		nav.html(this.nav.$el);
+		nav.tabs();
+	},
+	renderSites: function() {
+		TPSApp.navigate('locations/', {trigger: true});
+	}
+});
+
+var SiteMenu = Backbone.View.extend({
+	initialize: function() {
+		this.el = jQuery('#sites');
+		this.sites = new SiteCollection();
+		this.children = new SiteElementCollection();
+	},
+	render: function() {
+		self = this;
+		this.sites.forEach(function(item) {
+			self.children.add(new SiteElement({menu:item}));
+		});
+		this.children.forEach(function(li) {
+			jQuery(self.el).append(li.attributes.$el);
+		});
 	}
 });
 
@@ -88,11 +115,13 @@ var MenuListView = Backbone.View.extend({
 			this.render();
 		},
 		tagName: 'ul',
-		render: function() {
+		render: function(loc) {
 			self = this;
 			menus = this.menus;
 			menus.forEach(function(item) {
-				self.children.add(new MenuElement({menu:item}));
+				if(item.attributes.loc == loc) {
+					self.children.add(new MenuElement({menu:item}));
+				}
 			});
 			this.children.forEach(function(li) {
 				self.$el.append(li.attributes.$el);
@@ -123,5 +152,27 @@ var MenuElement = Backbone.View.extend({
 			var loc = this.options.menu.attributes['loc'];
 			var uri = 'feed/' + loc + '/' + type;
 			TPSApp.navigate(uri, {trigger: true});
+		}
+});
+
+var SiteElement = Backbone.View.extend({
+		tagName: 'li',
+		className: 'site-link',
+		attributes: function(){
+			return {
+				'data-site-id': this.options.menu.attributes['site_id']
+			};
+		},
+		events: {
+			'click': 'navigate'
+		},
+		initialize: function() {
+			var self = this;
+			var title = this.options.menu.attributes['loc'];
+			this.$el.html(title);
+		},
+		navigate: function(menu) {
+			var loc = this.options.menu.attributes['loc'];
+			TPSApp.navigate('locations/' + loc, {trigger: true});
 		}
 });

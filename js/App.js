@@ -4,9 +4,9 @@ var App = Backbone.Router.extend({
 		},
 		routes: {
 			'': 'index',
-			'feed/:loc/:type': 'feed',
+			'locations/:loc/:type': 'feed',
 			'locations/': 'locs',
-			'locations/:loc': 'location',
+			'locations/:loc': 'locs',
 			'map':'map',
 		},
 		feed: function(loc, type) {
@@ -14,10 +14,11 @@ var App = Backbone.Router.extend({
 			this.TPSView.frames.render();
 		},
 		locs: function(loc) {
-			this.TPSView.sites.render();
-		},
-		location: function(loc) {
-			this.TPSView.renderSiteView(loc);
+			if(loc) {
+				this.TPSView.renderViews(loc);
+			} else {
+				this.TPSView.sites.render();
+			}
 		},
 		index: function() {
 			console.log('routes initialized');
@@ -34,7 +35,7 @@ var App = Backbone.Router.extend({
 
 Drupal.behaviors.nvf2 = {
 	attach: function() {
-		TPSApp = new App();
-		Backbone.history.start();
+		//TPSApp = new App();
+		//Backbone.history.start();
 	},
 };

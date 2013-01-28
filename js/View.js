@@ -1,14 +1,23 @@
 var MainView = Backbone.View.extend({
 	initialize: function() {
 		this.nav = new MenuListView();
-		this.sites = new SiteMenu();
+		this.sites = new SiteListView();
 		this.controls = new ControlView();
 		this.render();
 		
 	},
 	events: {
+		'click .feed-link':'renderFeed',
 		'click #mapMaker':'renderMapView',
-		'click #listMaker':'renderSites',
+		'click #listMaker':'navToSites',
+		'click .site-link':'navToViews'
+	},
+	renderFeed: function(el) {
+		//console.log('rendering feed');
+		var type = el.currentTarget.dataset.type;
+		var loc = el.currentTarget.dataset.loc;
+		var uri = 'locations/' + loc + '/' + type;
+		TPSApp.navigate(uri, {trigger: true});
 	},
 	renderMapView: function() {
         var mapOptions = {
@@ -34,31 +43,20 @@ var MainView = Backbone.View.extend({
 	render: function() {
 	    this.$el = jQuery("#TPS-Viewer");
 	},
-	renderSiteView: function(loc) {
-		this.nav.render(loc);
+	renderViews: function(loc) {
 		nav = jQuery('#nav');
+		if(loc) {
+			this.nav.render(loc);
+		}
+		//console.log('listing location views...');
 		nav.html(this.nav.$el);
-		nav.tabs();
 	},
-	renderSites: function() {
+	navToSites: function() {
 		TPSApp.navigate('locations/', {trigger: true});
-	}
-});
-
-var SiteMenu = Backbone.View.extend({
-	initialize: function() {
-		this.el = jQuery('#sites');
-		this.sites = new SiteCollection();
-		this.children = new SiteElementCollection();
 	},
-	render: function() {
-		self = this;
-		this.sites.forEach(function(item) {
-			self.children.add(new SiteElement({menu:item}));
-		});
-		this.children.forEach(function(li) {
-			jQuery(self.el).append(li.attributes.$el);
-		});
+	navToViews: function(el) {
+		var loc = el.currentTarget.dataset.loc;
+		TPSApp.navigate('locations/' + loc, {trigger: true});
 	}
 });
 
@@ -92,6 +90,7 @@ var FrameView = Backbone.View.extend({
 	},
 	updateFramerate: function(framerate){
 		this.render('mjpeg',framerate);
+		console.log('upadating frameRate...');
 	}
 });
 
@@ -108,23 +107,50 @@ var ControlView = Backbone.View.extend({
 	},
 });
 
+var SiteListView = Backbone.View.extend({
+	initialize: function() {
+		this.el = jQuery('#sites');
+	},
+	render: function() {
+		this.sites = new SiteCollection();
+		//console.log('created new site collection');
+		this.children = new SiteElementCollection();
+		//console.log('created new collection of site list elements');
+		self = this;
+		this.$el.html('');
+		//console.log('set value of' + this.$el + ' to ""');
+		this.sites.forEach(function(item) {
+			//console.log('added new site to site collection');
+			self.children.add(new SiteElement({menu:item}));
+		});
+		this.children.forEach(function(li) {
+			//console.log('added new site to list');
+			jQuery(self.el).append(li.attributes.$el);
+		});
+	}
+});
+
 var MenuListView = Backbone.View.extend({
 		initialize: function() {
-			this.menus = new MenuCollection();
-			this.children = new MenuElementCollection();
-			this.render();
 		},
 		tagName: 'ul',
 		render: function(loc) {
+			this.menus = new MenuCollection();
+			//console.log('created new menu collection');
+			this.children = new MenuElementCollection();
+			//console.log('created collection for menu elements')
 			self = this;
-			menus = this.menus;
-			menus.forEach(function(item) {
+			this.menus.forEach(function(item) {
 				if(item.attributes.loc == loc) {
-					self.children.add(new MenuElement({menu:item}));
+						self.children.add(new MenuElement({menu:item}));
+						//console.log('added new child menu element to menu collection ');
 				}
 			});
+			this.$el.html('');
+			//console.log('set value of menu' + this.$el + ' to ""');
 			this.children.forEach(function(li) {
 				self.$el.append(li.attributes.$el);
+				//console.log('added child element markup to list children');
 			});
 		}
 });
@@ -138,20 +164,11 @@ var MenuElement = Backbone.View.extend({
 				'data-type': this.options.menu.attributes['type'],
 			};
 		},
-		events: {
-			'click': 'navigate'
-		},
 		initialize: function() {
 			var self = this;
 			var title = this.options.menu.attributes['title'];
 			this.$el.html(title);
-		},
-		navigate: function(menu) {
-			console.log('navigating...');
-			var type = this.options.menu.attributes['type'];
-			var loc = this.options.menu.attributes['loc'];
-			var uri = 'feed/' + loc + '/' + type;
-			TPSApp.navigate(uri, {trigger: true});
+			//console.log('new menu element created');
 		}
 });
 
@@ -160,19 +177,13 @@ var SiteElement = Backbone.View.extend({
 		className: 'site-link',
 		attributes: function(){
 			return {
-				'data-site-id': this.options.menu.attributes['site_id']
+				'data-loc': this.options.menu.attributes.loc
 			};
-		},
-		events: {
-			'click': 'navigate'
 		},
 		initialize: function() {
 			var self = this;
 			var title = this.options.menu.attributes['loc'];
 			this.$el.html(title);
+			//console.log('created new site menu element');
 		},
-		navigate: function(menu) {
-			var loc = this.options.menu.attributes['loc'];
-			TPSApp.navigate('locations/' + loc, {trigger: true});
-		}
 });

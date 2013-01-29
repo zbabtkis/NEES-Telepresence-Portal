@@ -35,7 +35,7 @@ var App = Backbone.Router.extend({
 
 Drupal.behaviors.nvf2 = {
 	attach: function() {
-		//TPSApp = new App();
-		//Backbone.history.start();
+		TPSApp = new App();
+		Backbone.history.start();
 	},
 };

@@ -13,7 +13,6 @@ var MainView = Backbone.View.extend({
 		'click .site-link':'navToViews'
 	},
 	renderFeed: function(el) {
-		//console.log('rendering feed');
 		var type = el.currentTarget.dataset.type;
 		var loc = el.currentTarget.dataset.loc;
 		var uri = 'locations/' + loc + '/' + type;

@@ -48,6 +48,8 @@ function nvf2_theme() {
    return($themes);
 }
 function nvf2_js_alter(&$js) {
-	//$js['misc/jquery.js']['data'] = 'http://code.jquery.com/jquery-1.8.3.js';
-	//$js['misc/ui/jquery.ui.core.min.js']['data'] = drupal_get_path('module','nvf2') . '/js/libs/jQuery UI/jquery-ui-1.10.0.custom.min.js';
+	if($_GET['q'] == 'nvf2') {
+		$js['misc/jquery.js']['data'] = 'http://code.jquery.com/jquery-1.8.3.js';
+		$js['misc/ui/jquery.ui.core.min.js']['data'] = drupal_get_path('module','nvf2') . '/js/libs/jQuery UI/jquery-ui-1.10.0.custom.min.js';
+	}
 }

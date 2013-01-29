@@ -26,6 +26,7 @@ function nvf2_page() {
 	drupal_add_library('system', 'ui.tabs');
 	drupal_add_css(drupal_get_path('module','nvf2') . '/css/nvf2.css');
 	drupal_add_css(drupal_get_path('module','nvf2') . '/js/libs/jQuery UI/css/ui-darkness/jquery-ui-1.10.0.custom.min.css');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/gmap-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/handlebars-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/underscore-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/backbone-min.js');

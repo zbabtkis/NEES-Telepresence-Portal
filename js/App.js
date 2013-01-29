@@ -1,41 +1,69 @@
 var App = Backbone.Router.extend({
 		initialize: function() {
-			this.addViews();
 		},
 		routes: {
-			'': 'index',
-			'locations/:loc/:type': 'feed',
-			'locations/': 'locs',
-			'locations/:loc': 'locs',
-			'map':'map',
+			'': 'indexPage',
+			'map':'mapPage',
+			'sites':'sitesPage',
+			'sites/:site':'sitesPage',
 		},
-		feed: function(loc, type) {
-			this.TPSView.frames = new FrameView({loc: loc, type: type});
-			this.TPSView.frames.render();
+		navToMap: function() {
+			this.navigate('map', {trigger: true});
 		},
-		locs: function(loc) {
-			if(loc) {
-				this.TPSView.renderViews(loc);
-			} else {
-				this.TPSView.sites.render();
+		navToSites: function() {
+			this.navigate('sites',{trigger: true});
+		},
+		navToSite: function(s) {
+			this.navigate('sites/' + s, {trigger: true});
+		},
+		indexPage: function() {
+		},
+		mapPage: function() {
+			if(this.sites) {
+				this.sites.$el.hide();
+			}
+			this.mapView = new MapView();
+			this.mapView.render();
+		},
+		sitesPage: function(s) {
+			if(this.mapView) {
+				this.mapView.$el.hide();
+			}
+			this.sites = new SiteListView();
+			this.sites.render();
+			this.listenTo(this.sites, 'site-opened', this.navToSite);
+
+			/** Render the new layer of menus */
+			if(s) {
+				this.siteMenu = new MenuListView();
+				this.siteMenu.render(s);
+				this.listenTo(this.siteMenu, 'feed-requested', this.fetchFeed);
 			}
 		},
-		index: function() {
-			console.log('routes initialized');
+		fetchFeed: function(v) {
+			this.frame = new FrameView({loc: v.l, type: v.t});
+			this.frame.controls = new ControlView();
+			this.frame.render();
+			this.frame.listenTo(this.frame.controls, 'framerate-changed', this.frame.updateFramerate);
 		},
-		map: function() {
-			
+		addListeners: function() {
+			this.listenTo(this.optionsMenu, 'list-initialized', this.navToSites);
+			this.listenTo(this.optionsMenu, 'map-requested', this.navToMap);
 		},
-		addViews: function() {
-			this.TPSView = new MainView();
-			var menus = this.TPSView.menus;
+		renderMenu: function(selector) {
+			this.optionsMenu = new Menu(selector);
+		},
+		listen: function() {
+			this.addListeners();
 		},
 });
 
 
 Drupal.behaviors.nvf2 = {
 	attach: function() {
-		TPSApp = new App();
+		window.TPSApp = new App();
+		window.TPSApp.renderMenu(jQuery('#options-menu'));
+		window.TPSApp.listen();
 		Backbone.history.start();
 	},
 };

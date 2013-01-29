@@ -1,94 +1,45 @@
-var MainView = Backbone.View.extend({
+var MapView = Backbone.View.extend({
 	initialize: function() {
-		this.nav = new MenuListView();
-		this.sites = new SiteListView();
-		this.controls = new ControlView();
-		this.render();
-		
-	},
-	events: {
-		'click .feed-link':'renderFeed',
-		'click #mapMaker':'renderMapView',
-		'click #listMaker':'navToSites',
-		'click .site-link':'navToViews'
-	},
-	renderFeed: function(el) {
-		var type = el.currentTarget.dataset.type;
-		var loc = el.currentTarget.dataset.loc;
-		var uri = 'locations/' + loc + '/' + type;
-		TPSApp.navigate(uri, {trigger: true});
-	},
-	renderMapView: function() {
-        var mapOptions = {
-          center: new google.maps.LatLng(33.662068,-116.685104),
-          zoom: 15,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById('vnf-video-wrapper'), mapOptions);
-        var marker = new google.maps.Marker({
-		    position: new google.maps.LatLng(33.662068,-116.685104),
-		    map: map,
-		    title:"Hello World!"
-		});
-		google.maps.event.addListener(marker, 'click', function() {
-	        var gm_id = marker.__gm_id;
-	        
-	    });
-	},
-	setControls: function() {
-		var el = '<applet code="com.charliemouse.cambozola.Viewer" archive="cambozola.jar" width="352" height="400"><param name="url" value="' + this._requestAddr + '"></applet>';
-		jQuery('#vnf-video-wrapper').append(el);
+		this.$el = jQuery("#map-view");
 	},
 	render: function() {
-	    this.$el = jQuery("#TPS-Viewer");
-	},
-	renderViews: function(loc) {
-		nav = jQuery('#nav');
-		if(loc) {
-			this.nav.render(loc);
-		}
-		//console.log('listing location views...');
-		nav.html(this.nav.$el);
-	},
-	navToSites: function() {
-		TPSApp.navigate('locations/', {trigger: true});
-	},
-	navToViews: function(el) {
-		var loc = el.currentTarget.dataset.loc;
-		TPSApp.navigate('locations/' + loc, {trigger: true});
-	}
+    	this.$el.width("600px").height("350px").gmap3();
+    	this.$el.show();
+    },
 });
 
 var FrameView = Backbone.View.extend({
 	initialize: function() {
-		this.$el = jQuery("nvf-frame");
+		this.$el = jQuery("#nvf-frame");
 		this.feedModel = new FeedModel({loc: this.options.loc, size: this.options.type});
-		this.listenTo(TPSApp.TPSView.controls,'framerateChanged', this.updateFramerate);
+		//this.listenTo(TPSApp.TPSView.controls,'framerateChanged', this.updateFramerate);
 	},
 	render: function(type, fr) {
 		if(type == 'jpeg') {
-			this.getJpeg();
+			this.__getJpeg();
 		} else if (type == 'mjpeg') {
-			this.getMjpeg(fr);
+			this.__getMjpeg(fr);
 		}
 		else {
-			this.getJpeg();
+			this.__getJpeg();
 		}
 	},
-	_getFeed: function() {
+	__getFeed: function() {
 		var fullRequest = this.feedModel.requestAddr + '/' + this._type;
-		jQuery('#vnf-video-wrapper').html('<img src="' + fullRequest + '">');
+		var el = '<img src="' + fullRequest + '" />';
+		this.$el.html(el);
+		console.log(fullRequest);
 	},
-	getJpeg: function() {
+	__getJpeg: function() {
 		this._type = 'jpeg';
-		this._getFeed();
+		this.__getFeed();
 	},
-	getMjpeg: function(frameRate) {
+	__getMjpeg: function(frameRate) {
 		this._type = 'mjpeg' + '/' + frameRate;
-		this._getFeed();
+		this.__getFeed();
 	},
-	updateFramerate: function(framerate){
-		this.render('mjpeg',framerate);
+	updateFramerate: function(f){
+		this.render('mjpeg',f);
 		console.log('upadating frameRate...');
 	}
 });
@@ -100,57 +51,58 @@ var ControlView = Backbone.View.extend({
 			max: 10,
 			value: 5,
 			change: function(ob, fr) {
-				self.trigger('framerateChanged', fr.value);
+				self.trigger('framerate-changed', fr.value);
 			}
 		});
 	},
 });
 
 var SiteListView = Backbone.View.extend({
-	initialize: function() {
-		this.el = jQuery('#sites');
-	},
-	render: function() {
-		this.sites = new SiteCollection();
-		//console.log('created new site collection');
-		this.children = new SiteElementCollection();
-		//console.log('created new collection of site list elements');
-		self = this;
-		this.$el.html('');
-		//console.log('set value of' + this.$el + ' to ""');
-		this.sites.forEach(function(item) {
-			//console.log('added new site to site collection');
-			self.children.add(new SiteElement({menu:item}));
-		});
-		this.children.forEach(function(li) {
-			//console.log('added new site to list');
-			jQuery(self.el).append(li.attributes.$el);
-		});
-	}
+		initialize: function() {
+			this.$el = jQuery('#sites');
+			this.$el.html('');
+		},
+		render: function() {
+			this.menus = new SiteCollection();
+			self = this;
+			this.menus.forEach(function(item) {
+				newMenu = new SiteElement({menu:item});
+				self.$el.append(newMenu.$el);
+			});
+			this.$el.show();
+		},
+		events: {
+			'click li':'openSite'
+		},
+		openSite: function(e) {
+			var loc = e.currentTarget.dataset.loc;
+			this.trigger('site-opened', loc);
+		}
 });
 
 var MenuListView = Backbone.View.extend({
 		initialize: function() {
+			this.$el = jQuery('#sub-menu');
+			this.$el.html('');
 		},
-		tagName: 'ul',
 		render: function(loc) {
 			this.menus = new MenuCollection();
-			//console.log('created new menu collection');
-			this.children = new MenuElementCollection();
-			//console.log('created collection for menu elements')
 			self = this;
 			this.menus.forEach(function(item) {
 				if(item.attributes.loc == loc) {
-						self.children.add(new MenuElement({menu:item}));
-						//console.log('added new child menu element to menu collection ');
+						newMenu = new MenuElement({menu:item});
+						self.$el.append(newMenu.$el);
 				}
 			});
-			this.$el.html('');
-			//console.log('set value of menu' + this.$el + ' to ""');
-			this.children.forEach(function(li) {
-				self.$el.append(li.attributes.$el);
-				//console.log('added child element markup to list children');
-			});
+			this.$el.show();
+		},
+		events: {
+			'click li': 'openFeed',
+		},
+		openFeed: function(e) {
+			var loc = e.currentTarget.dataset.loc,
+				type = e.currentTarget.dataset.type;
+			this.trigger('feed-requested', {t: type, l: loc});
 		}
 });
 		
@@ -167,7 +119,6 @@ var MenuElement = Backbone.View.extend({
 			var self = this;
 			var title = this.options.menu.attributes['title'];
 			this.$el.html(title);
-			//console.log('new menu element created');
 		}
 });
 
@@ -185,4 +136,20 @@ var SiteElement = Backbone.View.extend({
 			this.$el.html(title);
 			//console.log('created new site menu element');
 		},
+});
+
+var Menu = Backbone.View.extend({
+	initialize: function(selector) {
+		this.$el = selector;
+	},
+	events: {
+		'click #listMaker':'addList',
+		'click #mapMaker':'renderMap',
+	},
+	addList: function() {
+		this.trigger('list-initialized');
+	},
+	renderMap: function() {
+		this.trigger('map-requested');
+	}
 });

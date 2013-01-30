@@ -3,7 +3,14 @@ var MapView = Backbone.View.extend({
 		this.$el = jQuery("#map-view");
 	},
 	render: function() {
-    	this.$el.width("600px").height("350px").gmap3();
+    	this.$el.width("600px").height("350px").gmap3({
+    		map: {
+    			options: {
+    				center: [39.232253141714885, -119.3115234375],
+    				zoom: 15
+    			}
+    		}
+    	});
     	this.$el.show();
     },
 });

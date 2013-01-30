@@ -8,10 +8,9 @@
 		<div id='map-view'></div>
 		<ul id='sub-menu'></ul>
 	</div>
-	<div id="controls">
-		<div class="slider"></div>
-	</div>
 	<div id="content-wrapper">
+		<div id="controls">
+		</div>
 		<div id="nvf-frame"></div>
 	</div>
 </div>                  

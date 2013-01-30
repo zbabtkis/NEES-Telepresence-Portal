@@ -1,5 +1,18 @@
-#vnf-video-wrapper {
+#content-wrapper {
 	min-width: 704px;
 	min-height: 480px;
 	background-color: black;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 5px 5px 5px black;
+}
+#content-wrapper #controls {
+	margin-bottom: 10px;
+}
+#nvf-frame img {
+	width: 100% !important;
+	height: auto !important;
+}
+#controls label {
+	color: white;
 }

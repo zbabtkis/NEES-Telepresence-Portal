@@ -46,16 +46,38 @@ var FrameView = Backbone.View.extend({
 
 var ControlView = Backbone.View.extend({
 	initialize: function() {
+		this.$el = jQuery('#controls');
+		this.$el.html('');
+		this.frameRateSelector = new SliderView();
+		this.frameRateSelector.$el.addClass('framerate');
+		this.$el.append('<label>Framerate: </label>', this.frameRateSelector.$el);
+		this.listenTo(this.frameRateSelector, 'framerate-sliding', this.renderSlideValue);
+		this.handleBar = jQuery('.ui-slider-handle');
+		this.handleBar.after("<span class='handle-value'></span>");
+		this.handleBar.valuespan = jQuery(".handle-value");
+	},
+	renderSlideValue: function(v) {
+		this.handleBar.valuespan.html(v);
+	}
+});
+
+var SliderView = Backbone.View.extend({
+	tagName: 'div',
+	className: 'slider',
+	initialize: function() {
 		self = this;
-		jQuery('.slider').slider({
+		this.$el.slider({
 			max: 10,
 			value: 5,
 			change: function(ob, fr) {
 				self.trigger('framerate-changed', fr.value);
+			},
+			slide: function(ob, fr) {
+				self.trigger('framerate-sliding', fr.value);
 			}
 		});
 	},
-});
+})
 
 var SiteListView = Backbone.View.extend({
 		initialize: function() {

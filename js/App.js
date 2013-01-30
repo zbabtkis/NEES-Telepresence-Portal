@@ -44,7 +44,7 @@ var App = Backbone.Router.extend({
 			this.frame = new FrameView({loc: v.l, type: v.t});
 			this.frame.controls = new ControlView();
 			this.frame.render();
-			this.frame.listenTo(this.frame.controls, 'framerate-changed', this.frame.updateFramerate);
+			this.frame.listenTo(this.frame.controls.frameRateSelector, 'framerate-changed', this.frame.updateFramerate);
 		},
 		addListeners: function() {
 			this.listenTo(this.optionsMenu, 'list-initialized', this.navToSites);

@@ -1,13 +1,62 @@
+#main-content header {
+	background-color: #06A;
+	border-bottom: 3px solid #09F;
+	color: white;
+	height: 80px;
+	width: 100%;
+}
+#main-content header h1{
+	float: left;
+	font-size: 26px;
+	padding: 15px;
+}
+#nav {
+	margin-top: 15px;
+	background: #222;
+	padding: 15px;
+}
+#nav label{
+	color: white;
+	border-bottom: 2px solid #eee;
+}
+#nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	padding: 5px;
+}
+#nav #sites li {
+	color: white;
+}
+#nav #sub-menu li {
+	color: white;
+}
+#content-column {
+	width: 100% !important;
+}
+#TPS-Viewer {
+	background-color: #101214;
+	float: left;
+	width: 100%;
+	margin: 0 auto;
+}
+#tps-viewer-menu {
+	float: left;
+	padding: 5px;
+	width: 30%;
+}
 #content-wrapper {
-	min-width: 704px;
+	max-width: 704px;
 	min-height: 480px;
-	background-color: black;
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 5px 5px 5px black;
+	float: right;
+	padding: 15px;
+	width:60%;
 }
 #content-wrapper #controls {
 	margin-bottom: 10px;
+}
+#nvf-frame {
+	position: relative !important;
 }
 #nvf-frame img {
 	width: 100% !important;
@@ -15,4 +64,46 @@
 }
 #controls label {
 	color: white;
+}
+#mapMaker {
+	background: url('img/map-icon.png');
+	background-size: 48px 48px;
+	border: none;
+	height: 48px;
+	width: 48px;
+}
+#listMaker {
+	background: url('img/grid-icon.png');
+	background-size: 48px 48px;
+	border: none;
+	height: 48px;
+	width: 48px;
+	float: right;
+}
+#map-view {
+	width: 100%;
+	height: 300px;
+	display: none;
+}
+.ui-slider-handle {
+	text-align: center;
+	text-decoration: none;
+	width: 100px !important;
+}
+#player-controls {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 50px;
+	opacity: 0.2;
+	background-color: black;
+}
+#player-controls:hover {
+	opacity: 0.8;
+}
+button.play-pause {
+	background: none;
+	color: white;
+	border: 1px dotted white;
+	font-size: 2.5em;
 }

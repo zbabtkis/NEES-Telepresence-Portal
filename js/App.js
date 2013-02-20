@@ -1,11 +1,10 @@
 var App = Backbone.Router.extend({
-		initialize: function() {
-		},
 		routes: {
 			'': 'indexPage',
 			'map':'mapPage',
 			'sites':'sitesPage',
 			'sites/:site':'sitesPage',
+			'map/:site':'mapPage',
 		},
 		navToMap: function() {
 			this.navigate('map', {trigger: true});
@@ -16,14 +15,25 @@ var App = Backbone.Router.extend({
 		navToSite: function(s) {
 			this.navigate('sites/' + s, {trigger: true});
 		},
+		navToMapSite: function(evt,s) {
+			this.navigate('map/' + s, {trigger: true});
+		},
 		indexPage: function() {
 		},
-		mapPage: function() {
+		mapPage: function(s) {
+			var that = this;
 			if(this.sites) {
 				this.sites.$el.hide();
 			}
 			this.mapView = new MapView();
 			this.mapView.render();
+			this.mapView.$el.show();
+			this.mapView.$el.on('site-opened', that.navToMapSite);
+			if(s) {
+				this.siteMenu = new MenuListView();
+				this.siteMenu.render(s);
+				this.listenTo(this.siteMenu, 'feed-requested', that.fetchFeed);
+			}
 		},
 		sitesPage: function(s) {
 			if(this.mapView) {
@@ -41,10 +51,8 @@ var App = Backbone.Router.extend({
 			}
 		},
 		fetchFeed: function(v) {
-			this.frame = new FrameView({loc: v.l, type: v.t});
-			this.frame.controls = new ControlView();
-			this.frame.render();
-			this.frame.listenTo(this.frame.controls.frameRateSelector, 'framerate-changed', this.frame.updateFramerate);
+			this.frame = this.frame || new FrameView();
+			this.frame.feedModel.set({loc: v.l, type: v.t});
 		},
 		addListeners: function() {
 			this.listenTo(this.optionsMenu, 'list-initialized', this.navToSites);

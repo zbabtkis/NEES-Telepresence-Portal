@@ -73,5 +73,6 @@ Drupal.behaviors.nvf2 = {
 		window.TPSApp.renderMenu(jQuery('#options-menu'));
 		window.TPSApp.listen();
 		Backbone.history.start();
+		var app = window.TPSApp || {};
 	},
 };

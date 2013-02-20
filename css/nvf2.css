@@ -5,6 +5,13 @@
 	height: 80px;
 	width: 100%;
 }
+.site-select {
+	border: none;
+}
+.site-select:hover {
+	cursor: pointer;
+	border-bottom: 3px #09F solid !important;
+}
 #main-content header h1{
 	float: left;
 	font-size: 26px;
@@ -25,6 +32,13 @@
 	list-style: none;
 	padding: 5px;
 }
+#nav li {
+	cursor: pointer;
+	padding: 3px;
+}
+#nav li:hover {
+	background: #09F;
+}
 #nav #sites li {
 	color: white;
 }
@@ -43,7 +57,7 @@
 #tps-viewer-menu {
 	float: left;
 	padding: 5px;
-	width: 30%;
+	width: 40%;
 }
 #content-wrapper {
 	max-width: 704px;
@@ -68,14 +82,12 @@
 #mapMaker {
 	background: url('img/map-icon.png');
 	background-size: 48px 48px;
-	border: none;
 	height: 48px;
 	width: 48px;
 }
 #listMaker {
 	background: url('img/grid-icon.png');
 	background-size: 48px 48px;
-	border: none;
 	height: 48px;
 	width: 48px;
 	float: right;
@@ -84,6 +96,9 @@
 	width: 100%;
 	height: 300px;
 	display: none;
+}
+.slider {
+	margin-bottom: 15px;
 }
 .ui-slider-handle {
 	text-align: center;
@@ -106,4 +121,72 @@ button.play-pause {
 	color: white;
 	border: 1px dotted white;
 	font-size: 2.5em;
+}
+
+/** Camera Actions */
+.camera-action {
+	border: 0;
+	width: 48px;
+	height: 48px;
+	background-size: 48px 48px;
+}
+.home-action {
+	background: url('img/camera-actions/home.png');
+}
+.focus-near {
+	background: url('img/camera-actions/focus_near.png');
+}
+.focus-far {
+	background: url('img/camera-actions/focus_far.png');
+}
+.focus-auto {
+	background: url('img/camera-actions/autofocus.png');
+}
+.zoom-in {
+	background: url('img/camera-actions/zoom_in.png');
+}
+.zoom-out {
+	background: url('img/camera-actions/zoom_out.png');
+}
+.zoom-in {
+	background: url('img/camera-actions/zoom_in.png');
+}
+.iris-close {
+	background: url('img/camera-actions/iris_close.png');
+}
+.iris-open {
+	background: url('img/camera-actions/iris_open.png');
+}
+.iris-auto {
+	background: url('img/camera-actions/iris_auto.png');
+}
+.pan-right {
+	background: url('img/camera-actions/direction.png');
+}
+.pan-left {
+	background: url('img/camera-actions/direction.png');
+	transform:rotate(180deg);
+	-ms-transform:rotate(180deg); /* IE 9 */
+	-moz-transform:rotate(180deg); /* Firefox */
+	-webkit-transform:rotate(180deg); /* Safari and Chrome */
+	-o-transform:rotate(180deg); /* Opera */
+}
+.tilt-down {
+	background: url('img/camera-actions/direction.png');
+	transform:rotate(90deg);
+	-ms-transform:rotate(90deg); /* IE 9 */
+	-moz-transform:rotate(90deg); /* Firefox */
+	-webkit-transform:rotate(90deg); /* Safari and Chrome */
+	-o-transform:rotate(90deg); /* Opera */
+}
+.tilt-up {
+	background: url('img/camera-actions/direction.png');
+	transform:rotate(270deg);
+	-ms-transform:rotate(270deg); /* IE 9 */
+	-moz-transform:rotate(270deg); /* Firefox */
+	-webkit-transform:rotate(270deg); /* Safari and Chrome */
+	-o-transform:rotate(270deg); /* Opera */
+}
+#controls {
+	text-align: center;
 }

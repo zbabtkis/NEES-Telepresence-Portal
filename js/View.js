@@ -50,9 +50,9 @@ var FrameView = Backbone.View.extend({
 	initialize: function() {
 		this.stream = new StreamView();
 		this.playerControls = new PlayerControlView();
+		this.feedModel = new FeedModel();
 		this.controls = new ControlView();
 		this.$el.append(this.stream.$el);
-		this.feedModel = new FeedModel();
 		this.listenTo(this.feedModel, 'change', this.render)
 		this.listenTo(this.controls.frameRateSelector.frameRate, 'change', this.updateFramerate);
 	},
@@ -68,9 +68,12 @@ var FrameView = Backbone.View.extend({
 		}
 	},
 	__getFeed: function() {
+		console.log(this._type);
 		var that = this;
-		var fullRequest = this.feedModel.requestAddr + '/' + this._type;
-		var feedImage = new FeedImage({'src': fullRequest});
+		this.stopListening(this.feedModel);
+		this.feedModel.set('fullRequest', this.feedModel.requestAddr + '/' + this._type);
+		this.listenTo(this.feedModel, 'change', this.render);
+		var feedImage = new FeedImage({'src': this.feedModel.get('fullRequest')});
 		feedImage.$el.load(function() {
 			that.stream.$el.html('');
 			that.$el.prepend(that.controls.$el);
@@ -126,11 +129,61 @@ var ControlView = Backbone.View.extend({
 		};
 	},
 	initialize: function() {
+		this.controller = new ControllerModel();
 		this.frameRateSelector = new SliderView();
 		this.frameRateSelector.$el.addClass('framerate');
 		this.$el.append(this.frameRateSelector.$el);
+		this.addCameraButtons();
 	},
+	addCameraButtons: function() {
+		this.cameraActions = [];
+		this.cameraActions['zoomIn'] = new CameraButtonView({'title': 'Zoom In', 'action': 'zoom', 'value': 'in'});
+		this.cameraActions['zoomOut'] = new CameraButtonView({'title': 'Zoom Out', 'action': 'zoom', 'value': 'out'});
+		this.cameraActions['panLeft'] = new CameraButtonView({'title': 'Pan Left', 'action': 'pan', 'value': 'left'});
+		this.cameraActions['panRight'] = new CameraButtonView({'title': 'Pan Right', 'action': 'pan', 'value': 'right'});
+		this.cameraActions['tiltUp'] = new CameraButtonView({'title': 'Tilt Up', 'action': 'tilt', 'value': 'up'});
+		this.cameraActions['tiltDown'] = new CameraButtonView({'title': 'Tilt Down', 'action': 'tilt', 'value': 'down'});
+		this.cameraActions['irisOpen'] = new CameraButtonView({'title': 'Iris Open', 'action': 'iris', 'value': 'open'});
+		this.cameraActions['irisClose'] = new CameraButtonView({'title': 'Iris Close', 'action': 'iris', 'value': 'close'});
+		this.cameraActions['irisAuto'] = new CameraButtonView({'title': 'Iris Auto', 'action': 'iris', 'value': 'auto'});
+		this.cameraActions['focusNear'] = new CameraButtonView({'title': 'Focus Near', 'action': 'focus', 'value': 'near'});
+		this.cameraActions['focusFar'] = new CameraButtonView({'title': 'Focus Far', 'action': 'focus', 'value': 'far'});
+		this.cameraActions['focusAuto'] = new CameraButtonView({'title': 'Autofocus', 'action': 'focus', 'value': 'auto'});
+		this.cameraActions['home'] = new CameraButtonView({'title': 'Home', 'action': 'home'});
+		for(action in this.cameraActions) {
+			var $el = this.cameraActions[action].$el;
+			this.$el.append($el);
+		}
+	},
+	events: {
+		'click .camera-action': 'doCameraAction',
+	},
+	doCameraAction: function(e) {
+		var action = e.currentTarget.dataset.action;
+		var value = e.currentTarget.dataset.value;
+		this.controller[action](value);
+	}
+});
 
+var CameraButtonView = Backbone.View.extend({
+	tagName: 'button',
+	className: function() {
+		var value = this.options.value?this.options.value:'action';
+		return 'camera-action ' + this.options.action + '-' + value;
+	},
+	defaults: {
+		'title': 'Camera Action',
+		'action': 'none',
+		'value': 'none',
+	},
+	attributes: function() {
+		return {
+			'data-action': this.options.action,
+			'data-value': this.options.value,
+			'alt': this.options.title,
+			'title': this.options.title,
+		};
+	},
 });
 
 var SliderView = Backbone.View.extend({

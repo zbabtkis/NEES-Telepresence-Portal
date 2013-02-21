@@ -8,6 +8,7 @@ var FeedModel = Backbone.Model.extend({
 		this.base_url = 'http://tpm.nees.ucsb.edu/feeds/';
 		this.uri = this.location + '/' + this.size;
 		this.requestAddr = this.base_url + this.uri;
+		this.trigger('feedUpdated');
 	}
 });
 

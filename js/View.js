@@ -53,11 +53,11 @@ var FrameView = Backbone.View.extend({
 		this.feedModel = new FeedModel();
 		this.controls = new ControlView();
 		this.$el.append(this.stream.$el);
-		this.listenTo(this.feedModel, 'change', this.render)
+		this.listenTo(this.feedModel, 'feedUpdated', this.render)
 		this.listenTo(this.controls.frameRateSelector.frameRate, 'change', this.updateFramerate);
 	},
-	render: function(type, fr) {
-		this.frameRate = fr || 5;
+	render: function(type) {
+		console.log('rendering feed...');
 		if(type == 'jpeg') {
 			this.__getJpeg();
 		} else if (type == 'mjpeg') {
@@ -68,7 +68,6 @@ var FrameView = Backbone.View.extend({
 		}
 	},
 	__getFeed: function() {
-		console.log(this._type);
 		var that = this;
 		this.stopListening(this.feedModel);
 		this.feedModel.set('fullRequest', this.feedModel.requestAddr + '/' + this._type);
@@ -88,7 +87,8 @@ var FrameView = Backbone.View.extend({
 		this.__getFeed();
 	},
 	__getMjpeg: function() {
-		this._type = 'mjpeg' + '/' + this.frameRate;
+		var fr = this.controls.frameRateSelector.getFrameRate();
+		this._type = 'mjpeg' + '/' + fr;
 		this.__getFeed();
 	},
 	__pause: function() {
@@ -98,8 +98,12 @@ var FrameView = Backbone.View.extend({
 		this.__getMjpeg();
 	},
 	updateFramerate: function(f){
-		console.log('upadating frameRate...');
-		this.render('mjpeg', f.get('value'));
+		var v = f.get('value');
+		if(v > 1) {
+			this.render('mjpeg');
+		} else {
+			this.render('jpeg');
+		}
 	}
 });
 
@@ -197,6 +201,7 @@ var SliderView = Backbone.View.extend({
 			value: 5,
 			change: function(ob, fr) {
 				that.setFrameRate(fr);
+				console.log('fr changed from slider');
 			},
 			slide: function(ob, fr) {
 				that.trigger('framerate-sliding', fr.value);
@@ -210,7 +215,14 @@ var SliderView = Backbone.View.extend({
 		this.setListeners();
 	},
 	setFrameRate: function(fr) {
-		this.frameRate.set('value', fr.value);
+		//deal with inputs from both the slider and the play pause button
+		console.log(fr);
+		if(fr) {
+			this.frameRate.set('value', fr.value);
+		}
+	},
+	getFrameRate: function() {
+		return this.frameRate.get('value');
 	},
 	renderSlideValue: function(v) {
 		this.framerateValue.$el.html(v);
@@ -264,10 +276,10 @@ var PlayButton = Backbone.View.extend({
 		};
 	},
 	initialize: function() {
-		this.$el.html('||');
+		this.$el.html('>');
 	},
 	playPause: function() {
-		this.state = this.state || 'play';
+		this.state = this.state || 'pause';
 		if(this.state === 'play') {
 			this.$el.html('>');
 			this.state = 'pause';

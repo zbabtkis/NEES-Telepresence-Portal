@@ -1,3 +1,6 @@
+.content-inner {
+	margin: 0 !important;
+}
 #main-content header {
 	background-color: #06A;
 	border-bottom: 3px solid #09F;
@@ -57,7 +60,7 @@
 #tps-viewer-menu {
 	float: left;
 	padding: 5px;
-	width: 40%;
+	width: 30%;
 }
 #content-wrapper {
 	max-width: 704px;
@@ -128,80 +131,92 @@ button.play-pause {
 	border: 0;
 	width: 48px;
 	height: 48px;
-	background-size: 48px 48px;
 	cursor: pointer;
+	background: url('img/camera-actions.png');
+	_background: url('img/camera-actions_ie6.png');
+	*background: url('img/camera-actions_ie6.png');
 }
 .camera-action:hover {
-	border-bottom: 3px solid #09F;
-}
-.home-action {
-	background: url('img/camera-actions/home.png');
-}
-.focus-near {
-	background: url('img/camera-actions/focus_near.png');
-}
-.focus-far {
-	background: url('img/camera-actions/focus_far.png');
-}
-.focus-auto {
-	background: url('img/camera-actions/autofocus.png');
+	border-bottom: 3px solid #fff;
 }
 .zoom-in {
-	background: url('img/camera-actions/zoom_in.png');
+	background-position: 624px 0;
 }
 .zoom-out {
-	background: url('img/camera-actions/zoom_out.png');
-}
-.zoom-in {
-	background: url('img/camera-actions/zoom_in.png');
-}
-.iris-close {
-	background: url('img/camera-actions/iris_close.png');
-}
-.iris-open {
-	background: url('img/camera-actions/iris_open.png');
-}
-.iris-auto {
-	background: url('img/camera-actions/iris_auto.png');
+	background-position: 576px 0;
 }
 .pan-right {
-	background: url('img/camera-actions/direction.png');
+	background-position: 528px 0;
 }
 .pan-left {
-	background: url('img/camera-actions/direction.png');
-	transform:rotate(180deg);
-	-ms-transform:rotate(180deg); /* IE 9 */
-	-moz-transform:rotate(180deg); /* Firefox */
-	-webkit-transform:rotate(180deg); /* Safari and Chrome */
-	-o-transform:rotate(180deg); /* Opera */
-}
-.pan-left:hover {
-	border-bottom: none;
-	border-top: 3px solid #09F;
-}
-.tilt-up:hover {
-	border-bottom: none;
-	border-left: 3px solid #09F;
-}
-.tilt-down:hover {
-	border-bottom: none;
-	border-right: 3px solid #09F;
+	background-position: 480px 0;
 }
 .tilt-down {
-	background: url('img/camera-actions/direction.png');
-	transform:rotate(90deg);
-	-ms-transform:rotate(90deg); /* IE 9 */
-	-moz-transform:rotate(90deg); /* Firefox */
-	-webkit-transform:rotate(90deg); /* Safari and Chrome */
-	-o-transform:rotate(90deg); /* Opera */
+	background-position: 432px 0;
 }
 .tilt-up {
-	background: url('img/camera-actions/direction.png');
-	transform:rotate(270deg);
-	-ms-transform:rotate(270deg); /* IE 9 */
-	-moz-transform:rotate(270deg); /* Firefox */
-	-webkit-transform:rotate(270deg); /* Safari and Chrome */
-	-o-transform:rotate(270deg); /* Opera */
+	background-position: 384px 0;
+}
+.iris-close {
+	background-position: 338px 0;
+}
+.iris-open {
+	background-position: 288px 0;
+}
+.iris-auto {
+	background-position: 240px 0;
+}
+.focus-near {
+	background-position: 192px 0;
+}
+.focus-far {
+	background-position: 144px 0;
+}
+.focus-auto {
+	background-position: 96px 0;
+}
+.home-action {
+	background-position: 48px 0;
+}
+
+.zoom-in:hover {
+	background-position: 624px 48px;
+}
+.zoom-out:hover {
+	background-position: 576px 48px;
+}
+.pan-right:hover {
+	background-position: 528px 48px;
+}
+.pan-left:hover {
+	background-position: 480px 48px;
+}
+.tilt-down:hover {
+	background-position: 432px 48px;
+}
+.tilt-up:hover {
+	background-position: 384px 48px;
+}
+.iris-close:hover {
+	background-position: 338px 48px;
+}
+.iris-open:hover {
+	background-position: 288px 48px;
+}
+.iris-auto:hover {
+	background-position: 240px 48px;
+}
+.focus-near:hover {
+	background-position: 192px 48px;
+}
+.focus-far:hover {
+	background-position: 144px 48px;
+}
+.focus-auto:hover {
+	background-position: 96px 48px;
+}
+.home-action:hover {
+	background-position: 48px 48px;
 }
 #controls {
 	text-align: center;

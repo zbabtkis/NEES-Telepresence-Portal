@@ -1,6 +1,7 @@
 var MapView = Backbone.View.extend({
 	el: "#map-view",
 	render: function() {
+		var that = this;
     	this.$el.gmap3({
     		map: {
     			options: {
@@ -36,7 +37,7 @@ var MapView = Backbone.View.extend({
 				        }
 				    },
 			    	click: function(marker, event, context) {
-			    		this.trigger('site-opened',context.data);
+			    		that.trigger('site-opened',context.data);
 			      	}
 	    		}
     		}
@@ -45,50 +46,60 @@ var MapView = Backbone.View.extend({
     },
 });
 
-var FrameView = Backbone.View.extend({
+var FeedView = Backbone.View.extend({
 	el: '#nvf-frame',
 	initialize: function() {
+		// Image wrapper for stream image.
 		this.stream = new StreamView();
+		// Play/Pause button control menu.
 		this.playerControls = new PlayerControlView();
+		// Holds connection data for current feed.
 		this.feedModel = new FeedModel();
+		// User input elements to control feed and camera robotics.
 		this.controls = new ControlView();
+
 		this.$el.append(this.stream.$el);
-		this.listenTo(this.feedModel, 'feedUpdated', this.render)
-		this.listenTo(this.controls.frameRateSelector.frameRate, 'change', this.updateFramerate);
+		this.addListeners();
 	},
 	render: function(type) {
-		console.log('rendering feed...');
 		if(type == 'jpeg') {
 			this.__getJpeg();
 		} else if (type == 'mjpeg') {
 			this.__getMjpeg();
 		}
 		else {
-			this.__getJpeg();
+			this.__getMjpeg();
 		}
 	},
 	__getFeed: function() {
 		var that = this;
+		// Temporarily stop listening to feedModel to avoid endless loop caused by setting the value of the full feed request.
 		this.stopListening(this.feedModel);
-		this.feedModel.set('fullRequest', this.feedModel.requestAddr + '/' + this._type);
+		// Selects the stream as either a static jpeg or moving jpeg with a framerate.
+		this.feedModel.set('fullRequest', this.feedModel.get('requestAddr') + '/' + this.__type);
 		this.listenTo(this.feedModel, 'change', this.render);
+		// Creates image element containing new src feed.
 		var feedImage = new FeedImage({'src': this.feedModel.get('fullRequest')});
+		// Waits until new feed is loaded before removing last feed.
 		feedImage.$el.load(function() {
 			that.stream.$el.html('');
 			that.$el.prepend(that.controls.$el);
 			that.stream.$el.append(feedImage.$el);
 			that.$el.append(that.playerControls.$el);
 		});
-		this.listenTo(this.playerControls.play, 'playerPaused', this.__pause);
-		this.listenTo(this.playerControls.play, 'playerPlayed', this.__play);
 	},
 	__getJpeg: function() {
-		this._type = 'jpeg';
+		this.__type = 'jpeg';
 		this.__getFeed();
 	},
 	__getMjpeg: function() {
+		// If framerate is 0, it should be set to a valid framerate for buffering.
+		if (this.controls.frameRateSelector.getFrameRate() == 0) {
+			this.controls.frameRateSelector.setFrameRate(5);
+			console.log(this.controls.frameRateSelector.getFrameRate());
+		}
 		var fr = this.controls.frameRateSelector.getFrameRate();
-		this._type = 'mjpeg' + '/' + fr;
+		this.__type = 'mjpeg' + '/' + fr;
 		this.__getFeed();
 	},
 	__pause: function() {
@@ -99,12 +110,25 @@ var FrameView = Backbone.View.extend({
 	},
 	updateFramerate: function(f){
 		var v = f.get('value');
-		if(v > 1) {
+		if(v > 0) {
 			this.render('mjpeg');
+			this.playerControls.toggleDisplay('play');
 		} else {
 			this.render('jpeg');
+			this.playerControls.toggleDisplay('pause');
 		}
-	}
+	},
+	addListeners: function() {
+		// Render immediately when a new feed has been loaded in the model.
+		this.listenTo(this.feedModel, 'change', this.render)
+		// Updates the url handler on the robot controller.
+		this.feedModel.on('change', this.controls.controller.updateRobotHandler, this.controls.controller);
+		// Routes a rerendering as either a still or moving image when the user changes the framerate.
+		this.listenTo(this.controls.frameRateSelector.frameRate, 'change', this.updateFramerate);
+		// Play Pause listeners.
+		this.listenTo(this.playerControls.play, 'playerPaused', this.__pause);
+		this.listenTo(this.playerControls.play, 'playerPlayed', this.__play);
+	},
 });
 
 var StreamView = Backbone.View.extend({
@@ -115,16 +139,17 @@ var StreamView = Backbone.View.extend({
 		};
 	},
 });
-
+/** Displays the current feed buffer or image. */
 var FeedImage = Backbone.View.extend({
 	tagName: 'img',
 	class: 'feed-image',
 	initialize: function() {
-		that = this;
+		var that = this;
 		this.$el.attr('src',that.options.src);
 	}
 });
 
+/** Input elements allowing user to control the feed */
 var ControlView = Backbone.View.extend({
 	tagName: 'div',
 	attributes: function() {
@@ -133,14 +158,18 @@ var ControlView = Backbone.View.extend({
 		};
 	},
 	initialize: function() {
+		// Handles the communication between the robot and the user.
 		this.controller = new ControllerModel();
 		this.frameRateSelector = new SliderView();
 		this.frameRateSelector.$el.addClass('framerate');
+		// Adds slider to controller view.
 		this.$el.append(this.frameRateSelector.$el);
+		// Renders camera action buttons on the controller.
 		this.addCameraButtons();
 	},
 	addCameraButtons: function() {
 		this.cameraActions = [];
+		// Creates Camera Button instances for each robotic action.
 		this.cameraActions['zoomIn'] = new CameraButtonView({'title': 'Zoom In', 'action': 'zoom', 'value': 'in'});
 		this.cameraActions['zoomOut'] = new CameraButtonView({'title': 'Zoom Out', 'action': 'zoom', 'value': 'out'});
 		this.cameraActions['panLeft'] = new CameraButtonView({'title': 'Pan Left', 'action': 'pan', 'value': 'left'});
@@ -155,6 +184,7 @@ var ControlView = Backbone.View.extend({
 		this.cameraActions['focusAuto'] = new CameraButtonView({'title': 'Autofocus', 'action': 'focus', 'value': 'auto'});
 		this.cameraActions['home'] = new CameraButtonView({'title': 'Home', 'action': 'home'});
 		for(action in this.cameraActions) {
+			// Appends elements to Control View.
 			var $el = this.cameraActions[action].$el;
 			this.$el.append($el);
 		}
@@ -165,10 +195,12 @@ var ControlView = Backbone.View.extend({
 	doCameraAction: function(e) {
 		var action = e.currentTarget.dataset.action;
 		var value = e.currentTarget.dataset.value;
-		this.controller[action](value);
+		// Tells the controller to perform robotic action.
+		this.controller.robotCommand(action,value);
 	}
 });
 
+/** Button linking to a robotic action */
 var CameraButtonView = Backbone.View.extend({
 	tagName: 'button',
 	className: function() {
@@ -190,15 +222,17 @@ var CameraButtonView = Backbone.View.extend({
 	},
 });
 
+/** jQuery slider taht controls framerate */
 var SliderView = Backbone.View.extend({
 	tagName: 'div',
 	className: 'slider',
 	initialize: function() {
+		var that = this;
 		this.frameRate = new FrameRateModel();
 		var that = this;
 		this.$el.slider({
-			max: 10,
-			value: 5,
+			max: that.frameRate.get('max'),
+			value: that.frameRate.get('value'),
 			change: function(ob, fr) {
 				that.setFrameRate(fr);
 				console.log('fr changed from slider');
@@ -207,17 +241,20 @@ var SliderView = Backbone.View.extend({
 				that.trigger('framerate-sliding', fr.value);
 			}
 		});
+		// jQuery slider handle selector to append framerate value to.
 		this.$handle = this.$el.find('.ui-slider-handle');
 		this.framerateLabel = new FrameRateLabel();
-		this.framerateValue = new FrameRateValue();
+		this.framerateValue = new FrameRateValue({value: this.frameRate.get('value')});
+		// Insert text displaying current slider framerate selection.
 		this.$handle.append(this.framerateLabel.$el);
 		this.$handle.append(this.framerateValue.$el);
-		this.setListeners();
+		this.addListeners();
 	},
 	setFrameRate: function(fr) {
 		//deal with inputs from both the slider and the play pause button
-		console.log(fr);
-		if(fr) {
+		if(typeof fr == 'number') {
+			this.frameRate.set('value', fr);
+		} else if(fr) {
 			this.frameRate.set('value', fr.value);
 		}
 	},
@@ -225,13 +262,15 @@ var SliderView = Backbone.View.extend({
 		return this.frameRate.get('value');
 	},
 	renderSlideValue: function(v) {
+		// Inserts the new framerate below the slider bar.
 		this.framerateValue.$el.html(v);
 	},
-	setListeners: function() {
+	addListeners: function() {
 		this.on('framerate-sliding', this.renderSlideValue);
 	}
 });
 
+/** Label displaying "Framerate" */
 var FrameRateLabel = Backbone.View.extend({
 	tagName: 'label',
 	className: 'framerate',
@@ -240,14 +279,16 @@ var FrameRateLabel = Backbone.View.extend({
 	},
 });
 
+// Displays current framerate value based on status of the framerate slider */
 var FrameRateValue = Backbone.View.extend({
 	tagName: 'span',
 	className: 'handle-value',
 	initialize: function() {
-		this.$el.html('Still');
+		this.$el.html(this.options.value);
 	}
 });
 
+/** Allows user to play and pause feed -- might take this out to avoid conflicts with slider/user confusion */
 var PlayerControlView = Backbone.View.extend({
 	tagName: 'div',
 	attributes: function() {
@@ -264,9 +305,14 @@ var PlayerControlView = Backbone.View.extend({
 	},
 	playPause: function() {
 		this.play.playPause();
-	}
+	},
+	// Shortcut for displayToggle method on play button.
+	toggleDisplay: function(val) {
+		this.play.toggleDisplay(val);
+	},
 });
 
+/** Button that toggles play/pause on feed */
 var PlayButton = Backbone.View.extend({
 	tagName: 'button',
 	className: 'play-pause',
@@ -276,10 +322,10 @@ var PlayButton = Backbone.View.extend({
 		};
 	},
 	initialize: function() {
-		this.$el.html('>');
+		this.$el.html('||');
 	},
-	playPause: function() {
-		this.state = this.state || 'pause';
+	playPause: function(val) {
+		this.state = this.state || 'play';
 		if(this.state === 'play') {
 			this.$el.html('>');
 			this.state = 'pause';
@@ -289,9 +335,19 @@ var PlayButton = Backbone.View.extend({
 			this.state = 'play';
 			this.trigger('playerPlayed');
 		}
-	}
+	},
+	toggleDisplay: function(val) {
+		if(val === 'play') {
+			this.$el.html('||');
+			this.state = 'play';
+		} else  {
+			this.$el.html('>');
+			this.state = 'pause';
+		}
+	},
 });
 
+// List of each available site -- alternative to map view. */
 var SiteListView = Backbone.View.extend({
 		initialize: function() {
 			this.$el = jQuery('#sites');
@@ -325,8 +381,8 @@ var MenuListView = Backbone.View.extend({
 			self = this;
 			this.menus.forEach(function(item) {
 				if(item.attributes.loc == loc) {
-						newMenu = new MenuElement({menu:item});
-						self.$el.append(newMenu.$el);
+					newMenu = new MenuElement({menu:item});
+					self.$el.append(newMenu.$el);
 				}
 			});
 			this.$el.show();
@@ -335,7 +391,7 @@ var MenuListView = Backbone.View.extend({
 			'click li': 'openFeed',
 		},
 		openFeed: function(e) {
-			var loc = e.currentTarget.dataset.loc,
+			var loc  = e.currentTarget.dataset.loc,
 				type = e.currentTarget.dataset.type;
 			this.trigger('feed-requested', {t: type, l: loc});
 		}
@@ -369,7 +425,6 @@ var SiteElement = Backbone.View.extend({
 			var self = this;
 			var title = this.options.menu.attributes['loc'];
 			this.$el.html(title);
-			//console.log('created new site menu element');
 		},
 });
 

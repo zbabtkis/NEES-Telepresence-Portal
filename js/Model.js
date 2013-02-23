@@ -1,21 +1,56 @@
 var FeedModel = Backbone.Model.extend({
-	initialize: function() {
-		this.on('change', this.updateURL);
+	listen: function() {
+		this.on('change:type', this.updateFeed);
+		this.on('change:loc', this.updateFeed);
+		this.listenTo(TPSApp.Model.FrameRateModel, 'change:value', this.getFeed);
+		//this.on('change', TPSApp.Model.Robot.updateRobotHandler, TPSApp.ControlView);
 	},
 	defaults: {
 		'baseUrl': 'http://tpm.nees.ucsb.edu/feeds/',
 	},
-	updateURL: function() {
+	updateFeed: function() {
 		this.set('uri', this.get('loc') + '/' + this.get('type'));
 		this.set('requestAddr', this.get('baseUrl') + this.get('uri'));
 		this.set('robotic', this.get('requestAddr') + '/robotic')
+		this.getFeed();
+	},
+	getFeed: function() {
+		if(TPSApp.Model.FrameRateModel.get('value') == 0) {
+			this._pause();
+		} else {
+			this._play();
+		}
+	},
+	_pause: function() {
+		this.set('_type','jpeg');
+		this._render();
+	},
+	_play: function() {
+		var fr = TPSApp.Model.FrameRateModel.get('value');
+		this.set('_type','mjpeg' + '/' + fr);
+		this.set('fullRequest', this.get('requestAddr') + '/' + this.get('_type'));
+	},
+	updateFramerate: function(f){
+		var v = f.get('value');
+		if(v > 0) {
+			this.render('mjpeg');
+			this.playerControls.toggleDisplay('play');
+		} else {
+			this.render('jpeg');
+			this.playerControls.toggleDisplay('pause');
+		}
+	},
+	addListeners: function() {
+		// Play Pause listeners.
+		this.listenTo(this.playerControls.play, 'playerPaused', this.__pause);
+		this.listenTo(this.playerControls.play, 'playerPlayed', this.__play);
 	},
 });
 
-var MenuModel = Backbone.Model.extend({
+var SiteViewModel = Backbone.Model.extend({
 	defaults: {
 		'title' : 'Full-Size',
-		'loc'   : 'Garner Valley Downhole Array',
+		'loc'   : 'Garner Valley SFSI Field Site',
 		'type'  : 'Full-Size',
 		'site_id' : 1,
 	},
@@ -36,7 +71,7 @@ var FrameRateModel = Backbone.Model.extend({
 
 
 /** Handles Robotic Actions */
-var ControllerModel = Backbone.Model.extend({
+var Robot = Backbone.Model.extend({
 	defaults: {
 		'lastCall': null, // Not in use now, but we might want to have some sort of undo function.
 	},

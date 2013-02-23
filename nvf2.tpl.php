@@ -12,6 +12,12 @@
 	</section>
 	<div id="content-wrapper">
 		<div id="nvf-frame">
+			<div id="controls">
+			</div>
+			<div id="stream">
+			</div>
+			<div id="player-controls">
+			</div>
 		</div>
 	</div>
 </div>                  

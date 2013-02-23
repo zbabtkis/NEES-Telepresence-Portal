@@ -3,29 +3,25 @@ var MapView = Backbone.View.extend({
 	render: function() {
 		var that = this;
     	this.$el.gmap3({
-    		map: {
-    			options: {
-    				center: [37.232253141714885, -119.3115234375],
-    				zoom: 5
-    			}
-    		},
+    		map: TPSApp.settings.map,
     		marker: {
-    			values: [
-    				{latLng: [33.0974,-115.531], data: "Garner Valley SFSI Field Site"},
-    				{latLng: [33.669,-116.674], data: "Wildlife Liquefaction Array"},
-    			],
+    			values: function() {
+    				var sites = TPSApp.menuListView.menuCollection.where({site_id: 1});
+    				console.log(sites);
+    				return(sites);
+    			},
     			events: {
-	    			mouseover: function(marker, event, context){
+	    			/*mouseover: function(marker, event, context){
 				        var map = jQuery(this).gmap3("get"),
 				        	infowindow = jQuery(this).gmap3({get:{name:"infowindow"}});
 				        if (infowindow){
 				        	infowindow.open(map, marker);
-				        	infowindow.setContent(context.data);
+				        	infowindow.setContent(context.get('loc'));
 				        } else {
 				          	jQuery(this).gmap3({
 				          		infowindow:{
 				            		anchor:marker, 
-				              		options:{content: context.data}
+				              		options:{content: context.get('loc')}
 				            	}
 				          	});
 				        }
@@ -37,8 +33,8 @@ var MapView = Backbone.View.extend({
 				        }
 				    },
 			    	click: function(marker, event, context) {
-			    		that.trigger('site-opened',context.data);
-			      	}
+			    		that.trigger('site-opened',context.loc);
+			      	}*/
 	    		}
     		}
     	});
@@ -48,118 +44,43 @@ var MapView = Backbone.View.extend({
 
 var FeedView = Backbone.View.extend({
 	el: '#nvf-frame',
-	initialize: function() {
-		// Image wrapper for stream image.
-		this.stream = new StreamView();
-		// Play/Pause button control menu.
-		this.playerControls = new PlayerControlView();
-		// Holds connection data for current feed.
-		this.feedModel = new FeedModel();
-		// User input elements to control feed and camera robotics.
-		this.controls = new ControlView();
-
-		this.$el.append(this.stream.$el);
-		this.addListeners();
-	},
-	render: function(type) {
-		if(type == 'jpeg') {
-			this.__getJpeg();
-		} else if (type == 'mjpeg') {
-			this.__getMjpeg();
-		}
-		else {
-			this.__getMjpeg();
-		}
-	},
-	__getFeed: function() {
+	render: function() {
 		var that = this;
-		// Temporarily stop listening to feedModel to avoid endless loop caused by setting the value of the full feed request.
-		this.stopListening(this.feedModel);
-		// Selects the stream as either a static jpeg or moving jpeg with a framerate.
-		this.feedModel.set('fullRequest', this.feedModel.get('requestAddr') + '/' + this.__type);
-		this.listenTo(this.feedModel, 'change', this.render);
-		// Creates image element containing new src feed.
-		var feedImage = new FeedImage({'src': this.feedModel.get('fullRequest')});
-		// Waits until new feed is loaded before removing last feed.
-		feedImage.$el.load(function() {
-			that.stream.$el.html('');
-			that.$el.prepend(that.controls.$el);
-			that.stream.$el.append(feedImage.$el);
-			that.$el.append(that.playerControls.$el);
+		console.log(TPSApp.View.FeedImage.$el);
+		TPSApp.View.FeedImage.$el.load(function() {
+			TPSApp.View.Stream.$el.html('');
+			//that.stream.$el.prepend(TPSApp.View.CameraControlView.$el);
+			TPSApp.View.Stream.$el.append(TPSApp.View.FeedImage.$el);
+			//that.stream.$el.append(TPSApp.View.PlayerControlView.$el);
 		});
 	},
-	__getJpeg: function() {
-		this.__type = 'jpeg';
-		this.__getFeed();
-	},
-	__getMjpeg: function() {
-		// If framerate is 0, it should be set to a valid framerate for buffering.
-		if (this.controls.frameRateSelector.getFrameRate() == 0) {
-			this.controls.frameRateSelector.setFrameRate(5);
-			console.log(this.controls.frameRateSelector.getFrameRate());
-		}
-		var fr = this.controls.frameRateSelector.getFrameRate();
-		this.__type = 'mjpeg' + '/' + fr;
-		this.__getFeed();
-	},
-	__pause: function() {
-		this.__getJpeg();
-	},
-	__play: function() {
-		this.__getMjpeg();
-	},
-	updateFramerate: function(f){
-		var v = f.get('value');
-		if(v > 0) {
-			this.render('mjpeg');
-			this.playerControls.toggleDisplay('play');
-		} else {
-			this.render('jpeg');
-			this.playerControls.toggleDisplay('pause');
-		}
-	},
-	addListeners: function() {
-		// Render immediately when a new feed has been loaded in the model.
-		this.listenTo(this.feedModel, 'change', this.render)
-		// Updates the url handler on the robot controller.
-		this.feedModel.on('change', this.controls.controller.updateRobotHandler, this.controls.controller);
-		// Routes a rerendering as either a still or moving image when the user changes the framerate.
-		this.listenTo(this.controls.frameRateSelector.frameRate, 'change', this.updateFramerate);
-		// Play Pause listeners.
-		this.listenTo(this.playerControls.play, 'playerPaused', this.__pause);
-		this.listenTo(this.playerControls.play, 'playerPlayed', this.__play);
-	},
+	listen: function() {
+		this.listenTo(TPSApp.View.FeedImage, 'newStreamInitialized', this.render);
+	}
 });
 
 var StreamView = Backbone.View.extend({
-	tagName: 'div',
-	attributes: function() {
-		return {
-			'id': 'stream',
-		};
-	},
+	el: '#stream',
 });
+
 /** Displays the current feed buffer or image. */
 var FeedImage = Backbone.View.extend({
 	tagName: 'img',
 	class: 'feed-image',
-	initialize: function() {
-		var that = this;
-		this.$el.attr('src',that.options.src);
-	}
+	listen: function() {
+		this.listenTo(TPSApp.Model.Feed, 'change:fullRequest', this.change);
+	},
+	change: function() {
+		this.$el.attr('src',TPSApp.Model.Feed.get('fullRequest'));
+		this.trigger('newStreamInitialized');
+	},
 });
 
 /** Input elements allowing user to control the feed */
-var ControlView = Backbone.View.extend({
-	tagName: 'div',
-	attributes: function() {
-		return {
-			'id': 'controls',
-		};
-	},
+var CameraControlView = Backbone.View.extend({
+	el: '#controls',
 	initialize: function() {
 		// Handles the communication between the robot and the user.
-		this.controller = new ControllerModel();
 		this.frameRateSelector = new SliderView();
 		this.frameRateSelector.$el.addClass('framerate');
 		// Adds slider to controller view.
@@ -195,8 +116,8 @@ var ControlView = Backbone.View.extend({
 	doCameraAction: function(e) {
 		var action = e.currentTarget.dataset.action;
 		var value = e.currentTarget.dataset.value;
-		// Tells the controller to perform robotic action.
-		this.controller.robotCommand(action,value);
+		// Tells the Robot to perform camera action.
+		TPSApp.Model.Robot.robotCommand(action,value);
 	}
 });
 
@@ -248,7 +169,6 @@ var SliderView = Backbone.View.extend({
 		// Insert text displaying current slider framerate selection.
 		this.$handle.append(this.framerateLabel.$el);
 		this.$handle.append(this.framerateValue.$el);
-		this.addListeners();
 	},
 	setFrameRate: function(fr) {
 		//deal with inputs from both the slider and the play pause button
@@ -265,7 +185,7 @@ var SliderView = Backbone.View.extend({
 		// Inserts the new framerate below the slider bar.
 		this.framerateValue.$el.html(v);
 	},
-	addListeners: function() {
+	listen: function() {
 		this.on('framerate-sliding', this.renderSlideValue);
 	}
 });
@@ -349,52 +269,47 @@ var PlayButton = Backbone.View.extend({
 
 // List of each available site -- alternative to map view. */
 var SiteListView = Backbone.View.extend({
-		initialize: function() {
-			this.$el = jQuery('#sites');
-			this.$el.html('');
-		},
-		render: function() {
-			this.menus = new SiteCollection();
-			self = this;
-			this.menus.forEach(function(item) {
-				newMenu = new SiteElement({menu:item});
-				self.$el.append(newMenu.$el);
-			});
-			this.$el.show();
-		},
-		events: {
-			'click li':'openSite'
-		},
-		openSite: function(e) {
-			var loc = e.currentTarget.dataset.loc;
-			this.trigger('site-opened', loc);
-		}
+	el: '#sites',
+	render: function() {
+		this.$el.html('');
+		self = this;
+		TPSApp.Model.Sites.forEach(function(item) {
+			var newMenu = new SiteElement({menu:item});
+			self.$el.append(newMenu.$el);
+		});
+		this.$el.show();
+	},
+	events: {
+		'click li':'openSite'
+	},
+	openSite: function(e) {
+		var siteId = e.currentTarget.dataset.siteId;
+		TPSApp.Model.SiteViews.updateViewsList(siteId);
+		//this.trigger('siteOpened', loc);
+	},
 });
 
 var MenuListView = Backbone.View.extend({
-		initialize: function() {
-			this.$el = jQuery('#sub-menu');
-			this.$el.html('');
-		},
-		render: function(loc) {
-			this.menus = new MenuCollection();
-			self = this;
-			this.menus.forEach(function(item) {
-				if(item.attributes.loc == loc) {
-					newMenu = new MenuElement({menu:item});
-					self.$el.append(newMenu.$el);
-				}
-			});
-			this.$el.show();
-		},
-		events: {
-			'click li': 'openFeed',
-		},
-		openFeed: function(e) {
-			var loc  = e.currentTarget.dataset.loc,
-				type = e.currentTarget.dataset.type;
-			this.trigger('feed-requested', {t: type, l: loc});
-		}
+	el: '#sub-menu',
+	render: function(loc) {
+		this.$el.html('');
+		var that = this;
+		TPSApp.Model.SiteViews.forEach(function(item) {
+			newMenu = new MenuElement({menu:item});
+			that.$el.append(newMenu.$el);
+		});
+	},
+	events: {
+		'click li': 'openFeed',
+	},
+	openFeed: function(e) {
+		var loc  = e.currentTarget.dataset.loc,
+			type = e.currentTarget.dataset.type;
+		TPSApp.Model.Feed.set({type: type, loc: loc});
+	},
+	listen: function() {
+		this.listenTo(TPSApp.Model.SiteViews, 'reset', this.render);
+	}
 });
 		
 var MenuElement = Backbone.View.extend({
@@ -418,28 +333,25 @@ var SiteElement = Backbone.View.extend({
 		className: 'site-link',
 		attributes: function(){
 			return {
-				'data-loc': this.options.menu.attributes.loc
+				'data-site-id': this.options.menu.attributes.site_id
 			};
 		},
 		initialize: function() {
-			var self = this;
 			var title = this.options.menu.attributes['loc'];
 			this.$el.html(title);
 		},
 });
 
 var Menu = Backbone.View.extend({
-	initialize: function(selector) {
-		this.$el = selector;
-	},
+	el: '#options-menu',
 	events: {
 		'click #listMaker':'addList',
 		'click #mapMaker':'renderMap',
 	},
 	addList: function() {
-		this.trigger('list-initialized');
+		TPSApp.navigate('sites', {trigger: true});
 	},
 	renderMap: function() {
-		this.trigger('map-requested');
+		TPSApp.navigate('map',{trigger: true});
 	}
 });

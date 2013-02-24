@@ -30,9 +30,9 @@
 
 var app = window.app || (window.app = {});
 
-(function() {
+(function($, Backbone, _) {
 
-	"use strict";
+	'use strict';
 	app.View = {};
 
 	var MapView = Backbone.View.extend({
@@ -45,13 +45,13 @@ var app = window.app || (window.app = {});
 	    			values: app.Model.Sites,
 	    			events: {
 		    			mouseover: function(marker, event, context){
-					        var map = jQuery(this).gmap3("get"),
-					        	infowindow = jQuery(this).gmap3({get:{name:"infowindow"}});
+					        var map = $(this).gmap3("get"),
+					        	infowindow = $(this).gmap3({get:{name:"infowindow"}});
 					        if (infowindow){
 					        	infowindow.open(map, marker);
 					        	infowindow.setContent(context.get('loc'));
 					        } else {
-					          	jQuery(this).gmap3({
+					          	$(this).gmap3({
 					          		infowindow:{
 					            		anchor:marker, 
 					              		options:{content: context.get('loc')}
@@ -60,7 +60,7 @@ var app = window.app || (window.app = {});
 					        }
 				      	},
 				      	mouseout: function(){
-					    	var infowindow = jQuery(this).gmap3({get:{name:"infowindow"}});
+					    	var infowindow = $(this).gmap3({get:{name:"infowindow"}});
 					    	if (infowindow){
 					          infowindow.close();
 					        }
@@ -169,7 +169,7 @@ var app = window.app || (window.app = {});
 		}
 	});
 
-	/** jQuery slider taht controls framerate */
+	/** $ slider taht controls framerate */
 	var SliderView = Backbone.View.extend({
 		tagName: 'div',
 		className: 'slider',
@@ -184,7 +184,7 @@ var app = window.app || (window.app = {});
 					that.trigger('framerate-sliding', fr.value);
 				}
 			});
-			// jQuery slider handle selector to append framerate value to.
+			// $ slider handle selector to append framerate value to.
 			this.$handle = this.$el.find('.ui-slider-handle');
 		},
 		renderSlideValue: function(v) {
@@ -263,7 +263,6 @@ var app = window.app || (window.app = {});
 			this.$el.html('');
 			self = this;
 			app.Model.Sites.forEach(function(item) {
-				console.log(item);
 				var newMenu = new SiteElement({menu:item});
 				self.$el.append(newMenu.$el);
 			});
@@ -273,16 +272,14 @@ var app = window.app || (window.app = {});
 			'click li':'openSite'
 		},
 		openSite: function(e) {
-			console.log('opening site');
-			var siteId = e.currentTarget.dataset.siteId;
-			app.Model.SiteViews.updateViewsList(siteId);
-			//this.trigger('siteOpened', loc);
+			var siteId = $(e.target).data('siteId');
+			app.Router.navigate('sites/' + siteId, {trigger: true});
 		},
 	});
 
 	var MenuListView = Backbone.View.extend({
 		el: '#sub-menu',
-		render: function(loc) {
+		render: function() {
 			this.$el.html('');
 			var that = this;
 			app.Model.SiteViews.forEach(function(item) {
@@ -294,8 +291,8 @@ var app = window.app || (window.app = {});
 			'click li': 'openFeed',
 		},
 		openFeed: function(e) {
-			var loc  = e.currentTarget.dataset.loc,
-				type = e.currentTarget.dataset.type;
+			var loc  = $(e.target).date('loc'),
+				type = $(e.target).date('type');
 			app.Model.Feed.set({type: type, loc: loc});
 		},
 		listen: function() {
@@ -307,7 +304,6 @@ var app = window.app || (window.app = {});
 			tagName: 'li',
 			className: 'feed-link',
 			attributes: function(){
-				console.log(this);
 				return {
 					'data-loc': this.options.menu.attributes['loc'],
 					'data-type': this.options.menu.attributes['type'],
@@ -350,7 +346,7 @@ var app = window.app || (window.app = {});
 		},
 	});
 	// Ensure template has loaded before trying to attach selectors.
-	jQuery(document).ready( function() {
+	$(document).ready( function() {
 		app.View.Map = new MapView;
 		app.View.Stream = new StreamView;
 		app.View.FeedImage = new FeedImage;
@@ -361,4 +357,4 @@ var app = window.app || (window.app = {});
 		app.View.Menu = new Menu;
 		app.trigger('viewsRendered');
 	});
-})();
+})(jQuery, Backbone, _);

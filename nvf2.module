@@ -32,6 +32,8 @@ function nvf2_page() {
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/backbone-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Model.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/View.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Router.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/app.settings.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/App.js');
 
 	$page = theme('nvf2_template');

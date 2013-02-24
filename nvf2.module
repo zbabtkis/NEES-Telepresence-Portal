@@ -30,10 +30,9 @@ function nvf2_page() {
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/handlebars-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/underscore-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/backbone-min.js');
-	drupal_add_js(drupal_get_path('module','nvf2') . '/js/App.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Model.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/View.js');
-	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Controller.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/App.js');
 
 	$page = theme('nvf2_template');
 	

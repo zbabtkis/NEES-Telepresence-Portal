@@ -291,8 +291,8 @@ var app = window.app || (window.app = {});
 			'click li': 'openFeed',
 		},
 		openFeed: function(e) {
-			var loc  = $(e.target).date('loc'),
-				type = $(e.target).date('type');
+			var loc  = $(e.target).data('loc'),
+				type = $(e.target).data('type');
 			app.Model.Feed.set({type: type, loc: loc});
 		},
 		listen: function() {

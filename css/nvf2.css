@@ -66,7 +66,7 @@
 	max-width: 704px;
 	min-height: 480px;
 	float: right;
-	padding: 15px;
+	padding: 5px 15px;
 	width:60%;
 }
 #content-wrapper #controls {
@@ -81,6 +81,10 @@
 }
 #controls label {
 	color: white;
+}
+#stream {
+	background: #444;
+	min-height: 385px;
 }
 #mapMaker {
 	background: url('img/map-icon.png');
@@ -101,7 +105,7 @@
 	display: none;
 }
 .slider {
-	margin-bottom: 15px;
+	margin: 15px 0 15px;
 }
 .ui-slider-handle {
 	text-align: center;
@@ -179,6 +183,9 @@ button.play-pause {
 	background-position: 48px 0;
 }
 
+.screenshot-action:hover {
+	background-position: 672px 48px;
+}
 .zoom-in:hover {
 	background-position: 624px 48px;
 }

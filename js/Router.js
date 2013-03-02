@@ -1,3 +1,19 @@
+/**
+ --------------------------------------------------------------------
+      Nees Telepresence -- App Router
+ --------------------------------------------------------------------
+ ********************************************************************
+ --------------------------------------------------------------------
+                Contents          
+ --------------------------------------------------------------------
+ 1. Implement Router
+ 2. Instantiate Router
+ --------------------------------------------------------------------
+                Uses          
+ --------------------------------------------------------------------
+ 1. Backbone
+ ********************************************************************/
+
 var app = window.app || (window.app = {});
 
 (function (Backbone) {
@@ -10,7 +26,7 @@ var app = window.app || (window.app = {});
       'map': 'mapPage',
       'sites': 'sitesPage',
       'sites/:site': 'sitesPage',
-      'map/:site': 'mapPage',
+      'map/:site': 'mapPage'
     },
     navToSite: function (s) {
       this.navigate('sites/' + s, {trigger: true});
@@ -25,12 +41,15 @@ var app = window.app || (window.app = {});
       if (app.View.SiteList) {
         app.View.SiteList.$el.hide();
       }
+      app.Model.Sites.getSettings();
       app.View.Map.render();
       app.View.Map.$el.show();
-      this.listenTo(app.View.Map, 'site-opened', that.navToMapSite);
+      google.maps.event.trigger(app.View.Map.map, "resize");
       if (s) {
-        app.View.MenuList.render(s);
-        this.listenTo(app.View.MenuList, 'feed-requested', that.fetchFeed);
+        app.Model.SiteViews.updateViewsList(s);
+        this.listenTo(app.View.MenuList, 'feed-requested', function () {
+          app.Model.FeedModel.set({loc: v.l, type: v.t});
+        });
       }
     },
     sitesPage: function (s) {

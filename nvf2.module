@@ -21,13 +21,16 @@ function nvf2_menu() {
 
 function nvf2_page() {
 	$GoogleAPIKey = 'AIzaSyCPpIzXStBCfaojLIUMJupPBaAONdXU9LQ';
+
+	drupal_add_js(array('modulePath'=>drupal_get_path('module', 'nvf2')), 'setting');
+
 	drupal_add_js("https://maps.googleapis.com/maps/api/js?key=$GoogleAPIKey&sensor=true");
 	drupal_add_library('system', 'ui.slider');
 	drupal_add_library('system', 'ui.tabs');
 	drupal_add_css(drupal_get_path('module','nvf2') . '/css/nvf2.css');
 	drupal_add_css(drupal_get_path('module','nvf2') . '/js/libs/jQuery UI/css/ui-darkness/jquery-ui-1.10.0.custom.min.css');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/gmap-min.js');
-	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/handlebars-min.js');
+	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/imagesLoaded.min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/underscore-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/libs/backbone-min.js');
 	drupal_add_js(drupal_get_path('module','nvf2') . '/js/Model.js');

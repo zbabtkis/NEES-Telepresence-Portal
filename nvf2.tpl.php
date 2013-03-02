@@ -1,8 +1,8 @@
 <div id="TPS-Viewer">
 	<section id='tps-viewer-menu'>
 		<div id='options-menu'>
-			<button id='mapMaker' class='site-select' />
-			<button id='listMaker' class='site-select' />
+			<button id='mapMaker' class='site-select'></button>
+			<button id='listMaker' class='site-select'></button>
 		</div>
 		<div id='nav'>
 			<label>Main Sites</label><ul id='sites'></ul>

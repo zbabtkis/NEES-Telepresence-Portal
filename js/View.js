@@ -40,13 +40,16 @@ var app = window.app || (window.app = {});
 
 	'use strict';
 	app.View = {};
-
+/** 1) -- Views
+    ..a) Map View */
 	var MapView = Backbone.View.extend({
 		el: "#map-view",
 		render: function() {
 			var that = this;
 			this.markers = [];
+			// Instantiate google map.
 	    	this.map = new google.maps.Map(this.el, app.Settings.map.options);
+	    	// Add site markers to map.
 	    	app.Model.Sites.forEach(function(site) {
 	    		that.markers.push(new google.maps.Marker({
 	    			position: site.get('position'),
@@ -55,6 +58,7 @@ var app = window.app || (window.app = {});
 	    			title: site.get('loc')
 	    		}));
 	    	});
+	    	// Add listeners to markers.
 	    	for(i in this.markers) {
 	    		this.markers[i].infowindow = new google.maps.InfoWindow({
 		    		content: this.markers[i].title,
@@ -72,28 +76,43 @@ var app = window.app || (window.app = {});
 	    	}
 	    }
 	});
-
+/**..b) StreamView */
 	var StreamView = Backbone.View.extend({
 		el: '#stream',
 		render: function() {
 			var that = this;
+			// Check for images loaded before appending.
 			app.View.FeedImage.$el.imagesLoaded(function() {
 				that.$el.html('');
+				// Append new stream image to view.
 				that.$el.append(app.View.FeedImage.$el);
+				// Remove any default backgrounds.
+				that.$el.css({'background': 'none'});
+				// Resize wrapper to match image size.
+				this.resize();
 			});
 		},
 		listen: function() {
 			var that = this;
+			_.bindAll(this, 'resize');
+			// Resize for responsive design.
+			$(window).resize(that.resize);
 			this.listenTo(app.View.FeedImage, 'newStreamInitialized', that.render);
+		},
+		resize: function() {
+			if(app.View.FeedImage.$el.height()) {
+				this.$el.css({'height':app.View.FeedImage.$el.height()});
+			}
 		}
 	});
-
+/**..c) FeedImage */
 	/** Displays the current feed buffer or image. */
 	var FeedImage = Backbone.View.extend({
 		tagName: 'img',
 		className: 'feed-image',
 		listen: function() {
 			var that = this;
+			// Change feed source when new source has been loaded into model.
 			this.listenTo(app.Model.Feed, 'change:fullRequest', that.change);
 		},
 		change: function() {
@@ -101,7 +120,7 @@ var app = window.app || (window.app = {});
 			this.trigger('newStreamInitialized');
 		}
 	});
-
+/**..d) CameraButtonView */
 	/** Button linking to a robotic action */
 	var CameraButtonView = Backbone.View.extend({
 		tagName: 'button',
@@ -114,6 +133,7 @@ var app = window.app || (window.app = {});
 			'action': 'none',
 			'value': 'none'
 		},
+		// Semantic robotic commands.
 		attributes: function() {
 			return {
 				'data-action': this.options.action,
@@ -123,7 +143,7 @@ var app = window.app || (window.app = {});
 			};
 		}
 	});
-
+/**..e) CameraControlView */
 	/** Input elements allowing user to control the feed */
 	var CameraControlView = Backbone.View.extend({
 		el: '#controls',
@@ -167,7 +187,7 @@ var app = window.app || (window.app = {});
 			app.Model.Robot.robotCommand(action,value);
 		}
 	});
-
+/**..f) SliderView */
 	/** $ slider taht controls framerate */
 	var SliderView = Backbone.View.extend({
 		tagName: 'div',
@@ -204,7 +224,7 @@ var app = window.app || (window.app = {});
 			}, this);
 		}
 	});
-
+/**..g) PlayButton */
 	/** Button that toggles play/pause on feed */
 	var PlayButton = Backbone.View.extend({
 		tagName: 'button',
@@ -215,7 +235,7 @@ var app = window.app || (window.app = {});
 			};
 		},
 		initialize: function() {
-			this.$el.html('||');
+			this.$el.html('||'); // Show play by default.
 			this.$parent = $('#player-controls');
 			this.$parent.append(this.$el);
 		},
@@ -223,6 +243,7 @@ var app = window.app || (window.app = {});
 			'click': 'playPause'
 		},
 		playPause: function(val) {
+			// Check current state and change it.
 			if(app.Model.FrameRate.get('value') != '0') {
 				this.$el.html('>');
 				app.Model.FrameRate.set('value', 0);
@@ -232,9 +253,11 @@ var app = window.app || (window.app = {});
 			}
 		},
 		listen: function() {
+			// Listen for change in framerate -- this could mean video has paused if fr is 0!
 			app.Model.FrameRate.on('change:value', this.updateButton, this);
 		},
 		updateButton: function() {
+			// If framerate slider changes from play to pause, only render change for button.
 			if(app.Model.FrameRate.get('value') == 0) {
 				this.$el.html('>');
 			} else {
@@ -242,13 +265,14 @@ var app = window.app || (window.app = {});
 			}
 		}
 	});
-
+/**..h) SiteListView */
 	// List of each available site -- alternative to map view. */
 	var SiteListView = Backbone.View.extend({
 		el: '#sites',
 		render: function() {
 			this.$el.html('');
 			var self = this;
+			// Create menu list for each site and append it to the view.
 			app.Model.Sites.forEach(function(item) {
 				var newMenu = new SiteElement({menu:item});
 				self.$el.append(newMenu.$el);
@@ -263,7 +287,7 @@ var app = window.app || (window.app = {});
 			app.Router.navigate('sites/' + siteId, {trigger: true});
 		}
 	});
-
+/**..i) MenuListView */
 	var MenuListView = Backbone.View.extend({
 		el: '#sub-menu',
 		render: function() {
@@ -286,7 +310,7 @@ var app = window.app || (window.app = {});
 			this.listenTo(app.Model.SiteViews, 'reset', this.render);
 		}
 	});
-			
+/**..j) MenuElement */			
 	var MenuElement = Backbone.View.extend({
 		tagName: 'li',
 		className: 'feed-link',
@@ -303,7 +327,7 @@ var app = window.app || (window.app = {});
 		}
 	});
 	app.View.MenuElement =  MenuElement;
-
+/**..k) SiteElement */
 	var SiteElement = Backbone.View.extend({
 		tagName: 'li',
 		className: 'site-link',
@@ -318,7 +342,7 @@ var app = window.app || (window.app = {});
 		}
 	});
 	app.View.SiteElement = SiteElement;
-
+/**..l) Menu */
 	var Menu = Backbone.View.extend({
 		el: '#options-menu',
 		events: {
@@ -332,8 +356,10 @@ var app = window.app || (window.app = {});
 			app.Router.navigate('map',{trigger: true});
 		}
 	});
+/** 2) Actions  */
 	// Ensure template has loaded before trying to attach selectors.
 	$(document).ready( function() {
+		// Instantiate views on app.View.
 		app.View.Stream = new StreamView;
 		app.View.Play = new PlayButton();
 		app.View.FeedImage = new FeedImage;

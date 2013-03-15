@@ -43,7 +43,7 @@ var app = window.app || (window.app = {});
       'loc'   : 'Garner Valley SFSI Field Site',
       'type'  : 'Full-Size',
       'site_id' : 1
-    }
+    },
   });
 
   // Holds current feed data (urls to access various feed types -- eg. moving, paused)

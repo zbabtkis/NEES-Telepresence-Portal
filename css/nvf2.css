@@ -8,22 +8,21 @@
 	height: 80px;
 	width: 100%;
 }
-.site-select {
-	border: none;
-}
-.site-select:hover {
-	cursor: pointer;
-	border-bottom: 3px #09F solid !important;
-}
 #main-content header h1{
 	float: left;
 	font-size: 26px;
 	padding: 15px;
 }
+#options-menu {
+	width: 100%;
+	padding: 5px 0 0 15px;
+}
 #nav {
 	margin-top: 15px;
 	background: #222;
 	padding: 15px;
+	float: left;
+	width: 100%;
 }
 #nav label{
 	color: white;
@@ -59,14 +58,12 @@
 }
 #tps-viewer-menu {
 	float: left;
-	padding: 5px;
+	margin: 5px 0 0 15px;
 	width: 30%;
 }
 #content-wrapper {
-	max-width: 704px;
-	min-height: 480px;
 	float: right;
-	padding: 5px 15px;
+	margin: 5px 15px;
 	width:60%;
 }
 #content-wrapper #controls {
@@ -84,20 +81,7 @@
 }
 #stream {
 	background: #444;
-	min-height: 385px;
-}
-#mapMaker {
-	background: url('img/map-icon.png');
-	background-size: 48px 48px;
-	height: 48px;
-	width: 48px;
-}
-#listMaker {
-	background: url('img/grid-icon.png');
-	background-size: 48px 48px;
-	height: 48px;
-	width: 48px;
-	float: right;
+	height: 385px;
 }
 #map-view {
 	width: 100%;
@@ -137,11 +121,28 @@ button.play-pause {
 	height: 48px;
 	cursor: pointer;
 	background: url('img/camera-actions.png');
-	_background: url('img/camera-actions_ie6.png');
-	*background: url('img/camera-actions_ie6.png');
+	_background: url('img/camera-actions_ie.gif');
+	*background: url('img/camera-actions_ie.gif');
+}
+#mapMaker {
+	background-position: 768px 0;
+	float: left;
+}
+#listMaker {
+	background-position: 720px 0;
+	float: right;
+}
+#mapMaker:hover {
+	background-position: 768px 48px;
+}
+#listMaker:hover {
+	background-position: 720px 48px;
 }
 .camera-action:hover {
 	border-bottom: 3px solid #fff;
+}
+.screenshot-action {
+	background-position: 672px 0;
 }
 .zoom-in {
 	background-position: 624px 0;
@@ -227,4 +228,23 @@ button.play-pause {
 }
 #controls {
 	text-align: center;
+}
+
+@media all and (max-width: 680px) {
+	#tps-viewer-menu {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	#content-wrapper {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	#options-menu {
+		padding: 0;
+	}
+	#nav {
+		padding: 0;
+	}
 }

@@ -79,6 +79,21 @@ var app = window.app || (window.app = {});
 /**..b) StreamView */
 	var StreamView = Backbone.View.extend({
 		el: '#stream',
+		initialize: function() {
+			// Awesome spinny preloader provided by spin.js :).
+			this.spinner = new Spinner({
+				color:'#eee',
+			}).spin(this.$el);
+			// Position spinner in center of video feed.
+			this.$spinner = $(this.spinner.el);
+			this.$spinner.css({
+				'top':'50%',
+				'left': '50%',
+				'position': 'absolute',
+				'z-index': '999999999999999999'
+			});
+			this.translucent = $('<div />').addClass('transparentBox').hide();
+		},
 		render: function() {
 			var that = this;
 			// Check for images loaded before appending.
@@ -89,8 +104,23 @@ var app = window.app || (window.app = {});
 				// Remove any default backgrounds.
 				that.$el.css({'background': 'none'});
 				// Resize wrapper to match image size.
-				this.resize();
+				that.resize();
+				that.$el.append(that.translucent);
+				if(!app.enableActions) {
+					that.enableActions();
+					app.enableActions = true;
+				}
 			});
+		},
+		enableActions: function() {
+			app.View.Play.enable();
+			app.View.FullScreenButton.enable();
+			app.View.Slider.enable();
+		},
+		fullScreen: function() {
+			$('.transparentBox').toggle();
+			app.View.FeedImage.$el.toggleClass('fullScreen');
+			$('#player-controls').toggleClass('fullScreenControls');
 		},
 		listen: function() {
 			var that = this;
@@ -98,6 +128,10 @@ var app = window.app || (window.app = {});
 			// Resize for responsive design.
 			$(window).resize(that.resize);
 			this.listenTo(app.View.FeedImage, 'newStreamInitialized', that.render);
+			app.Model.Feed.on('change:fullRequest', function() {
+				this.$el.append(this.$spinner);
+			}.bind(this));
+			this.listenTo(app.View.FullScreenButton, 'fullScreen', this.fullScreen, this);
 		},
 		resize: function() {
 			if(app.View.FeedImage.$el.height()) {
@@ -116,7 +150,9 @@ var app = window.app || (window.app = {});
 			this.listenTo(app.Model.Feed, 'change:fullRequest', that.change);
 		},
 		change: function() {
-			this.$el.attr('src',app.Model.Feed.get('fullRequest'));
+			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(function() {
+				$(this).attr('src', '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg');
+			});
 			this.trigger('newStreamInitialized');
 		}
 	});
@@ -148,10 +184,6 @@ var app = window.app || (window.app = {});
 	var CameraControlView = Backbone.View.extend({
 		el: '#controls',
 		initialize: function() {
-			//app.View.Slider.$el.addClass('framerate');
-			// Adds slider to controller view.
-			//this.$el.append(app.View.Slider.$el);
-			// Renders camera action buttons on the controller.
 			this.addCameraButtons();
 		},
 		addCameraButtons: function() {
@@ -192,7 +224,7 @@ var app = window.app || (window.app = {});
 	var SliderView = Backbone.View.extend({
 		tagName: 'div',
 		className: 'slider',
-		initialize: function () {
+		enable: function () {
 			var that = this;
 			this.$el.slider({
 				max: app.Model.FrameRate.get('max'),
@@ -208,7 +240,7 @@ var app = window.app || (window.app = {});
 			// $ slider handle selector to append framerate value to.
 			this.$handle = this.$el.find('.ui-slider-handle');
 			this.renderSlideValue(app.Model.FrameRate.get('value'));
-			$('#controls').append(this.$el);
+			$('#slider').append(this.$el);
 		},
 		renderSlideValue: function (v) {
 			this.$handle.html('');
@@ -235,20 +267,17 @@ var app = window.app || (window.app = {});
 			};
 		},
 		initialize: function() {
-			this.$el.html('||'); // Show play by default.
 			this.$parent = $('#player-controls');
+		},
+		enable: function() {
 			this.$parent.append(this.$el);
+			this.$el.click(this.playPause);
 		},
-		events: {
-			'click': 'playPause'
-		},
-		playPause: function(val) {
+		playPause: function() {
 			// Check current state and change it.
 			if(app.Model.FrameRate.get('value') != '0') {
-				this.$el.html('>');
 				app.Model.FrameRate.set('value', 0);
 			} else  {
-				this.$el.html('||');
 				app.Model.FrameRate.set('value', 5);
 			}
 		},
@@ -258,11 +287,7 @@ var app = window.app || (window.app = {});
 		},
 		updateButton: function() {
 			// If framerate slider changes from play to pause, only render change for button.
-			if(app.Model.FrameRate.get('value') == 0) {
-				this.$el.html('>');
-			} else {
-				this.$el.html('||');
-			}
+			this.$el.toggleClass('play');
 		}
 	});
 /**..h) SiteListView */
@@ -356,12 +381,34 @@ var app = window.app || (window.app = {});
 			app.Router.navigate('map',{trigger: true});
 		}
 	});
+/**..m) Full Screen Button */
+	var FullScreenButton = Backbone.View.extend({
+		tagName: 'button',
+		initialize: function() {
+			this.$parent = $('#player-controls');
+			this.$el.attr('id','fullScreenButton').addClass('camera-action');
+		},
+		enable: function() {
+			var that = this;
+			this.$el.toggle(function() {
+					$(this).toggleClass('small');
+					that.trigger('fullScreen');
+				},
+				function() {
+					$(this).toggleClass('small');
+					that.trigger('fullScreen');
+				}
+			);
+			this.$parent.append(this.$el);
+		}
+	});
 /** 2) Actions  */
 	// Ensure template has loaded before trying to attach selectors.
 	$(document).ready( function() {
 		// Instantiate views on app.View.
 		app.View.Stream = new StreamView;
 		app.View.Play = new PlayButton();
+		app.View.FullScreenButton = new FullScreenButton();
 		app.View.FeedImage = new FeedImage;
 		app.View.CameraControl = new CameraControlView;
 		app.View.Slider = new SliderView();

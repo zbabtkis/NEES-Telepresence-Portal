@@ -9,14 +9,16 @@
 			<div id='map-view'></div>
 			<label>Site Views</label><ul id='sub-menu'></ul>
 		</div>
+		<div id="controls">
+		</div>
 	</section>
 	<div id="content-wrapper">
 		<div id="nvf-frame">
-			<div id="controls">
-			</div>
 			<div id="stream">
 			</div>
 			<div id="player-controls">
+				<div class="transparentBar"></div>
+				<div id='slider'></div>
 			</div>
 		</div>
 	</div>

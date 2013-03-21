@@ -16,8 +16,8 @@ This module comes pre-configured, so just install it in Drupal and navigate to /
 
 Requirements
 ------------
-Drupal 7.x
-Javascript
+* Drupal 7.x
+* Javascript
 
 About
 -----

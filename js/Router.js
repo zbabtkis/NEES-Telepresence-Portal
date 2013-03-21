@@ -29,6 +29,7 @@ var app = window.app || (window.app = {});
       'map/:site': 'mapPage' // Display list of site views with map of sites above.
     },
     indexPage: function () {
+      this.sitesPage();
     },
     mapPage: function (s) {
       var that = this;

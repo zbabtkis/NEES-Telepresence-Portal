@@ -93,6 +93,8 @@ var app = window.app || (window.app = {});
 				'z-index': '999999999999999999'
 			});
 			this.translucent = $('<div />').addClass('transparentBox').hide();
+			this.selectAStream = $('<img />').attr({'src':'/' + Drupal.settings.modulePath + '/css/img/select-a-stream.jpg', 'alt': "Select a stream", 'title': "Select a stream", 'class': 'image-default'});
+			this.$el.html(this.selectAStream);
 		},
 		render: function() {
 			var that = this;
@@ -106,21 +108,13 @@ var app = window.app || (window.app = {});
 				// Resize wrapper to match image size.
 				that.resize();
 				that.$el.append(that.translucent);
-				if(!app.enableActions) {
-					that.enableActions();
-					app.enableActions = true;
-				}
 			});
-		},
-		enableActions: function() {
-			app.View.Play.enable();
-			app.View.FullScreenButton.enable();
-			app.View.Slider.enable();
 		},
 		fullScreen: function() {
 			$('.transparentBox').toggle();
 			app.View.FeedImage.$el.toggleClass('fullScreen');
 			$('#player-controls').toggleClass('fullScreenControls');
+			this.resize();
 		},
 		listen: function() {
 			var that = this;
@@ -150,11 +144,30 @@ var app = window.app || (window.app = {});
 			this.listenTo(app.Model.Feed, 'change:fullRequest', that.change);
 		},
 		change: function() {
+			var that = this;
+			var unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
 			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(function() {
-				$(this).attr('src', '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg');
+				$(this).attr('src', unavailable);
+				that.disableActions();
+			}).load(function() {
+				if($(this).attr('src') != unavailable) {
+					that.enableActions();
+				}
 			});
 			this.trigger('newStreamInitialized');
-		}
+		},
+		enableActions: function() {
+			app.View.Play.enable();
+			app.View.FullScreenButton.enable();
+			app.View.Slider.enable();
+			app.View.CameraControl.enable();
+		},
+		disableActions: function() {
+			app.View.Play.disable();
+			app.View.FullScreenButton.disable();
+			app.View.Slider.disable();
+			app.View.CameraControl.disable();
+		},
 	});
 /**..d) CameraButtonView */
 	/** Button linking to a robotic action */
@@ -182,32 +195,44 @@ var app = window.app || (window.app = {});
 /**..e) CameraControlView */
 	/** Input elements allowing user to control the feed */
 	var CameraControlView = Backbone.View.extend({
-		el: '#controls',
-		initialize: function() {
-			this.addCameraButtons();
+		tagName: 'div',
+		attributes: function() {
+			return {
+				'id':'controls'
+			};
 		},
-		addCameraButtons: function() {
+		parent: "#tps-viewer-menu",
+		initialize: function() {
+			this.$el.html('<h3>Camera Controls</h3>');
 			this.cameraActions = [];
 			// Creates Camera Button instances for each robotic action.
-			this.cameraActions['screenshot'] = new CameraButtonView({'title': 'Screenshot', 'action': 'screenshot'});
 			this.cameraActions['zoomIn'] = new CameraButtonView({'title': 'Zoom In', 'action': 'zoom', 'value': 'in'});
 			this.cameraActions['zoomOut'] = new CameraButtonView({'title': 'Zoom Out', 'action': 'zoom', 'value': 'out'});
+			this.cameraActions['irisOpen'] = new CameraButtonView({'title': 'Iris Open', 'action': 'iris', 'value': 'open'});
+			this.cameraActions['irisClose'] = new CameraButtonView({'title': 'Iris Close', 'action': 'iris', 'value': 'close'});
+			this.cameraActions['irisAuto'] = new CameraButtonView({'title': 'Iris Auto', 'action': 'iris', 'value': 'auto'});
 			this.cameraActions['panLeft'] = new CameraButtonView({'title': 'Pan Left', 'action': 'pan', 'value': 'left'});
 			this.cameraActions['panRight'] = new CameraButtonView({'title': 'Pan Right', 'action': 'pan', 'value': 'right'});
 			this.cameraActions['tiltUp'] = new CameraButtonView({'title': 'Tilt Up', 'action': 'tilt', 'value': 'up'});
 			this.cameraActions['tiltDown'] = new CameraButtonView({'title': 'Tilt Down', 'action': 'tilt', 'value': 'down'});
-			this.cameraActions['irisOpen'] = new CameraButtonView({'title': 'Iris Open', 'action': 'iris', 'value': 'open'});
-			this.cameraActions['irisClose'] = new CameraButtonView({'title': 'Iris Close', 'action': 'iris', 'value': 'close'});
-			this.cameraActions['irisAuto'] = new CameraButtonView({'title': 'Iris Auto', 'action': 'iris', 'value': 'auto'});
+			this.cameraActions['screenshot'] = new CameraButtonView({'title': 'Screenshot', 'action': 'screenshot'});
 			this.cameraActions['focusNear'] = new CameraButtonView({'title': 'Focus Near', 'action': 'focus', 'value': 'near'});
 			this.cameraActions['focusFar'] = new CameraButtonView({'title': 'Focus Far', 'action': 'focus', 'value': 'far'});
 			this.cameraActions['focusAuto'] = new CameraButtonView({'title': 'Autofocus', 'action': 'focus', 'value': 'auto'});
+			this.cameraActions['refresh'] = new CameraButtonView({'title': 'Refresh','action':'refresh'});
 			this.cameraActions['home'] = new CameraButtonView({'title': 'Home', 'action': 'home'});
 			for(var action in this.cameraActions) {
 				// Appends elements to Control View.
 				var $el = this.cameraActions[action].$el;
 				this.$el.append($el);
 			}
+			$(this.parent).append(this.$el.hide());
+		},
+		enable: function() {
+			this.$el.fadeIn();
+		},
+		disable: function() {
+			this.$el.fadeOut('slow');
 		},
 		events: {
 			'click .camera-action': 'doCameraAction'
@@ -224,7 +249,7 @@ var app = window.app || (window.app = {});
 	var SliderView = Backbone.View.extend({
 		tagName: 'div',
 		className: 'slider',
-		enable: function () {
+		initialize: function () {
 			var that = this;
 			this.$el.slider({
 				max: app.Model.FrameRate.get('max'),
@@ -240,7 +265,13 @@ var app = window.app || (window.app = {});
 			// $ slider handle selector to append framerate value to.
 			this.$handle = this.$el.find('.ui-slider-handle');
 			this.renderSlideValue(app.Model.FrameRate.get('value'));
-			$('#slider').append(this.$el);
+			$('#slider').html(this.$el.hide());
+		},
+		enable: function() {
+			this.$el.show();
+		},
+		disable: function() {
+			this.$el.fadeOut('slow');
 		},
 		renderSlideValue: function (v) {
 			this.$handle.html('');
@@ -268,10 +299,14 @@ var app = window.app || (window.app = {});
 		},
 		initialize: function() {
 			this.$parent = $('#player-controls');
+			this.$parent.append(this.$el.hide());
+			this.$el.click(this.playPause);
 		},
 		enable: function() {
-			this.$parent.append(this.$el);
-			this.$el.click(this.playPause);
+			this.$el.fadeIn();
+		},
+		disable: function() {
+			this.$el.fadeOut('slow');
 		},
 		playPause: function() {
 			// Check current state and change it.
@@ -287,7 +322,11 @@ var app = window.app || (window.app = {});
 		},
 		updateButton: function() {
 			// If framerate slider changes from play to pause, only render change for button.
-			this.$el.toggleClass('play');
+			if(app.Model.FrameRate.get('value') != '0') {
+				this.$el.removeClass('play');
+			} else  {
+				this.$el.addClass('play');
+			}
 		}
 	});
 /**..h) SiteListView */
@@ -385,11 +424,9 @@ var app = window.app || (window.app = {});
 	var FullScreenButton = Backbone.View.extend({
 		tagName: 'button',
 		initialize: function() {
+			var that = this;
 			this.$parent = $('#player-controls');
 			this.$el.attr('id','fullScreenButton').addClass('camera-action');
-		},
-		enable: function() {
-			var that = this;
 			this.$el.toggle(function() {
 					$(this).toggleClass('small');
 					that.trigger('fullScreen');
@@ -399,7 +436,13 @@ var app = window.app || (window.app = {});
 					that.trigger('fullScreen');
 				}
 			);
-			this.$parent.append(this.$el);
+			this.$parent.append(this.$el.hide());
+		},
+		enable: function() {
+			this.$el.fadeIn();
+		},
+		disable: function() {
+			this.$el.fadeOut('slow');
 		}
 	});
 /** 2) Actions  */

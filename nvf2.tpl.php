@@ -1,16 +1,14 @@
 <div id="TPS-Viewer">
 	<section id='tps-viewer-menu'>
-		<div id='options-menu'>
-			<button id='mapMaker' class='camera-action'></button>
-			<button id='listMaker' class='camera-action'></button>
-		</div>
-		<div id='nav'>
-			<label>Main Sites</label><ul id='sites'></ul>
-			<div id='map-view'></div>
-			<label>Site Views</label><ul id='sub-menu'></ul>
-		</div>
-		<div id="controls">
-		</div>
+			<div id='options-menu'>
+				<button id='mapMaker' class='camera-action' alt='Show Sites Map' title='Show Sites Map'></button>
+				<button id='listMaker' class='camera-action' alt='Show Sites List' title='Show Sites List'></button>
+			</div>
+			<div id='nav'>
+				<label>Main Sites</label><ul id='sites'></ul>
+				<div id='map-view'></div>
+				<label>Site Views</label><ul id='sub-menu'></ul>
+			</div>
 	</section>
 	<div id="content-wrapper">
 		<div id="nvf-frame">

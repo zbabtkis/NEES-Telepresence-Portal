@@ -1,5 +1,32 @@
-.content-inner {
-	margin: 0 !important;
+/**
+ * ===============================================
+ *               NEES Telepresence
+ * ===============================================
+ * Content
+ * -------
+ * ..1) App Header
+ * ..2) App Menu
+ * ..3) App Content
+ * ..4) App Controls
+ * ....a) Player Controls
+ * ....b) Camera Controls
+ * ..5) Responsive
+ * -----------------------------------------------
+ */
+
+/** 
+ -------------------------------------------------
+ 1) App Header
+ -------------------------------------------------
+ */
+
+#content-column {
+	/** This overrides an issue witht the NEES site
+	 *  theme that causes the wrapper to take up
+	 *  only half the width on wide screens.
+	 */
+	width: 100% !important;
+	border: 1px solid #054B81;
 }
 #main-content header {
 	background-color: #06A;
@@ -13,20 +40,21 @@
 	font-size: 26px;
 	padding: 15px;
 }
-#options-menu {
-	width: 100%;
-	padding: 5px 0 0 15px;
-}
+/** 
+ -------------------------------------------------
+ 2) App Menu
+ -------------------------------------------------
+ */
 #nav {
 	margin-top: 15px;
 	background: #222;
-	padding: 15px;
 	float: left;
 	width: 100%;
 }
 #nav label{
 	color: white;
 	border-bottom: 2px solid #eee;
+	padding: 10px;
 }
 #nav ul {
 	margin: 0;
@@ -36,10 +64,10 @@
 }
 #nav li {
 	cursor: pointer;
-	padding: 3px;
+	padding: 6px;
 }
 #nav li:hover {
-	background: #09F;
+	background: #054B81;
 }
 #nav #sites li {
 	color: white;
@@ -47,70 +75,58 @@
 #nav #sub-menu li {
 	color: white;
 }
-#content-column {
-	width: 100% !important;
-}
+/** 
+ -------------------------------------------------
+ 3) App Content
+ -------------------------------------------------
+ */
 #TPS-Viewer {
 	background-color: #101214;
 	float: left;
 	width: 100%;
-	margin: 0 auto;
+}
+#TPS-Viewer h3 {
+	color: #eee;
 }
 #tps-viewer-menu {
 	float: left;
-	margin: 5px 0 0 15px;
+	margin: 1% 0 1% 1%;
 	width: 30%;
 }
 #content-wrapper {
 	float: right;
-	margin: 5px 15px;
-	width:60%;
-}
-#content-wrapper #controls {
-	margin-bottom: 10px;
+	margin: 1% 1% 0 0;
+	width: 66%;
 }
 #nvf-frame {
-	position: relative !important;
+	position: relative;
 }
 #nvf-frame img {
-	width: 100% !important;
-	height: auto !important;
+	width: 100%;
+	background: #222;
 }
-#controls label {
-	color: white;
+#nvf-frame img.image-default {
+	max-height: 100%;
 }
 #stream {
-	background: #444;
 	height: 385px;
+	background-height: ;
 }
 #map-view {
 	width: 100%;
 	height: 300px;
 	display: none;
 }
-.slider {
-	margin: 15px 0 15px;
-}
-.ui-slider-handle {
-	text-align: center;
-	text-decoration: none;
-	width: 100px !important;
-}
-#slider {
-	width: 75%;
-	float: right;
-}
+/** 
+ -------------------------------------------------
+ 4) App Controls
+ -------------------------------------------------
+ */
+
+/** Player Controls */
 #player-controls button {
-	margin: 10px;
-}
-.transparentBar {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0.2;
-	background-color: black;
-	z-index: -1;
+	margin: 10px 10px 10px 0;
+	float: left;
 }
 #fullScreenButton {
 	background-position: 612px 36px;
@@ -118,32 +134,6 @@
 #fullScreenButton:hover{
 	background-position: 612px 0;
 }
-.small {
-	background-position: 0 36px !important;
-}
-.small:hover {
-	background-position: 0 0 !important;
-}
-.play-pause {
-	color: white;
-	border: 0;
-	cursor: pointer;
-	background: url('img/camera-actions.png');
-	background-size: 720px 72px;
-	background-position: 684px 36px;
-	height: 36px;
-	width: 36px;
-}
-.play-pause:hover {
-	background-position: 684px 0;
-}
-.play {
-	background-position: 648px 36px !important;
-}
-.play:hover {
-	background-position: 648px 0 !important;
-}
-
 .fullScreen {
 	width: 100%;
 	position: fixed;
@@ -156,8 +146,64 @@
 	bottom: 0 !important;
 	left: 0 !important;
 	z-index: 999999999 !important;
+	width: 100%;
 }
-
+.small {
+	background-position: 722px 36px !important;
+}
+.small:hover {
+	background-position: 722px 0 !important;
+}
+.play-pause {
+	color: white;
+	border: 0;
+	cursor: pointer;
+	background: url('img/camera-actions.png');
+	background-size: 756px 72px;
+	background-position: 684px 36px;
+	height: 36px;
+	width: 36px;
+}
+.play-pause:hover {
+	background-position: 684px 0;
+}
+.play {
+	background-position: 650px 36px !important;
+}
+.play:hover {
+	background-position: 650px 0 !important;
+}
+#slider {
+	width: 75%;
+	float: right;
+	margin: 5px 2px;
+}
+.slider {
+	margin: 15px 0 15px;
+}
+.ui-slider-handle {
+	text-align: center;
+	text-decoration: none;
+	width: 100px !important;
+}
+.transparentBar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0.2;
+	-moz-opacity: 0.2;
+	-o-opacity: 0.2;
+	-wekbit-opacity: 0.2;
+	background-color: black;
+	z-index: -1;
+}
+.transparentBar:hover {
+	opacity: 0.9;
+	-moz-opacity: 0.9;
+	-o-opacity: 0.9;
+	-webkit-opacity: 0.9;
+}
 .transparentBox {
     position: fixed;
     top: 0px;
@@ -169,14 +215,21 @@
     z-index: 499;
 }
 
-/** Camera Actions */
+/** Camera Controls */
+#controls {
+	text-align: center;
+	float: left;
+	margin-top: 15px;
+	background: #054B81;
+	width: 100%;
+}
 .camera-action {
 	border: 0;
 	width: 36px;
 	height: 36px;
 	cursor: pointer;
-	margin: 0 5px 0 5px;
-	background-size: 720px 72px;
+	margin: 8px 8px 8px 8px;
+	background-size: 756px 72px;
 	background: url('img/camera-actions.png');
 	_background: url('img/camera-actions_ie.gif');
 	*background: url('img/camera-actions_ie.gif');
@@ -184,10 +237,13 @@
 #mapMaker {
 	background-position: 576px 36px;
 	float: left;
+	margin: 0;
 }
 #listMaker {
-	background-position: 540px 36px;
+	background-position: 542px 36px;
 	float: right;
+	margin: 0;
+	padding: 0;
 }
 .screenshot-action {
 	background-position: 504px 36px;
@@ -228,15 +284,18 @@
 .focus-auto {
 	background-position: 72px 36px;
 }
+.refresh-action {
+	background-position: 0 36px;
+}
 .home-action {
 	background-position: 36px 36px;
 }
-
+/** Camera Controls -- Hover */
 #mapMaker:hover {
 	background-position: 576px 0;
 }
 #listMaker:hover {
-	background-position: 540px 0;
+	background-position: 542px 0;
 }
 .screenshot-action:hover {
 	background-position: 504px 0;
@@ -277,15 +336,19 @@
 .focus-auto:hover {
 	background-position: 72px 0;
 }
+.refresh-action:hover {
+	background-position: 0 0;
+}
 .home-action:hover {
 	background-position: 36px 0;
 }
-#controls {
-	text-align: center;
-	float: left;
-	margin-top: 15px;
-}
+/** 
+ -------------------------------------------------
+ 5) Responsive
+ -------------------------------------------------
+ */
 
+/** Tablet and Smartphone*/
 @media all and (max-width: 680px) {
 	#tps-viewer-menu {
 		width: 100%;
@@ -302,5 +365,17 @@
 	}
 	#nav {
 		padding: 0;
+	}
+	#player-controls {
+		margin: 5px;
+	}
+	#slider {
+		width: 60%;
+	}
+}
+/** Widescreen */
+@media all and (min-width: 1400px) {
+	.camera-action {
+		margin: 5px;
 	}
 }

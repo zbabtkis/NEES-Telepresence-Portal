@@ -262,6 +262,13 @@ var app = window.app || (window.app = {});
       });
       return this;
     },
+    _refresh: function() {
+      var currentRequest = app.Model.Feed.get('fullRequest');
+      var time = Date.now();
+      // Allow view to detect change in feed by appending current time to url.
+      app.Model.Feed.set('fullRequest', currentRequest + time);
+      console.log(app.Model.Feed.get('fullRequest'));
+    },
     _home: function() {
       var that = this;
       jQuery.ajax({

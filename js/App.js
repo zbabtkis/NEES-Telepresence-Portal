@@ -17,7 +17,7 @@
  
 var app = window.app || (window.app = {});
 
-(function (Backbone, _) {
+(function (Backbone, _, $) {
 
   'use strict';
 
@@ -32,6 +32,7 @@ var app = window.app || (window.app = {});
   });
 
   app.init = function () {
+    app.browserCheck();
     for (var mKey in app.Model) {
       if(typeof app.Model[mKey].addLocationsFromSettings === 'function') {
         app.Model[mKey].addLocationsFromSettings();
@@ -46,5 +47,13 @@ var app = window.app || (window.app = {});
       }
     }
   };
+  app.browserCheck = function() {
+    if($.browser.msie && $.browser.version < 10) {
+      this.browserSupport = false;
+      alert("You are using this application on a browser that isn't fully supported -- You may experience issues loading the feeds. We recommend viewing this page on Firefox, Chrome, Opera, or Internet Explorer 10 and newer.");
+    } else {
+      this.browserSupport = true;
+    }
+  };
 
-}(Backbone, _));
+}(Backbone, _, jQuery));

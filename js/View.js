@@ -45,7 +45,7 @@ var app = window.app || (window.app = {});
 	var MapView = Backbone.View.extend({
 		el: "#map-view",
 		render: function() {
-			var that = this;
+			var i, that = this;
 			this.markers = [];
 			// Instantiate google map.
 	    	this.map = new google.maps.Map(this.el, app.Settings.map.options);
@@ -80,21 +80,7 @@ var app = window.app || (window.app = {});
 	var StreamView = Backbone.View.extend({
 		el: '#stream',
 		initialize: function() {
-			// Awesome spinny preloader provided by spin.js :).
-			this.spinner = new Spinner({
-				color:'#eee',
-			}).spin(this.$el);
-			// Position spinner in center of video feed.
-			this.$spinner = $(this.spinner.el);
-			this.$spinner.css({
-				'top':'50%',
-				'left': '50%',
-				'position': 'absolute',
-				'z-index': '999999999999999999'
-			});
-			this.translucent = $('<div />').addClass('transparentBox').hide();
-			this.selectAStream = $('<img />').attr({'src':'/' + Drupal.settings.modulePath + '/css/img/select-a-stream.jpg', 'alt': "Select a stream", 'title': "Select a stream", 'class': 'image-default'});
-			this.$el.html(this.selectAStream);
+			this.addFancyElements();
 		},
 		render: function() {
 			var that = this;
@@ -110,26 +96,61 @@ var app = window.app || (window.app = {});
 				that.$el.append(that.translucent);
 			});
 		},
+		addFancyElements: function() {
+			// Awesome spinny preloader provided by spin.js :).
+			this.spinner = new Spinner({
+				color:'#eee'
+			}).spin(this.$el);
+			// Position spinner in center of video feed.
+			this.$spinner = $(this.spinner.el);
+			this.$spinner.css({
+				'top':'50%',
+				'left': '50%',
+				'position': 'absolute',
+				'z-index': '999999999999999999'
+			});
+
+			this.translucent = $('<div />').addClass('transparentBox').hide();
+
+			this.selectAStream = $('<img />').attr({
+				'src':'/' + Drupal.settings.modulePath + '/css/img/select-a-stream.jpg',
+				'alt': "Select a stream",
+				'title': "Select a stream",
+				'class': 'image-default'
+			});
+			this.$el.html(this.selectAStream);
+		},
 		fullScreen: function() {
+			// Create translucent background over app during full screen mode.
 			$('.transparentBox').toggle();
-			app.View.FeedImage.$el.toggleClass('fullScreen');
+			// Display player controls at bottom of screen
 			$('#player-controls').toggleClass('fullScreenControls');
+			// Make stream take up full window.
+			app.View.FeedImage.$el.toggleClass('fullScreen');
+
+			// Otherwise, app wrapper elongates to match bottom of image.
 			this.resize();
 		},
 		listen: function() {
 			var that = this;
-			_.bindAll(this, 'resize');
 			// Resize for responsive design.
-			$(window).resize(that.resize);
+			$(window).on('resize', this.resize);
+			// Provides preloading image.
+			this.listenTo(app.Model.Feed, 'change:fullRequest', that.loading);
+			// Render when stream when new view selected
 			this.listenTo(app.View.FeedImage, 'newStreamInitialized', that.render);
-			app.Model.Feed.on('change:fullRequest', function() {
-				this.$el.append(this.$spinner);
-			}.bind(this));
-			this.listenTo(app.View.FullScreenButton, 'fullScreen', this.fullScreen, this);
+			// Handle full screen reuquests.
+			this.listenTo(app.View.FullScreenButton, 'fullScreen', that.fullScreen);
+		},
+		loading: function() {
+			this.$el.append(this.$spinner);
 		},
 		resize: function() {
+			var imgSize;
+
 			if(app.View.FeedImage.$el.height()) {
-				this.$el.css({'height':app.View.FeedImage.$el.height()});
+				imgSize = app.View.FeedImage.$el.height();
+				this.$el.css({'height': imgSize});
 			}
 		}
 	});
@@ -140,41 +161,45 @@ var app = window.app || (window.app = {});
 		className: 'feed-image',
 		listen: function() {
 			var that = this;
+			_.bindAll(this);
 			// Change feed source when new source has been loaded into model.
 			this.listenTo(app.Model.Feed, 'change:fullRequest', that.change);
 		},
 		change: function() {
-			var that = this;
-			var unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
-			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(function() {
-				$(this).attr('src', unavailable);
-				that.disableActions();
-			}).load(function() {
-				if($(this).attr('src') != unavailable) {
-					that.enableActions();
-				}
-			});
+			var that,
+				unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
+			// Change image source to new feed if image load is success -- otherwise handle feed failure.
+			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(this._fail).load(this._loaded);
 			this.trigger('newStreamInitialized');
 		},
-		enableActions: function() {
+		_fail: function() {
+			$(this).attr('src', 'unavailable');
+			that._disableActions();
+		},
+		_loaded: function() {
+			if($(this).attr('src') != 'unavailable') {
+				this._enableActions();
+			}
+		},
+		_enableActions: function() {
 			app.View.Play.enable();
 			app.View.FullScreenButton.enable();
 			app.View.Slider.enable();
 			app.View.CameraControl.enable();
 		},
-		disableActions: function() {
+		_disableActions: function() {
 			app.View.Play.disable();
 			app.View.FullScreenButton.disable();
 			app.View.Slider.disable();
 			app.View.CameraControl.disable();
-		},
+		}
 	});
 /**..d) CameraButtonView */
 	/** Button linking to a robotic action */
 	var CameraButtonView = Backbone.View.extend({
 		tagName: 'button',
 		className: function() {
-			var value = this.options.value?this.options.value:'action';
+			var value = this.options.value ? this.options.value : 'action';
 			return 'camera-action ' + this.options.action + '-' + value;
 		},
 		defaults: {
@@ -203,6 +228,8 @@ var app = window.app || (window.app = {});
 		},
 		parent: "#tps-viewer-menu",
 		initialize: function() {
+			var action,
+				aButton;
 			this.$el.html('<h3>Camera Controls</h3>');
 			this.cameraActions = [];
 			// Creates Camera Button instances for each robotic action.
@@ -221,10 +248,10 @@ var app = window.app || (window.app = {});
 			this.cameraActions['focusAuto'] = new CameraButtonView({'title': 'Autofocus', 'action': 'focus', 'value': 'auto'});
 			this.cameraActions['refresh'] = new CameraButtonView({'title': 'Refresh','action':'refresh'});
 			this.cameraActions['home'] = new CameraButtonView({'title': 'Home', 'action': 'home'});
-			for(var action in this.cameraActions) {
+			for(action in this.cameraActions) {
 				// Appends elements to Control View.
-				var $el = this.cameraActions[action].$el;
-				this.$el.append($el);
+				aButton = this.cameraActions[action].$el;
+				this.$el.append(aButton);
 			}
 			$(this.parent).append(this.$el.hide());
 		},
@@ -238,8 +265,8 @@ var app = window.app || (window.app = {});
 			'click .camera-action': 'doCameraAction'
 		},
 		doCameraAction: function(e) {
-			var action = e.currentTarget.dataset.action;
-			var value = e.currentTarget.dataset.value;
+			var action = e.currentTarget.dataset.action,
+				value = e.currentTarget.dataset.value;
 			// Tells the Robot to perform camera action.
 			app.Model.Robot.robotCommand(action,value);
 		}
@@ -275,10 +302,9 @@ var app = window.app || (window.app = {});
 		},
 		renderSlideValue: function (v) {
 			this.$handle.html('');
-			var fr = v;
 			// Insert text displaying current slider framerate selection.
 			this.$handle.append('Framerate:');
-			this.$handle.append(fr);
+			this.$handle.append(v);
 		},
 		listen: function () {
 			this.on('sliderChanged', this.renderSlideValue);
@@ -333,15 +359,18 @@ var app = window.app || (window.app = {});
 	// List of each available site -- alternative to map view. */
 	var SiteListView = Backbone.View.extend({
 		el: '#sites',
+		initialize: function() {
+			_.bindAll(this);
+		},
 		render: function() {
 			this.$el.html('');
-			var self = this;
 			// Create menu list for each site and append it to the view.
-			app.Model.Sites.forEach(function(item) {
-				var newMenu = new SiteElement({menu:item});
-				self.$el.append(newMenu.$el);
-			});
+			app.Model.Sites.forEach(this.addMenu);
 			this.$el.show();
+		},
+		addMenu: function(item) {
+			var newMenu = new SiteElement({menu:item});
+			this.$el.append(newMenu.$el);
 		},
 		events: {
 			'click li':'openSite'

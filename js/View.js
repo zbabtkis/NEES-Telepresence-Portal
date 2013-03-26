@@ -7,9 +7,7 @@
                 Contents          
  --------------------------------------------------------------------
  1. Views 
-   a. MapView (google maps)
-     - map
-     - markers
+   a. InfoView (Help)
    b. StreamView (wrapper for current stream)
    c. FeedImage
    d. CameraButtonView
@@ -41,40 +39,21 @@ var app = window.app || (window.app = {});
 	'use strict';
 	app.View = {};
 /** 1) -- Views
-    ..a) Map View */
-	var MapView = Backbone.View.extend({
-		el: "#map-view",
-		render: function() {
-			var i, that = this;
-			this.markers = [];
-			// Instantiate google map.
-	    	this.map = new google.maps.Map(this.el, app.Settings.map.options);
-	    	// Add site markers to map.
-	    	app.Model.Sites.forEach(function(site) {
-	    		that.markers.push(new google.maps.Marker({
-	    			position: site.get('position'),
-	    			map: that.map,
-	    			site_id: site.get('site_id'),
-	    			title: site.get('loc')
-	    		}));
-	    	});
-	    	// Add listeners to markers.
-	    	for(i in this.markers) {
-	    		this.markers[i].infowindow = new google.maps.InfoWindow({
-		    		content: this.markers[i].title,
-		    		maxWidth: 50
-		    	});
-	    		google.maps.event.addListener(this.markers[i], 'click', function() {
-	    			app.Router.navigate('map/' + this.site_id, {trigger: true});
-	    		});
-	    		google.maps.event.addListener(this.markers[i], 'mouseover', function() {
-	    			this.infowindow.open(that.map, this);
-	    		});
-	    		google.maps.event.addListener(this.markers[i], 'mouseout', function() {
-	    			this.infowindow.close(that.map, this);
-	    		});
-	    	}
-	    }
+
+/**..a) Info View */
+	var InfoView = Backbone.View.extend({
+		el: '#info-view .inner-view',
+		initialize: function() {
+			var header, txt;
+			this.listenTo(app.Router, 'helpRequest', this.help);
+			header = $("<h3 />").html('Help');
+			txt = Drupal.settings.telepresence_about;
+			header.appendTo(this.$el);
+			this.$el.append(txt);
+		},
+		help: function() {
+			app.View.Menu.showHelp();
+		}
 	});
 /**..b) StreamView */
 	var StreamView = Backbone.View.extend({
@@ -147,10 +126,10 @@ var app = window.app || (window.app = {});
 		},
 		resize: function() {
 			var imgSize;
-
+			var that = this;
 			if(app.View.FeedImage.$el.height()) {
 				imgSize = app.View.FeedImage.$el.height();
-				this.$el.css({'height': imgSize});
+				that.$el.css({'height': imgSize});
 			}
 		}
 	});
@@ -166,20 +145,17 @@ var app = window.app || (window.app = {});
 			this.listenTo(app.Model.Feed, 'change:fullRequest', that.change);
 		},
 		change: function() {
-			var that,
-				unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
 			// Change image source to new feed if image load is success -- otherwise handle feed failure.
 			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(this._fail).load(this._loaded);
 			this.trigger('newStreamInitialized');
 		},
 		_fail: function() {
-			$(this).attr('src', 'unavailable');
-			that._disableActions();
+			var unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
+			this.$el.attr('src', unavailable);
+			this._disableActions();
 		},
 		_loaded: function() {
-			if($(this).attr('src') != 'unavailable') {
-				this._enableActions();
-			}
+			this._enableActions();
 		},
 		_enableActions: function() {
 			app.View.Play.enable();
@@ -364,6 +340,7 @@ var app = window.app || (window.app = {});
 		},
 		render: function() {
 			this.$el.html('');
+			app.View.Menu.showList();
 			// Create menu list for each site and append it to the view.
 			app.Model.Sites.forEach(this.addMenu);
 			this.$el.show();
@@ -439,14 +416,22 @@ var app = window.app || (window.app = {});
 	var Menu = Backbone.View.extend({
 		el: '#options-menu',
 		events: {
-			'click #listMaker':'addList',
-			'click #mapMaker':'renderMap'
+			'click #listMaker':'getList',
+			'click #helpMaker':'getHelp'
 		},
-		addList: function() {
+		getList: function() {
 			app.Router.navigate('sites', {trigger: true});
 		},
-		renderMap: function() {
-			app.Router.navigate('map',{trigger: true});
+		getHelp: function() {
+			app.Router.navigate('help',{trigger: true});
+		},
+		showList: function() {
+			$('#info-view').hide();
+			$('#nav').show();
+		},
+		showHelp: function() {
+			$('#nav').hide();
+			$('#info-view').show();
 		}
 	});
 /**..m) Full Screen Button */
@@ -478,16 +463,16 @@ var app = window.app || (window.app = {});
 	// Ensure template has loaded before trying to attach selectors.
 	$(document).ready( function() {
 		// Instantiate views on app.View.
-		app.View.Stream = new StreamView;
+		app.View.Stream = new StreamView();
 		app.View.Play = new PlayButton();
 		app.View.FullScreenButton = new FullScreenButton();
-		app.View.FeedImage = new FeedImage;
-		app.View.CameraControl = new CameraControlView;
+		app.View.FeedImage = new FeedImage();
+		app.View.CameraControl = new CameraControlView();
 		app.View.Slider = new SliderView();
 		app.View.SiteList = new SiteListView();
-		app.View.MenuList = new MenuListView;
-		app.View.Menu = new Menu;
-		app.View.Map = new MapView;
+		app.View.MenuList = new MenuListView();
+		app.View.Menu = new Menu();
+		app.View.Info = new InfoView();
 		app.trigger('viewsRendered');
 	});
 })(jQuery, Backbone, _);

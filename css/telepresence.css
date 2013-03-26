@@ -1,0 +1,378 @@
+/**
+ * ===============================================
+ *               NEES Telepresence
+ * ===============================================
+ * Content
+ * -------
+ * ..1) App Header
+ * ..2) App Menu
+ * ..3) App Content
+ * ..4) App Controls
+ * ....a) Player Controls
+ * ....b) Camera Controls
+ * ..5) Responsive
+ * -----------------------------------------------
+ */
+
+/** 
+ -------------------------------------------------
+ 1) App Header
+ -------------------------------------------------
+ */
+
+#content-column {
+	/** This overrides an issue witht the NEES site
+	 *  theme that causes the wrapper to take up
+	 *  only half the width on wide screens.
+	 */
+	width: 100% !important;
+	border: 1px solid #054B81;
+}
+#main-content header {
+	background-color: #06A;
+	border-bottom: 3px solid #09F;
+	color: white;
+	height: 80px;
+	width: 100%;
+}
+#main-content header h1{
+	float: left;
+	font-size: 26px;
+	padding: 15px;
+}
+/** 
+ -------------------------------------------------
+ 2) App Menu
+ -------------------------------------------------
+ */
+#info-view .inner-view {
+	padding: 5px;
+}
+#nav , #info-view {
+	margin-top: 15px;
+	background: #222;
+	float: left;
+	width: 100%;
+	color: #eee;
+}
+#nav label{
+	border-bottom: 2px solid #eee;
+	padding: 10px;
+}
+#nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	padding: 5px;
+}
+#nav li {
+	cursor: pointer;
+	padding: 6px;
+}
+#nav li:hover {
+	background: #054B81;
+}
+/** 
+ -------------------------------------------------
+ 3) App Content
+ -------------------------------------------------
+ */
+#TPS-Viewer {
+	background-color: #101214;
+	float: left;
+	width: 100%;
+}
+#TPS-Viewer h3 {
+	color: #eee;
+}
+#tps-viewer-menu {
+	float: left;
+	margin: 1% 0 1% 1%;
+	width: 30%;
+}
+#content-wrapper {
+	float: right;
+	margin: 1% 1% 0 0;
+	width: 66%;
+}
+#nvf-frame {
+	position: relative;
+}
+#nvf-frame img {
+	width: 100%;
+	background: #222;
+}
+#nvf-frame img.image-default {
+	max-height: 100%;
+}
+#stream {
+	height: 385px;
+	background-height: ;
+}
+#map-view {
+	width: 100%;
+	height: 300px;
+	display: none;
+}
+/** 
+ -------------------------------------------------
+ 4) App Controls
+ -------------------------------------------------
+ */
+
+/** Player Controls */
+#player-controls button {
+	margin: 10px 10px 10px 0;
+	float: left;
+}
+#fullScreenButton {
+	background-position: 612px 36px;
+}
+#fullScreenButton:hover{
+	background-position: 612px 0;
+}
+.fullScreen {
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 99999999;
+}
+.fullScreenControls {
+	position: fixed !important;
+	bottom: 0 !important;
+	left: 0 !important;
+	z-index: 999999999 !important;
+	width: 100%;
+}
+.small {
+	background-position: 722px 36px !important;
+}
+.small:hover {
+	background-position: 722px 0 !important;
+}
+.play-pause {
+	color: white;
+	border: 0;
+	cursor: pointer;
+	background: url('img/camera-actions.png');
+	background-size: 756px 72px;
+	background-position: 684px 36px;
+	height: 36px;
+	width: 36px;
+}
+.play-pause:hover {
+	background-position: 684px 0;
+}
+.play {
+	background-position: 650px 36px !important;
+}
+.play:hover {
+	background-position: 650px 0 !important;
+}
+#slider {
+	width: 75%;
+	float: right;
+	margin: 5px 2px;
+}
+.slider {
+	margin: 15px 0 15px;
+}
+.ui-slider-handle {
+	text-align: center;
+	text-decoration: none;
+	width: 100px !important;
+}
+.transparentBar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0.2;
+	-moz-opacity: 0.2;
+	-o-opacity: 0.2;
+	-wekbit-opacity: 0.2;
+	background-color: black;
+	z-index: -1;
+}
+.transparentBar:hover {
+	opacity: 0.9;
+	-moz-opacity: 0.9;
+	-o-opacity: 0.9;
+	-webkit-opacity: 0.9;
+}
+.transparentBox {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #222;
+    opacity: 0.9;
+    z-index: 499;
+}
+
+/** Camera Controls */
+#controls {
+	text-align: center;
+	float: left;
+	margin-top: 15px;
+	background: #054B81;
+	width: 100%;
+}
+.camera-action {
+	border: 0;
+	width: 36px;
+	height: 36px;
+	cursor: pointer;
+	margin: 8px 8px 8px 8px;
+	background-size: 756px 72px;
+	background: url('img/camera-actions.png');
+	_background: url('img/camera-actions_ie.gif');
+	*background: url('img/camera-actions_ie.gif');
+}
+#helpMaker {
+	background-position: 576px 36px;
+	float: left;
+	margin: 0;
+}
+#listMaker {
+	background-position: 540px 36px;
+	float: right;
+	margin: 0;
+	padding: 0;
+}
+.screenshot-action {
+	background-position: 504px 36px;
+}
+.zoom-in {
+	background-position: 468px 36px;
+}
+.zoom-out {
+	background-position: 432px 36px;
+}
+.pan-right {
+	background-position: 396px 36px;
+}
+.pan-left {
+	background-position: 360px 36px;
+}
+.tilt-down {
+	background-position: 324px 36px;
+}
+.tilt-up {
+	background-position: 288px 36px;
+}
+.iris-close {
+	background-position: 252px 36px;
+}
+.iris-open {
+	background-position: 216px 36px;
+}
+.iris-auto {
+	background-position: 180px 36px;
+}
+.focus-near {
+	background-position: 144px 36px;
+}
+.focus-far {
+	background-position: 108px 36px;
+}
+.focus-auto {
+	background-position: 72px 36px;
+}
+.refresh-action {
+	background-position: 0 36px;
+}
+.home-action {
+	background-position: 36px 36px;
+}
+/** Camera Controls -- Hover */
+#helpMaker:hover {
+	background-position: 576px 0;
+}
+#listMaker:hover {
+	background-position: 540px 0;
+}
+.screenshot-action:hover {
+	background-position: 504px 0;
+}
+.zoom-in:hover {
+	background-position: 468px 0;
+}
+.zoom-out:hover {
+	background-position: 432px 0;
+}
+.pan-right:hover {
+	background-position: 396px 0;
+}
+.pan-left:hover {
+	background-position: 360px 0;
+}
+.tilt-down:hover {
+	background-position: 324px 0;
+}
+.tilt-up:hover {
+	background-position: 288px 0;
+}
+.iris-close:hover {
+	background-position: 252px 0;
+}
+.iris-open:hover {
+	background-position: 216px 0;
+}
+.iris-auto:hover {
+	background-position: 180px 0;
+}
+.focus-near:hover {
+	background-position: 144px 0;
+}
+.focus-far:hover {
+	background-position: 108px 0;
+}
+.focus-auto:hover {
+	background-position: 72px 0;
+}
+.refresh-action:hover {
+	background-position: 0 0;
+}
+.home-action:hover {
+	background-position: 36px 0;
+}
+/** 
+ -------------------------------------------------
+ 5) Responsive
+ -------------------------------------------------
+ */
+
+/** Tablet and Smartphone*/
+@media all and (max-width: 680px) {
+	#tps-viewer-menu {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	#content-wrapper {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	#options-menu {
+		padding: 0;
+	}
+	#nav {
+		padding: 0;
+	}
+	#player-controls {
+		margin: 5px;
+	}
+	#slider {
+		width: 60%;
+	}
+}
+/** Widescreen */
+@media all and (min-width: 1400px) {
+	.camera-action {
+		margin: 5px;
+	}
+}

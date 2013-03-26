@@ -27,7 +27,7 @@ var app = window.app || (window.app = {});
 
   'use strict';
   app.Model ={};
-  
+
   // Site Locations -- rendered in list or map
   var SiteModel = Backbone.Model.extend({
     defaults: {

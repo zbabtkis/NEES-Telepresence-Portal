@@ -3,6 +3,8 @@ NEES Telepresence Portal
 
 A portal for streaming and controlling live video feeds from UCSB NEES sites.
 
+Check out the poral in action at http://www.nees.ucsb.edu/telepresence!
+
 Features
 --------
 * Pan, tilt, zoom, focus, and more.

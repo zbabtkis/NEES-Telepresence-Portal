@@ -1,0 +1,26 @@
+<?php
+/**
+ * @file
+ * Installs db for telepresence module
+ */
+
+/** 
+ *Implements hook_schema().
+ */
+function telepresence_schema() {
+	$schema = array();
+
+	$schema['telepresence'] = array(
+		'description' => 'Holds information for the NEES Telepresence app',
+		'fields' => array(
+			'about' => array(
+				'description' => 'Holds info for about section of Telepresence app',
+				'type' => 'text',
+				'not_null' => true,
+				'default_value' => "No information."
+			)
+		),
+		'primary_key' => array('k')
+	);
+	return $schema;
+}

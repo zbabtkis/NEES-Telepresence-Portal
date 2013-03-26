@@ -1,0 +1,111 @@
+<?php
+
+/*function telepresence_permission() {
+	$perms = array();
+	$perms['view nees media'] = array(
+		'title' => 'View Nees Media',
+		'description' => 'Allows someone to view the video feeds on the telepresence page');
+	return $perms;
+}*/
+
+function telepresence_menu() {
+	$items = array();
+	$items['telepresence'] = array(
+		'title' => t('Telepresence'),
+		'description' => t('Video feeds from NEES locations.'),
+		'page callback' => 'telepresence_page',
+		'access arguments' => array('view nees media'),
+		'type' => MENU_NORMAL_ITEM
+	);
+	$items['admin/config/telepresence'] = array(
+		'title' => 'Telepresence Configuration',
+		'description' => t('Configuration options for the Telepresence application'),
+		'page callback' => t('drupal_get_form'),
+		'page arguments' => array('telepresence_config'),
+		'access arguments' => array('administer nodes'),
+		'type' => MENU_NORMAL_ITEM
+	);
+	return $items;
+}
+
+function telepresence_config() {
+	$form = array();
+
+	$form['telepresence_about'] = array(
+		'#title' => t('About'),
+		'#type' => 'text_format',
+		'#default_value' => telepresence_get_settings()
+	);
+	$form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => 'save',
+		'#submit' => array('telepresence_save_settings')
+	);
+	return($form);
+}
+
+function telepresence_save_settings($form, &$form_state) {
+	try {
+		db_truncate('telepresence')->execute();
+
+		db_insert('telepresence')
+		->fields(array(
+			'about' => $form_state['input']['telepresence_about']['value'])
+		)
+		->execute();
+	} catch (Exception $e) {
+		dsm($e);
+	}
+}
+
+function telepresence_get_settings() {
+	$r = db_select('telepresence', 't')
+		->fields('t')
+		->execute()
+		->fetchAssoc();
+	return $r['about'];
+}
+
+function telepresence_page() {
+	$GoogleAPIKey = 'AIzaSyCPpIzXStBCfaojLIUMJupPBaAONdXU9LQ';
+
+	drupal_add_js(array('modulePath'=>drupal_get_path('module', 'telepresence')), 'setting');
+
+	drupal_add_js("https://maps.googleapis.com/maps/api/js?key=$GoogleAPIKey&sensor=true");
+	drupal_add_library('system', 'ui.slider');
+	drupal_add_library('system', 'ui.tabs');
+	drupal_add_css(drupal_get_path('module','telepresence') . '/css/telepresence.css');
+	drupal_add_css(drupal_get_path('module','telepresence') . '/js/libs/jQuery UI/css/ui-darkness/jquery-ui-1.10.0.custom.min.css');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/gmap-min.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/spin.min.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/imagesLoaded.min.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/underscore-min.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/backbone-min.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/Model.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/View.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/Router.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/app.settings.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/App.js');
+
+	$about = telepresence_get_settings();
+	drupal_add_js(array('telepresence_about' => $about), 'setting');
+
+	$page = theme('telepresence_template');
+	
+	return $page;
+}
+
+function telepresence_theme() {
+   $themes = array(
+      'telepresence_template' => array(
+          'template' => 'telepresence',
+      ),
+   );
+   return($themes);
+}
+function telepresence_js_alter(&$js) {
+	if($_GET['q'] == 'telepresence') {
+		$js['misc/jquery.js']['data'] = 'http://code.jquery.com/jquery-1.8.3.js';
+		$js['misc/ui/jquery.ui.core.min.js']['data'] = drupal_get_path('module','telepresence') . '/js/libs/jQuery UI/jquery-ui-1.10.0.custom.min.js';
+	}
+}

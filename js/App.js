@@ -21,6 +21,8 @@ var app = window.app || (window.app = {});
 
   'use strict';
 
+  app.version = "7.x-1.0";
+
   _.extend(app, Backbone.Events);
 
   // Views must be rendered on document ready before Router

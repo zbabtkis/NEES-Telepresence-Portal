@@ -1,12 +1,15 @@
 <?php
 
-/*function telepresence_permission() {
+function telepresence_permission() {
 	$perms = array();
-	$perms['view nees media'] = array(
-		'title' => 'View Nees Media',
-		'description' => 'Allows someone to view the video feeds on the telepresence page');
+	$perms['access telepresence'] = array(
+		'title' => 'Access Telepresence Portal',
+		'description' => 'Allows user to view video feeds on the telepresence page.');
+	$perms['administer telepresence'] = array(
+		'title' => 'Administer Telepresence Portal Configuration',
+		'description' => 'Change settings and content related to the telepresence module.');
 	return $perms;
-}*/
+}
 
 function telepresence_menu() {
 	$items = array();
@@ -14,7 +17,7 @@ function telepresence_menu() {
 		'title' => t('Telepresence'),
 		'description' => t('Video feeds from NEES locations.'),
 		'page callback' => 'telepresence_page',
-		'access arguments' => array('view nees media'),
+		'access arguments' => array('access telepresence'),
 		'type' => MENU_NORMAL_ITEM
 	);
 	$items['admin/config/telepresence'] = array(
@@ -22,7 +25,7 @@ function telepresence_menu() {
 		'description' => t('Configuration options for the Telepresence application'),
 		'page callback' => t('drupal_get_form'),
 		'page arguments' => array('telepresence_config'),
-		'access arguments' => array('administer nodes'),
+		'access arguments' => array('administer telepresence'),
 		'type' => MENU_NORMAL_ITEM
 	);
 	return $items;
@@ -67,16 +70,13 @@ function telepresence_get_settings() {
 }
 
 function telepresence_page() {
-	$GoogleAPIKey = 'AIzaSyCPpIzXStBCfaojLIUMJupPBaAONdXU9LQ';
 
 	drupal_add_js(array('modulePath'=>drupal_get_path('module', 'telepresence')), 'setting');
 
-	drupal_add_js("https://maps.googleapis.com/maps/api/js?key=$GoogleAPIKey&sensor=true");
 	drupal_add_library('system', 'ui.slider');
 	drupal_add_library('system', 'ui.tabs');
 	drupal_add_css(drupal_get_path('module','telepresence') . '/css/telepresence.css');
 	drupal_add_css(drupal_get_path('module','telepresence') . '/js/libs/jQuery UI/css/ui-darkness/jquery-ui-1.10.0.custom.min.css');
-	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/gmap-min.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/spin.min.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/imagesLoaded.min.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/underscore-min.js');

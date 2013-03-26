@@ -261,12 +261,14 @@ var app = window.app || (window.app = {});
 			this.el.height = 200;
 			this.el.width = 200;
 
+			// Defaults for drawing background circle.
 			this.centerX = this.el.width / 2;
 			this.centerY = this.el.height / 2;
 			this.canvasR = this.centerX - 2;
 
 			this.drawCircle();
 
+			// Events for collecting coordinates nad redrawing.
 			this.$el.on('mouseenter mousemove', this.movePointer);
 			this.$el.on('click', this.getValues);
 			this.$el.on('mousedown', this.active);
@@ -275,6 +277,7 @@ var app = window.app || (window.app = {});
 			return this.el.getContext('2d');
 		},
 		drawCircle: function() {
+			// Border
 			this.ctx().beginPath();
 			this.ctx().arc(this.centerX, this.centerY, this.canvasR, 0, 2 * Math.PI*2, false);
 			this.ctx().fillStyle = "#111";
@@ -291,47 +294,55 @@ var app = window.app || (window.app = {});
 			this.ctx().lineTo(this.el.height, this.centerY);
 			this.ctx().stroke();
 		},
-		drawPointer: function(x, y, color) {
+		drawPointer: function(x, y, color, boundary) {
+			var rad = (boundary || 100)/10;
+
+			// Draws small circle to select camera angle.
 			this.ctx().beginPath();
-			this.ctx().arc(x, y, 10, 0, 2 * Math.PI, false);
+			this.ctx().arc(x, y, rad, 0, 2 * Math.PI, false);
 			this.ctx().fillStyle = color;
 			this.ctx().fill();
 		},
 		removePointer: function() {
 			this.ctx().clearRect(0, 0, this.el.width, this.el.height);
 		},
-		inBoundry: function(x, y) {
+		inBoundary: function(x, y) {
 			var dist, distX, distY;
 
+			// Formula for calculating distance between center and pointer.
 			distX = Math.abs(this.centerX - x);
 			distY = Math.abs(this.centerY - y);
-
 			dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
 
-			return(dist <= this.canvasR);
+			return(dist);
 		},
 		movePointer: function(e, color) {
-			var x, y;
+			var x, y, boundary;
 
 			x = e.offsetX;
 			y = e.offsetY;
+			boundary = this.inBoundary(x, y);
 
-			if(this.inBoundry(x, y)) {
+			// Make sure pointer is inside background-circle.
+			if(boundary <= this.canvasR) {
 				this.el.style.cursor = 'none';
 				this.removePointer();
 				this.drawCircle();
-				this.drawPointer(x, y, '#09f');
+				this.drawPointer(x, y, '#09f', boundary);
 			}
 		},
 		active: function(e) {
+			// Draw pointer as orange if when user clicks a point.
 			this.drawPointer(e.offsetX, e.offsetY, 'orange');
 		},
 		getValues: function(e) {
 			var x, y, scale, args;
 
+			// Get current point on the graph for sending to Robot model.
 			x = e.offsetX + ',13';
 			y = '13,' + e.offsetY ;
 
+			// For camera to set camera position.
 			args = {
 				'width': x,
 				'height': y,
@@ -339,6 +350,7 @@ var app = window.app || (window.app = {});
 				'imgHeight': this.el.height
 			};
 
+			// Send command to Robot.
 			app.Model.Robot.robotCommand('position', args);
 		}
 	});

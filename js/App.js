@@ -57,5 +57,11 @@ var app = window.app || (window.app = {});
       this.browserSupport = true;
     }
   };
+  // Reset layout for responsive design.
+  app.resizeFix = function() {
+    $(document).resize(function() {
+      app.View.Stream.resize();
+    });
+  };
 
 }(Backbone, _, jQuery));

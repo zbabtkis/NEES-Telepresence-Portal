@@ -60,6 +60,7 @@ var app = window.app || (window.app = {});
 	var StreamView = Backbone.View.extend({
 		el: '#stream',
 		initialize: function() {
+			_.bindAll(this);
 			this.addFancyElements();
 		},
 		render: function() {
@@ -127,10 +128,10 @@ var app = window.app || (window.app = {});
 		},
 		resize: function() {
 			var imgSize;
-			var that = this;
+
 			if(app.View.FeedImage.$el.height()) {
 				imgSize = app.View.FeedImage.$el.height();
-				that.$el.css({'height': imgSize});
+				this.$el.css({'height': imgSize});
 			}
 		}
 	});
@@ -264,7 +265,7 @@ var app = window.app || (window.app = {});
 			// Defaults for drawing background circle.
 			this.centerX = this.el.width / 2;
 			this.centerY = this.el.height / 2;
-			this.canvasR = this.centerX - 2;
+			this.canvasR = this.centerX - 10;
 
 			this.drawCircle();
 
@@ -287,11 +288,11 @@ var app = window.app || (window.app = {});
 			this.ctx().stroke();
 			// Crosshair
 			this.ctx().lineWidth = 1;
-			this.ctx().moveTo(this.centerX, 0);
-			this.ctx().lineTo(this.centerX, this.el.width);
+			this.ctx().moveTo(this.centerX, 10);
+			this.ctx().lineTo(this.centerX, this.el.width - 10);
 
-			this.ctx().moveTo(0, this.centerY);
-			this.ctx().lineTo(this.el.height, this.centerY);
+			this.ctx().moveTo(10, this.centerY);
+			this.ctx().lineTo(this.el.height - 10, this.centerY);
 			this.ctx().stroke();
 		},
 		drawPointer: function(x, y, color, boundary) {
@@ -329,6 +330,8 @@ var app = window.app || (window.app = {});
 				this.removePointer();
 				this.drawCircle();
 				this.drawPointer(x, y, '#09f', boundary);
+			} else {
+				this.el.style.cursor = 'normal';
 			}
 		},
 		active: function(e) {

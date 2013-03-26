@@ -12,14 +12,15 @@
    c. FeedImage
    d. CameraButtonView
    e. CameraControlView
-   f. SliderView
-   g. PlayerControlViwe
-   h. PlayButton
-   i. SiteListView
-   j. MenuListView
-   k. MenuElement
-   l. SiteElement
-   m. Menu
+   f. AngleControlView
+   g. SliderView
+   h. PlayerControlViwe
+   i. PlayButton
+   j. SiteListView
+   k. MenuListView
+   l. MenuElement
+   m. SiteElement
+   n. Menu
  2. Actions
    a. document ready
 	 - instantiate views
@@ -230,6 +231,9 @@ var app = window.app || (window.app = {});
 				this.$el.append(aButton);
 			}
 			$(this.parent).append(this.$el.hide());
+			this.cAngle = new AngleControlView();
+			this.$el.append("<h4>Camera Angle</h4>");
+			this.$el.append(this.cAngle.$el);
 		},
 		enable: function() {
 			this.$el.fadeIn();
@@ -247,7 +251,98 @@ var app = window.app || (window.app = {});
 			app.Model.Robot.robotCommand(action,value);
 		}
 	});
-/**..f) SliderView */
+/**..f) AngleControlView */
+	var AngleControlView = Backbone.View.extend({
+		tagName: 'canvas',
+		className: 'angle-control',
+		initialize: function() {
+			_.bindAll(this);
+
+			this.el.height = 200;
+			this.el.width = 200;
+
+			this.centerX = this.el.width / 2;
+			this.centerY = this.el.height / 2;
+			this.canvasR = this.centerX - 2;
+
+			this.drawCircle();
+
+			this.$el.on('mouseenter mousemove', this.movePointer);
+			this.$el.on('click', this.getValues);
+			this.$el.on('mousedown', this.active);
+		},
+		ctx: function() {
+			return this.el.getContext('2d');
+		},
+		drawCircle: function() {
+			this.ctx().beginPath();
+			this.ctx().arc(this.centerX, this.centerY, this.canvasR, 0, 2 * Math.PI*2, false);
+			this.ctx().fillStyle = "#111";
+			this.ctx().fill();
+			this.ctx().lineWidth = 5
+			this.ctx().strokeStyle = "#eee";
+			this.ctx().stroke();
+			// Crosshair
+			this.ctx().lineWidth = 1;
+			this.ctx().moveTo(this.centerX, 0);
+			this.ctx().lineTo(this.centerX, this.el.width);
+
+			this.ctx().moveTo(0, this.centerY);
+			this.ctx().lineTo(this.el.height, this.centerY);
+			this.ctx().stroke();
+		},
+		drawPointer: function(x, y, color) {
+			this.ctx().beginPath();
+			this.ctx().arc(x, y, 10, 0, 2 * Math.PI, false);
+			this.ctx().fillStyle = color;
+			this.ctx().fill();
+		},
+		removePointer: function() {
+			this.ctx().clearRect(0, 0, this.el.width, this.el.height);
+		},
+		inBoundry: function(x, y) {
+			var dist, distX, distY;
+
+			distX = Math.abs(this.centerX - x);
+			distY = Math.abs(this.centerY - y);
+
+			dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+
+			return(dist <= this.canvasR);
+		},
+		movePointer: function(e, color) {
+			var x, y;
+
+			x = e.offsetX;
+			y = e.offsetY;
+
+			if(this.inBoundry(x, y)) {
+				this.el.style.cursor = 'none';
+				this.removePointer();
+				this.drawCircle();
+				this.drawPointer(x, y, '#09f');
+			}
+		},
+		active: function(e) {
+			this.drawPointer(e.offsetX, e.offsetY, 'orange');
+		},
+		getValues: function(e) {
+			var x, y, scale, args;
+
+			x = e.offsetX + ',13';
+			y = '13,' + e.offsetY ;
+
+			args = {
+				'width': x,
+				'height': y,
+				'imgWidth': this.el.width,
+				'imgHeight': this.el.height
+			};
+
+			app.Model.Robot.robotCommand('position', args);
+		}
+	});
+/**..g) SliderView */
 	/** $ slider taht controls framerate */
 	var SliderView = Backbone.View.extend({
 		tagName: 'div',
@@ -289,7 +384,7 @@ var app = window.app || (window.app = {});
 			}, this);
 		}
 	});
-/**..g) PlayButton */
+/**..h) PlayButton */
 	/** Button that toggles play/pause on feed */
 	var PlayButton = Backbone.View.extend({
 		tagName: 'button',
@@ -331,7 +426,7 @@ var app = window.app || (window.app = {});
 			}
 		}
 	});
-/**..h) SiteListView */
+/**..i) SiteListView */
 	// List of each available site -- alternative to map view. */
 	var SiteListView = Backbone.View.extend({
 		el: '#sites',
@@ -357,7 +452,7 @@ var app = window.app || (window.app = {});
 			app.Router.navigate('sites/' + siteId, {trigger: true});
 		}
 	});
-/**..i) MenuListView */
+/**..j) MenuListView */
 	var MenuListView = Backbone.View.extend({
 		el: '#sub-menu',
 		render: function() {
@@ -380,7 +475,7 @@ var app = window.app || (window.app = {});
 			this.listenTo(app.Model.SiteViews, 'reset', this.render);
 		}
 	});
-/**..j) MenuElement */			
+/**..k) MenuElement */			
 	var MenuElement = Backbone.View.extend({
 		tagName: 'li',
 		className: 'feed-link',
@@ -397,7 +492,7 @@ var app = window.app || (window.app = {});
 		}
 	});
 	app.View.MenuElement =  MenuElement;
-/**..k) SiteElement */
+/**..l) SiteElement */
 	var SiteElement = Backbone.View.extend({
 		tagName: 'li',
 		className: 'site-link',
@@ -412,7 +507,7 @@ var app = window.app || (window.app = {});
 		}
 	});
 	app.View.SiteElement = SiteElement;
-/**..l) Menu */
+/**..m) Menu */
 	var Menu = Backbone.View.extend({
 		el: '#options-menu',
 		events: {
@@ -434,7 +529,7 @@ var app = window.app || (window.app = {});
 			$('#info-view').show();
 		}
 	});
-/**..m) Full Screen Button */
+/**..n) Full Screen Button */
 	var FullScreenButton = Backbone.View.extend({
 		tagName: 'button',
 		initialize: function() {

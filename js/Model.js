@@ -153,7 +153,7 @@ var app = window.app || (window.app = {});
   // Holds current framerate for camera feed
   var FrameRateModel = Backbone.Model.extend({
     defaults: {
-      'value': 6, // Initial value on framerate slider
+      'value': 1, // Initial value on framerate slider
       'max'  : 10 // Max on framerate slider
     }
   });
@@ -284,6 +284,22 @@ var app = window.app || (window.app = {});
     _screenshot: function() {
       var loc = app.Model.Feed.get('requestAddr') + '/jpeg?attachment=true';
       window.location.href=loc;
+    },
+    _position: function(args) {
+      var that, actions = [], action, pan, tilt, i;
+
+      that = this;
+      actions['pan'] = "?ctrl=apan&amp;imagewidth=" + args.imgWidth + "&amp;value=?" + args.width;
+      actions['tilt'] = "?ctrl=atilt&amp;imageheight=" + args.imgHeight + "&amp;value=?" + args.height;
+      for(action in actions) {
+        $.ajax({
+          url: that.get('handler') + actions[action],
+          dataType: 'jsonp',
+          complete: function() {
+              
+          }
+        });
+      }
     }
   });
   app.Model.Robot = new Robot;

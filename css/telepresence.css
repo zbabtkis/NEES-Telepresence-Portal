@@ -82,7 +82,7 @@
 	float: left;
 	width: 100%;
 }
-#TPS-Viewer h3 {
+#TPS-Viewer h3, #TPS-Viewer h4 {
 	color: #eee;
 }
 #tps-viewer-menu {

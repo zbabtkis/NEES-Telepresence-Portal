@@ -6,25 +6,15 @@ var app = window.app || (window.app = {});
   'use strict';
 
   app.Settings = {
-    // Gmaps initial rendering options
-    map: {
-      options: {
-        center: new google.maps.LatLng(33.3, -116.0),
-        zoom: 8,
-        mapTypeId: google.maps.MapTypeId.HYBRID
-      }
-    },
     // Locations loaded in map or main list view.
     locations: [
       {
         loc: "Garner Valley SFSI Field Site",
         site_id: 1,
-        position: new google.maps.LatLng(33.0974, -115.531)
       },
       {
         loc: "Wildlife Liquefaction Array",
         site_id: 2,
-        position: new google.maps.LatLng(33.669, -116.674)
       }
     ],
     // Site specific views that get loaded when user clicks site.

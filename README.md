@@ -12,7 +12,7 @@ Features
 
 Installation
 ------------
-This module comes pre-configured to connect to the UCSB NEES video feed, so just install it in Drupal and navigate to /nvf2
+This module comes pre-configured to connect to the UCSB NEES video feed, so just install it in Drupal and navigate to /telepresence
 
 If you need to use this app to access another stream, follow the instructions in app.settings.js in the js folder. You'll be up and running with just a few modifactions to the JSON object!
 

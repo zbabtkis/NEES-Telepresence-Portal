@@ -295,8 +295,8 @@ var app = window.app || (window.app = {});
 			this.ctx().lineTo(this.el.height - 10, this.centerY);
 			this.ctx().stroke();
 		},
-		drawPointer: function(x, y, color, boundary) {
-			var rad = (boundary || 100)/10;
+		drawPointer: function(x, y, color, dist) {
+			var rad = (dist + 10 || 100)/10;
 
 			// Draws small circle to select camera angle.
 			this.ctx().beginPath();
@@ -318,19 +318,19 @@ var app = window.app || (window.app = {});
 			return(dist);
 		},
 		movePointer: function(e, color) {
-			var x, y, boundary;
+			var x, y, dist;
 
 			x = e.pageX - this.el.offsetLeft;
 			y = e.pageY - this.el.offsetTop;
 
-			boundary = this.inBoundary(x, y);
+			dist = this.inBoundary(x, y);
 
 			// Make sure pointer is inside background-circle.
-			if(boundary <= this.canvasR) {
+			if(dist <= this.canvasR) {
 				this.el.style.cursor = 'none';
 				this.removePointer();
 				this.drawCircle();
-				this.drawPointer(x, y, '#09f', boundary);
+				this.drawPointer(x, y, '#09f', dist);
 			} else {
 				this.el.style.cursor = 'normal';
 			}

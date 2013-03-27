@@ -320,8 +320,9 @@ var app = window.app || (window.app = {});
 		movePointer: function(e, color) {
 			var x, y, boundary;
 
-			x = e.offsetX;
-			y = e.offsetY;
+			x = e.pageX - this.el.offsetLeft;
+			y = e.pageY - this.el.offsetTop;
+
 			boundary = this.inBoundary(x, y);
 
 			// Make sure pointer is inside background-circle.
@@ -342,8 +343,8 @@ var app = window.app || (window.app = {});
 			var x, y, scale, args;
 
 			// Get current point on the graph for sending to Robot model.
-			x = e.offsetX + ',13';
-			y = '13,' + e.offsetY ;
+			x = e.pageX - this.el.offsetLeft + ',13';
+			y = '13,' + e.pageY - this.el.offsetTop ;
 
 			// For camera to set camera position.
 			args = {

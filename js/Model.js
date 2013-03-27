@@ -30,20 +30,10 @@ var app = window.app || (window.app = {});
 
   // Site Locations -- rendered in list or map
   var SiteModel = Backbone.Model.extend({
-    defaults: {
-      'loc': 'Garner Valley Downhole Array',
-      'id': 0
-    }
   });
 
   // Site Location Views
   var SiteViewModel = Backbone.Model.extend({
-    defaults: {
-      'title' : 'Full-Size',
-      'loc'   : 'Garner Valley SFSI Field Site',
-      'type'  : 'Full-Size',
-      'site_id' : 1
-    }
   });
 
   // Holds current feed data (urls to access various feed types -- eg. moving, paused)
@@ -54,9 +44,7 @@ var app = window.app || (window.app = {});
       this.listenTo(app.Model.FrameRate, 'change:value', this.getFeed);
     },
     defaults: {
-      'type'   : 'Full-Size',
-      'loc'    : 'Garner Vallye SFSI Field Site',
-      'baseUrl': 'http://tpm.nees.ucsb.edu/feeds/'
+      'baseUrl': app.Settings.baseURL
     },
     // update requestAddress with location/view of current selection
     updateFeed: function() {

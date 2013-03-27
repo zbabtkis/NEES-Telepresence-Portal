@@ -45,11 +45,9 @@ var app = window.app || (window.app = {});
 	var InfoView = Backbone.View.extend({
 		el: '#info-view .inner-view',
 		initialize: function() {
-			var header, txt;
+			var txt;
 			this.listenTo(app.Router, 'helpRequest', this.help);
-			header = $("<h3 />").html('Help');
 			txt = Drupal.settings.telepresence_about;
-			header.appendTo(this.$el);
 			this.$el.append(txt);
 		},
 		help: function() {
@@ -149,7 +147,6 @@ var app = window.app || (window.app = {});
 		change: function() {
 			// Change image source to new feed if image load is success -- otherwise handle feed failure.
 			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(this._fail).load(this._loaded);
-			this.trigger('newStreamInitialized');
 		},
 		_fail: function() {
 			var unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
@@ -157,6 +154,7 @@ var app = window.app || (window.app = {});
 			this._disableActions();
 		},
 		_loaded: function() {
+			this.trigger('newStreamInitialized');
 			this._enableActions();
 		},
 		_enableActions: function() {
@@ -208,7 +206,7 @@ var app = window.app || (window.app = {});
 		initialize: function() {
 			var action,
 				aButton;
-			this.$el.html('<h3>Camera Controls</h3>');
+			this.$el.html('<h4>Camera Controls</h4>');
 			this.cameraActions = [];
 			// Creates Camera Button instances for each robotic action.
 			this.cameraActions['zoomIn'] = new CameraButtonView({'title': 'Zoom In', 'action': 'zoom', 'value': 'in'});
@@ -233,7 +231,7 @@ var app = window.app || (window.app = {});
 			}
 			$(this.parent).append(this.$el.hide());
 			this.cAngle = new AngleControlView();
-			this.$el.append("<h4>Camera Angle</h4>");
+			this.$el.append("<h5>Camera Angle</h5>");
 			this.$el.append(this.cAngle.$el);
 		},
 		enable: function() {
@@ -530,6 +528,9 @@ var app = window.app || (window.app = {});
 			'click #listMaker':'getList',
 			'click #helpMaker':'getHelp'
 		},
+		initialize: function() {
+			this.on('toggleMenu', this.toggleMenu);
+		},
 		getList: function() {
 			app.Router.navigate('sites', {trigger: true});
 		},
@@ -537,12 +538,37 @@ var app = window.app || (window.app = {});
 			app.Router.navigate('help',{trigger: true});
 		},
 		showList: function() {
-			$('#info-view').hide();
-			$('#nav').show();
+			$('#info-view').slideUp('fast', function() {
+				$('#info-view').hide();
+				app.View.MenuHeader.trigger('changeMenu','Site Cameras');
+				$('#nav').slideDown();
+			});
 		},
 		showHelp: function() {
-			$('#nav').hide();
-			$('#info-view').show();
+			$('#nav').slideUp('fast', function() {
+				$('#nav').hide();
+				app.View.MenuHeader.trigger('changeMenu', 'Help');
+				$('#info-view').slideDown();
+			});
+		},
+		toggleMenu: function() {
+			$('#telepresence-dashboard').toggle('slide', {direction: 'up'}, 200);
+		}
+	});
+/**..n) Menu Header */
+	var MenuHeader = Backbone.View.extend({
+		el: "#menu-header",
+		events: {
+			'click': 'toggle'
+		},
+		initialize: function() {
+			this.on('changeMenu', this.changeHeading);
+		},
+		toggle: function() {
+			app.View.Menu.trigger('toggleMenu');
+		},
+		changeHeading: function(v) {
+			$("#menu-header h4").html(v);
 		}
 	});
 /**..n) Full Screen Button */
@@ -583,6 +609,7 @@ var app = window.app || (window.app = {});
 		app.View.SiteList = new SiteListView();
 		app.View.MenuList = new MenuListView();
 		app.View.Menu = new Menu();
+		app.View.MenuHeader = new MenuHeader();
 		app.View.Info = new InfoView();
 		app.trigger('viewsRendered');
 	});

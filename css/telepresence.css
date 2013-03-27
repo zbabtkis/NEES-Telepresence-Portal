@@ -45,11 +45,22 @@
  2) App Menu
  -------------------------------------------------
  */
+#options-menu, #telepresence-dashboard {
+	float: left;
+	width: 100%;
+}
+#menu-header {
+	float: left;
+	width: 100%;
+	cursor: pointer;
+	padding: 0;
+	background: #1A1A1A;
+	margin: 10px 0 0 0;
+}
 #info-view .inner-view {
 	padding: 5px;
 }
 #nav , #info-view {
-	margin-top: 15px;
 	background: #222;
 	float: left;
 	width: 100%;
@@ -57,13 +68,14 @@
 }
 #nav label{
 	border-bottom: 2px solid #eee;
-	padding: 10px;
+	padding: 5px;
+	font-weight: bold;
+	cursor: default;
 }
 #nav ul {
 	margin: 0;
 	padding: 0;
 	list-style: none;
-	padding: 5px;
 }
 #nav li {
 	cursor: pointer;
@@ -82,8 +94,9 @@
 	float: left;
 	width: 100%;
 }
-#TPS-Viewer h3, #TPS-Viewer h4 {
+#TPS-Viewer h3, #TPS-Viewer h4, #TPS-Viewer h5 {
 	color: #eee;
+	text-align: center;
 }
 #tps-viewer-menu {
 	float: left;

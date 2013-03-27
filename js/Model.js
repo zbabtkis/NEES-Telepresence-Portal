@@ -255,7 +255,6 @@ var app = window.app || (window.app = {});
       var time = '?timestamp=' + Date.now();
       // Allow view to detect change in feed by appending current time to url.
       app.Model.Feed.set('fullRequest', currentRequest + time);
-      console.log(app.Model.Feed.get('fullRequest'));
     },
     _home: function() {
       var that = this;

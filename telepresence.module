@@ -81,10 +81,10 @@ function telepresence_page() {
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/imagesLoaded.min.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/underscore-min.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/libs/backbone-min.js');
+	drupal_add_js(drupal_get_path('module','telepresence') . '/js/app.settings.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/Model.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/View.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/Router.js');
-	drupal_add_js(drupal_get_path('module','telepresence') . '/js/app.settings.js');
 	drupal_add_js(drupal_get_path('module','telepresence') . '/js/App.js');
 
 	$about = telepresence_get_settings();

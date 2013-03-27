@@ -321,6 +321,7 @@ var app = window.app || (window.app = {});
 			x = e.pageX - this.el.offsetLeft;
 			y = e.pageY - this.el.offsetTop;
 
+			color = color || '#09f';
 			dist = this.inBoundary(x, y);
 
 			// Make sure pointer is inside background-circle.
@@ -328,14 +329,14 @@ var app = window.app || (window.app = {});
 				this.el.style.cursor = 'none';
 				this.removePointer();
 				this.drawCircle();
-				this.drawPointer(x, y, '#09f', dist);
+				this.drawPointer(x, y, color, dist);
 			} else {
 				this.el.style.cursor = 'normal';
 			}
 		},
 		active: function(e) {
 			// Draw pointer as orange if when user clicks a point.
-			this.drawPointer(e.offsetX, e.offsetY, 'orange');
+			this.movePointer(e, 'orange');
 		},
 		getValues: function(e) {
 			var x, y, scale, args;

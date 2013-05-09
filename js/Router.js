@@ -26,6 +26,7 @@ var app = window.app || (window.app = {});
       'sites': 'sitesPage',
       'help': 'helpPage', // Displays map for selecting site.
       'sites/:site': 'sitesPage', // Display list of site views.
+      'sites/:site/:view': 'feedPage'
     },
     helpPage: function() {
       this.trigger('helpRequest');
@@ -36,12 +37,14 @@ var app = window.app || (window.app = {});
       app.View.SiteList.render();
       // Render the second menu layer (site views) under the site list
       if (s) {
+        //If pushState, change %20 to space
+        s = unescape(s);
         app.Model.SiteViews.updateViewsList(s);
-        // Listen for user view selection
-        this.listenTo(app.View.MenuList, 'feed-requested', function () {
-          app.Model.FeedModel.set({loc: v.l, type: v.t});
-        });
       }
+    },
+    feedPage: function(loc, view) {
+      this.sitesPage(loc);
+      app.Model.Feed.set({loc: loc, type: view});
     }
   });
   app.Router = new Router();

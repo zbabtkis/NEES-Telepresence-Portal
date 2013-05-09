@@ -28,17 +28,18 @@
 	width: 100% !important;
 	border: 1px solid #054B81;
 }
-#main-content-header {
-	background-color: #06A;
-	border-bottom: 3px solid #09F;
+#page-header, #main-content-header {
+	background-color: #07C;
 	color: white;
 	height: 80px;
 	width: 100%;
 }
-#main-content header h1{
+#page-title{
 	float: left;
 	font-size: 26px;
 	padding: 15px;
+	margin-top: 0;
+	padding: 10px;
 }
 /** 
  -------------------------------------------------
@@ -52,25 +53,28 @@
 #menu-header {
 	float: left;
 	width: 100%;
-	cursor: pointer;
 	padding: 0;
-	background: #1A1A1A;
+	background: #111;
 	margin: 10px 0 0 0;
+	border-bottom: 1px solid #eee;
+}
+#menu-header h4 {
+	margin: -40px auto;
+	cursor: pointer;
+	width: 140px;
 }
 #info-view .inner-view {
 	padding: 5px;
 }
-#nav , #info-view {
-	background: #222;
+#nav {
+	background: #111;
 	float: left;
 	width: 100%;
 	color: #eee;
 }
-#nav label{
-	border-bottom: 2px solid #eee;
-	padding: 5px;
-	font-weight: bold;
-	cursor: default;
+#info-view {
+	background: #eee;
+	color: #222;
 }
 #nav ul {
 	margin: 0;
@@ -82,8 +86,35 @@
 	padding: 6px;
 }
 #nav li:hover {
-	background: #054B81;
+	background: #07C;
 }
+
+#nav li.active {
+	background: #111;
+}
+#nav li.active:hover {
+	background: #111;
+	cursor: default;
+}
+#sub-menu {
+	background: #222;
+}
+#sub-menu li{
+	padding-left: 20px;
+}
+#sub-menu li:hover {
+	background: #07c;
+	color: #eee;
+}
+.site-link.active:after {
+	content: "\25BC";
+	float: right;
+}
+.site-link:after {
+content: "\25B6";
+float: right;
+}
+
 /** 
  -------------------------------------------------
  3) App Content
@@ -115,12 +146,20 @@
 	width: 100%;
 	background: #222;
 }
-#nvf-frame img.image-default {
+#nvf-frame img.fail, #nvf-frame img.image-default, #nvf-frame img.fullScreen {
 	max-height: 100%;
 }
 #stream {
 	height: 385px;
-	background-height: ;
+	background: #222;
+}
+#stream .telepresence-message{
+	top: 50%;
+	position: absolute;
+	margin: -38.5px auto;
+	width: 100%;
+	text-align: center;
+	color: #777;
 }
 #map-view {
 	width: 100%;

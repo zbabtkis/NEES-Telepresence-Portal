@@ -255,7 +255,6 @@ var app = window.app || (window.app = {});
       var time = '?timestamp=' + Date.now();
       // Allow view to detect change in feed by appending current time to url.
       app.Model.Feed.set('fullRequest', currentRequest + time);
-      console.log(app.Model.Feed.get('fullRequest'));
     },
     _home: function() {
       var that = this;
@@ -313,8 +312,15 @@ var app = window.app || (window.app = {});
   var SiteViewCollection = Backbone.Collection.extend({
     model: SiteViewModel,
     // Load site views from app.Settings -- set when site is chosen or updated.
-    updateViewsList: function (siteId) {
-      var newViews = [];
+    updateViewsList: function (loc) {
+      var siteId, newViews = [];
+      for(var a in app.Settings.locations) {
+        // Get matching site id.
+        if(app.Settings.locations[a].loc == loc) {
+          var siteId = app.Settings.locations[a].site_id;
+          break;
+        }
+      }
       for(var i in app.Settings.views) {
         // Grab views that are associated with site location by site_id property.
         if(app.Settings.views[i].site_id == siteId) {

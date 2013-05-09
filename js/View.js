@@ -45,11 +45,9 @@ var app = window.app || (window.app = {});
 	var InfoView = Backbone.View.extend({
 		el: '#info-view .inner-view',
 		initialize: function() {
-			var header, txt;
+			var txt;
 			this.listenTo(app.Router, 'helpRequest', this.help);
-			header = $("<h3 />").html('Help');
 			txt = Drupal.settings.telepresence_about;
-			header.appendTo(this.$el);
 			this.$el.append(txt);
 		},
 		help: function() {
@@ -62,6 +60,7 @@ var app = window.app || (window.app = {});
 		initialize: function() {
 			_.bindAll(this);
 			this.addFancyElements();
+			this.$el.append("<h1 class='telepresence-message'>Select a stream</h1>");
 		},
 		render: function() {
 			var that = this;
@@ -70,8 +69,6 @@ var app = window.app || (window.app = {});
 				that.$el.html('');
 				// Append new stream image to view.
 				that.$el.append(app.View.FeedImage.$el);
-				// Remove any default backgrounds.
-				that.$el.css({'background': 'none'});
 				// Resize wrapper to match image size.
 				that.resize();
 				that.$el.append(that.translucent);
@@ -81,25 +78,11 @@ var app = window.app || (window.app = {});
 			// Awesome spinny preloader provided by spin.js :).
 			this.spinner = new Spinner({
 				color:'#eee'
-			}).spin(this.$el);
-			// Position spinner in center of video feed.
-			this.$spinner = $(this.spinner.el);
-			this.$spinner.css({
-				'top':'50%',
-				'left': '50%',
-				'position': 'absolute',
-				'z-index': '999999999999999999'
 			});
+
+			// Position spinner in center of video feed.
 
 			this.translucent = $('<div />').addClass('transparentBox').hide();
-
-			this.selectAStream = $('<img />').attr({
-				'src':'/' + Drupal.settings.modulePath + '/css/img/select-a-stream.jpg',
-				'alt': "Select a stream",
-				'title': "Select a stream",
-				'class': 'image-default'
-			});
-			this.$el.html(this.selectAStream);
 		},
 		fullScreen: function() {
 			// Create translucent background over app during full screen mode.
@@ -124,7 +107,16 @@ var app = window.app || (window.app = {});
 			this.listenTo(app.View.FullScreenButton, 'fullScreen', that.fullScreen);
 		},
 		loading: function() {
-			this.$el.append(this.$spinner);
+			this.spinner.spin(this.el);
+		},
+		loadFail: function() {
+			this.spinner.stop();
+			this.$el.html('');
+			this.$el.append("<h1 class='telepresence-message'>Unable to load stream</h1>");
+		},
+		loadSuccess: function() {
+			this.spinner.stop();
+			this.$el.addClass('stream-loaded');
 		},
 		resize: function() {
 			var imgSize;
@@ -140,6 +132,11 @@ var app = window.app || (window.app = {});
 	var FeedImage = Backbone.View.extend({
 		tagName: 'img',
 		className: 'feed-image',
+		initialize: function() {
+			if(this._cameraAngle) {
+				this.$el.css('cursor','pointer');
+			}
+		},
 		listen: function() {
 			var that = this;
 			_.bindAll(this);
@@ -149,14 +146,16 @@ var app = window.app || (window.app = {});
 		change: function() {
 			// Change image source to new feed if image load is success -- otherwise handle feed failure.
 			this.$el.attr('src',app.Model.Feed.get('fullRequest')).error(this._fail).load(this._loaded);
-			this.trigger('newStreamInitialized');
 		},
 		_fail: function() {
-			var unavailable = '/' + Drupal.settings.modulePath + '/css/img/stream-unavailable.jpg';
-			this.$el.attr('src', unavailable);
+			this.$el.hide();
+			app.View.Stream.loadFail();
 			this._disableActions();
 		},
 		_loaded: function() {
+			this.$el.show();
+			app.View.Stream.loadSuccess();
+			this.trigger('newStreamInitialized');
 			this._enableActions();
 		},
 		_enableActions: function() {
@@ -164,12 +163,37 @@ var app = window.app || (window.app = {});
 			app.View.FullScreenButton.enable();
 			app.View.Slider.enable();
 			app.View.CameraControl.enable();
+			if(typeof this.$el.RemoveClass == 'function') {
+				this.$el.RemoveClass('fail image-default');
+			}
 		},
 		_disableActions: function() {
 			app.View.Play.disable();
 			app.View.FullScreenButton.disable();
 			app.View.Slider.disable();
 			app.View.CameraControl.disable();
+			this.$el.addClass('fail');
+		},
+		events: {
+			'click': '_cameraAngle'
+		},
+		_cameraAngle: function(e) {
+			var x, y, scale, args;
+
+			// Get current point on the graph for sending to Robot model.
+			x = e.pageX - this.$el.offset().left + ',13';
+			y = '13,' + e.pageY - this.$el.offset().top;
+
+			// For camera to set camera position.
+			args = {
+				'width': x,
+				'height': y,
+				'imgWidth': this.el.width,
+				'imgHeight': this.el.height
+			};
+
+			// Send command to Robot.
+			app.Model.Robot.robotCommand('position', args);
 		}
 	});
 /**..d) CameraButtonView */
@@ -208,7 +232,7 @@ var app = window.app || (window.app = {});
 		initialize: function() {
 			var action,
 				aButton;
-			this.$el.html('<h3>Camera Controls</h3>');
+			this.$el.html('<h4>Camera Controls</h4>');
 			this.cameraActions = [];
 			// Creates Camera Button instances for each robotic action.
 			this.cameraActions['zoomIn'] = new CameraButtonView({'title': 'Zoom In', 'action': 'zoom', 'value': 'in'});
@@ -233,7 +257,7 @@ var app = window.app || (window.app = {});
 			}
 			$(this.parent).append(this.$el.hide());
 			this.cAngle = new AngleControlView();
-			this.$el.append("<h4>Camera Angle</h4>");
+			this.$el.append("<h5>Camera Angle</h5>");
 			this.$el.append(this.cAngle.$el);
 		},
 		enable: function() {
@@ -269,7 +293,7 @@ var app = window.app || (window.app = {});
 
 			this.drawCircle();
 
-			// Events for collecting coordinates nad redrawing.
+			// Events for collecting coordinates and redrawing.
 			this.$el.on('mouseenter mousemove', this.movePointer);
 			this.$el.on('click', this.getValues);
 			this.$el.on('mousedown', this.active);
@@ -320,9 +344,10 @@ var app = window.app || (window.app = {});
 		movePointer: function(e, color) {
 			var x, y, dist;
 
-			x = e.pageX - this.el.offsetLeft;
-			y = e.pageY - this.el.offsetTop;
+			x = e.pageX - this.$el.offset().left;
+			y = e.pageY - this.$el.offset().top;
 
+			color = color || '#09f';
 			dist = this.inBoundary(x, y);
 
 			// Make sure pointer is inside background-circle.
@@ -330,14 +355,14 @@ var app = window.app || (window.app = {});
 				this.el.style.cursor = 'none';
 				this.removePointer();
 				this.drawCircle();
-				this.drawPointer(x, y, '#09f', dist);
+				this.drawPointer(x, y, color, dist);
 			} else {
 				this.el.style.cursor = 'normal';
 			}
 		},
 		active: function(e) {
 			// Draw pointer as orange if when user clicks a point.
-			this.drawPointer(e.offsetX, e.offsetY, 'orange');
+			this.movePointer(e, 'orange');
 		},
 		getValues: function(e) {
 			var x, y, scale, args;
@@ -457,35 +482,37 @@ var app = window.app || (window.app = {});
 			this.$el.show();
 		},
 		addMenu: function(item) {
-			var newMenu = new SiteElement({menu:item});
+			var newMenu = new SiteElement(item.attributes);
 			this.$el.append(newMenu.$el);
-		},
-		events: {
-			'click li':'openSite'
-		},
-		openSite: function(e) {
-			var siteId = $(e.target).data('siteId');
-			app.Router.navigate('sites/' + siteId, {trigger: true});
 		}
 	});
 /**..j) MenuListView */
 	var MenuListView = Backbone.View.extend({
 		el: '#sub-menu',
-		render: function() {
+		render: function(c) {
+			var $parent, that = this;
+
 			this.$el.html('');
-			var that = this;
+
+			// Make sure sub-menu contains links.
+			if(c.models[0]) {
+				var siteLinks = $('.site-link');
+
+				$('.site-link.active').removeClass('active');
+
+				// Get parent li element form matching site location in model.
+				$parent = siteLinks.filter(function() {
+					var f = $(this).data('siteLoc') == c.models[0].get('loc');
+					return f;
+				})
+				$parent.addClass('active');
+				this.$el.insertAfter($parent);
+			}
+
 			app.Model.SiteViews.forEach(function(item) {
-				var newMenu = new MenuElement({menu:item});
+				var newMenu = new MenuElement(item.attributes);
 				that.$el.append(newMenu.$el);
 			});
-		},
-		events: {
-			'click li': 'openFeed'
-		},
-		openFeed: function(e) {
-			var loc  = $(e.target).data('loc'),
-				type = $(e.target).data('type');
-			app.Model.Feed.set({type: type, loc: loc});
 		},
 		listen: function() {
 			this.listenTo(app.Model.SiteViews, 'reset', this.render);
@@ -497,14 +524,22 @@ var app = window.app || (window.app = {});
 		className: 'feed-link',
 		attributes: function(){
 			return {
-				'data-loc': this.options.menu.attributes['loc'],
-				'data-type': this.options.menu.attributes['type']
+				'data-loc': this.options.loc,
+				'data-type': this.options.title
 			};
 		},
 		initialize: function() {
 			var self = this;
-			var title = this.options.menu.attributes['title'];
+			var title = this.options.title;
 			this.$el.html(title);
+		},
+		events: {
+			'click' : 'openFeed'
+		},
+		openFeed: function() {
+			var loc = this.$el.data('loc');
+			var type = this.$el.data('type');
+			app.Router.navigate('sites/' + loc + '/' + type, {trigger: true});
 		}
 	});
 	app.View.MenuElement =  MenuElement;
@@ -514,11 +549,21 @@ var app = window.app || (window.app = {});
 		className: 'site-link',
 		attributes: function(){
 			return {
-				'data-site-id': this.options.menu.attributes.site_id
+				'data-site-loc': this.options.loc
 			};
 		},
+		events: {
+			'click': 'openViews'
+		},
+		openViews: function(e) {
+			if(this.el = e.target) {
+				var loc = this.options.loc;
+
+				app.Router.navigate('sites/' + loc, {trigger: true});
+			}
+		},
 		initialize: function() {
-			var title = this.options.menu.attributes['loc'];
+			var title = this.options.loc;
 			this.$el.html(title);
 		}
 	});
@@ -530,6 +575,9 @@ var app = window.app || (window.app = {});
 			'click #listMaker':'getList',
 			'click #helpMaker':'getHelp'
 		},
+		initialize: function() {
+			this.on('toggleMenu', this.toggleMenu);
+		},
 		getList: function() {
 			app.Router.navigate('sites', {trigger: true});
 		},
@@ -537,12 +585,37 @@ var app = window.app || (window.app = {});
 			app.Router.navigate('help',{trigger: true});
 		},
 		showList: function() {
-			$('#info-view').hide();
-			$('#nav').show();
+			$('#info-view').slideUp('fast', function() {
+				$('#info-view').hide();
+				app.View.MenuHeader.trigger('changeMenu','Site Cameras');
+				$('#nav').slideDown();
+			});
 		},
 		showHelp: function() {
-			$('#nav').hide();
-			$('#info-view').show();
+			$('#nav').slideUp('fast', function() {
+				$('#nav').hide();
+				app.View.MenuHeader.trigger('changeMenu', 'Help');
+				$('#info-view').slideDown();
+			});
+		},
+		toggleMenu: function() {
+			$('#telepresence-dashboard').toggle('slide', {direction: 'up'}, 200);
+		}
+	});
+/**..n) Menu Header */
+	var MenuHeader = Backbone.View.extend({
+		el: "#menu-header",
+		events: {
+			'click': 'toggle'
+		},
+		initialize: function() {
+			this.on('changeMenu', this.changeHeading);
+		},
+		toggle: function() {
+			app.View.Menu.trigger('toggleMenu');
+		},
+		changeHeading: function(v) {
+			$("#menu-header h4").html(v);
 		}
 	});
 /**..n) Full Screen Button */
@@ -583,6 +656,7 @@ var app = window.app || (window.app = {});
 		app.View.SiteList = new SiteListView();
 		app.View.MenuList = new MenuListView();
 		app.View.Menu = new Menu();
+		app.View.MenuHeader = new MenuHeader();
 		app.View.Info = new InfoView();
 		app.trigger('viewsRendered');
 	});

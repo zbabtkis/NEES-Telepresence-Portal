@@ -22,7 +22,7 @@ var app = window.app || (window.app = {});
   'use strict';
 
   app.version = "7.x-1.0";
-
+  
   _.extend(app, Backbone.Events);
 
   // Views must be rendered on document ready before Router
@@ -30,7 +30,7 @@ var app = window.app || (window.app = {});
   app.on('viewsRendered', function () {
     app.init();
     // Wait to listen for routes until router has been instantiated
-    Backbone.history.start();
+    Backbone.history.start({pushState: true, root: '/telepresence/'});
   });
 
   app.init = function () {

@@ -13,9 +13,9 @@
 				</article>
 			</div>
 			<div id='nav'>
-				<label>Main Sites</label><ul id='sites'></ul>
-				<div id='map-view'></div>
-				<label>Site Views</label><ul id='sub-menu'></ul>
+				<ul id='sites'>
+					<ul id='sub-menu'></ul>
+				</ul>
 			</div>
 		</section>
 	</aside>

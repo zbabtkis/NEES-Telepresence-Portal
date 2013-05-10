@@ -1,22 +1,14 @@
+<script data-main="<?php print $module_path; ?>/js/main" src="<?php print $module_path; ?>/js/libs/require.js"></script>
 <div id="TPS-Viewer">
 	<aside id='tps-viewer-menu'>
-		<nav id='options-menu'>
-			<button id='helpMaker' class='camera-action' alt='Show Help' title='Show Help'></button>
-			<button id='listMaker' class='camera-action' alt='Show Sites List' title='Show Sites List'></button>
+		<nav id='tps-tabs'>
+			<button id='help-tab' class='camera-action' alt='Show Help' title='Show Help'></button>
+			<button id='list-tab' class='camera-action' alt='Show Sites List' title='Show Sites List'></button>
 		</nav>
 		<header id='menu-header'>
 			<h4></h4>
 		</header>
 		<section id='telepresence-dashboard'>
-			<div id='info-view'>
-				<article class='inner-view'>
-				</article>
-			</div>
-			<div id='nav'>
-				<ul id='sites'>
-					<ul id='sub-menu'></ul>
-				</ul>
-			</div>
 		</section>
 	</aside>
 	<div id="content-wrapper">
@@ -29,4 +21,4 @@
 			</div>
 		</div>
 	</div>
-</div>                  
+</div>

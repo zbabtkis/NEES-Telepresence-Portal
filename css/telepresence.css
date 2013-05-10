@@ -283,12 +283,12 @@ float: right;
 	_background: url('img/camera-actions_ie.gif');
 	*background: url('img/camera-actions_ie.gif');
 }
-#helpMaker {
+#help-tab {
 	background-position: 576px 36px;
 	float: left;
 	margin: 0;
 }
-#listMaker {
+#list-tab {
 	background-position: 540px 36px;
 	float: right;
 	margin: 0;
@@ -340,10 +340,10 @@ float: right;
 	background-position: 36px 36px;
 }
 /** Camera Controls -- Hover */
-#helpMaker:hover {
+#help-tab:hover {
 	background-position: 576px 0;
 }
-#listMaker:hover {
+#list-tab:hover {
 	background-position: 540px 0;
 }
 .screenshot-action:hover {

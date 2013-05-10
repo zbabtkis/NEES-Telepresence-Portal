@@ -27,11 +27,7 @@ var app = window.app || (window.app = {});
 
   'use strict';
   app.Model ={};
-
-  // Site Locations -- rendered in list or map
-  var SiteModel = Backbone.Model.extend({
-  });
-
+  
   // Site Location Views
   var SiteViewModel = Backbone.Model.extend({
   });
@@ -295,19 +291,6 @@ var app = window.app || (window.app = {});
   *   COLLECTIONS
   **************************************/
 
-  var SiteCollection = Backbone.Collection.extend({
-    model: SiteModel,
-    // Load site locations from app.Settings.
-    getSettings: function () {
-      var sites = [];
-      for(var i in app.Settings.locations) {
-        sites.push(new SiteModel(app.Settings.locations[i]));
-      }
-      // Reset sites.
-      this.reset(sites);
-    }
-  });
-  app.Model.Sites = new SiteCollection();
 
   var SiteViewCollection = Backbone.Collection.extend({
     model: SiteViewModel,

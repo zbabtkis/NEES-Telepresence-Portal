@@ -1,31 +1,29 @@
-define(['Model/Site'], function(Site) {
+define([
+    'Model/Site'
+  , 'app.settings'
+  , 'underscore'
+  , 'backbone'], 
+
+  function(Site, settings) {
   'use strict';
 
   var Sites, sites;
 
   Sites = Backbone.Collection.extend({
-    model: Site
+    model: Site,
+    initialize: function() {
+      var that = this,
+          inst = [];
+
+      for(var i in settings.locations) {
+        inst.push(new Site(settings.locations[i]));
+      }
+      // Reset sites.
+      that.reset(inst);
+    }
   });
 
-  return {
-    initialize: function() {
-      if(!sites) {
-        sites = new Sites();
-      }
-    },
-    getSettings: function () {
-      if(!sites) {
-        this.initialize();
-      }
+  var sites = new Site();
 
-      require(['text!app.settings.js'], function(settings) {
-        var inst = [];
-        for(var i in settings.locations) {
-          inst.push(new Site(settings.locations[i]));
-        }
-        // Reset sites.
-        sites.reset(inst);
-      });
-    }
-  }
+  return sites;
 });

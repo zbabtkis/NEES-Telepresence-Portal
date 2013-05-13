@@ -19,9 +19,7 @@ define(['underscore','backbone'], function () {
       });
     },
     sitesPage: function (s) {
-      // Load Sites from app settings.
-      require(['Collection/Sites', 'View/Sites'], function(collection, view) {
-        collection.getSettings();
+      require(['View/Sites'], function(view) {
         view.render();
       });
       // Render the second menu layer (site views) under the site list

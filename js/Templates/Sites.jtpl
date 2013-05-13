@@ -1,3 +1,7 @@
 <ul id='site-list'>
+	<% _.each(sites, function(site) { %> 
+		<li data-id=<%= site.site_id %>>
+			<%= site.loc %></li> 
+	<% }); %>
 	<ul id='sub-menu'></ul>
 </ul>

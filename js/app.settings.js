@@ -1,25 +1,8 @@
-/**
- --------------------------------------------------------------------
-      Nees Telepresence -- App Settings
- --------------------------------------------------------------------
- ********************************************************************
- --------------------------------------------------------------------
-                Contents          
- --------------------------------------------------------------------
- 1. BaseURL -- sets the base feed URL.
- 2. locations -- you can add locations here for your monitoring sites.
- 3. views -- location specific camera views.
- --------------------------------------------------------------------
- */
-
-var app = window.app || (window.app = {});
-
-// Holds site information to render in map and list views.
-(function () {
+define(function () {
 
   'use strict';
 
-  app.Settings = {
+  var Settings = {
     // FlexTPS RESTful server base URL.
     baseURL: 'http://tpm.nees.ucsb.edu/feeds/',
     // Locations loaded in map or main list view.
@@ -69,4 +52,6 @@ var app = window.app || (window.app = {});
       }
     ]
   };
-}());
+
+  return Settings;
+});

@@ -14,6 +14,34 @@
  * -----------------------------------------------
  */
 
+.icon {
+	color: white;
+	background: none !important;
+	padding: 15px 20px 15px 0;
+	display: inline-block;
+	width: auto;
+	height: auto;
+	line-height: default;
+	vertical-align: text-top;
+}
+
+.k-slider-horizontal {
+    display: inline-block;
+    float: left;
+    width: 100%;
+    height: 26px;
+}
+
+.k-slider-vertical {
+    display: inline-block;
+    float: left;
+    width: 26px;
+    height: 500px;
+    float: right;
+}
+#player-controls {
+	float: left;
+}
 /** 
  -------------------------------------------------
  1) App Header
@@ -152,6 +180,7 @@ float: right;
 #stream {
 	height: 385px;
 	background: #222;
+	float: left;
 }
 #stream .telepresence-message{
 	top: 50%;
@@ -196,31 +225,6 @@ float: right;
 	left: 0 !important;
 	z-index: 999999999 !important;
 	width: 100%;
-}
-.small {
-	background-position: 722px 36px !important;
-}
-.small:hover {
-	background-position: 722px 0 !important;
-}
-.play-pause {
-	color: white;
-	border: 0;
-	cursor: pointer;
-	background: url('img/camera-actions.png');
-	background-size: 756px 72px;
-	background-position: 684px 36px;
-	height: 36px;
-	width: 36px;
-}
-.play-pause:hover {
-	background-position: 684px 0;
-}
-.play {
-	background-position: 650px 36px !important;
-}
-.play:hover {
-	background-position: 650px 0 !important;
 }
 #slider {
 	width: 75%;
@@ -284,15 +288,12 @@ float: right;
 	*background: url('img/camera-actions_ie.gif');
 }
 #help-tab {
-	background-position: 576px 36px;
 	float: left;
 	margin: 0;
 }
 #list-tab {
-	background-position: 540px 36px;
 	float: right;
 	margin: 0;
-	padding: 0;
 }
 .screenshot-action {
 	background-position: 504px 36px;

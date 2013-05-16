@@ -73,6 +73,10 @@ function telepresence_page() {
 	$about       = telepresence_get_settings();
 	$module_path = drupal_get_path('module', 'telepresence');
 
+	drupal_add_css($module_path . '/css/font-awesome/css/font-awesome.min.css');
+	drupal_add_css($module_path . '/css/kendo.common.min.css');
+	drupal_add_css($module_path . '/css/kendo.black.min.css');
+
 	drupal_add_js(
 		array(
 			'modulePath'         => $module_path,
@@ -81,21 +85,7 @@ function telepresence_page() {
 		'setting'
 	);
 
-	drupal_add_library('system', 'ui.slider');
-	drupal_add_library('system', 'ui.tabs');
 	drupal_add_css($module_path . '/css/telepresence.css');
-	drupal_add_css($module_path . '/js/libs/jQuery UI/css/ui-darkness/jquery-ui-1.10.0.custom.min.css');
-
-	/**drupal_add_js($module_path . '/js/libs/spin.min.js');
-	drupal_add_js($module_path . '/js/libs/imagesLoaded.min.js');
-	drupal_add_js($module_path . '/js/libs/underscore-min.js');
-	drupal_add_js($module_path . '/js/libs/backbone-min.js');
-	drupal_add_js($module_path . '/js/app.settings.js');
-	drupal_add_js($module_path . '/js/Model.js');
-	drupal_add_js($module_path . '/js/View.js');
-	drupal_add_js($module_path . '/js/Controls.js');
-	drupal_add_js($module_path . '/js/Router.js');
-	drupal_add_js($module_path . '/js/App.js');*/
 
 	$page = theme('telepresence_template', array('module_path' => $module_path));
 	

@@ -3,6 +3,7 @@ define([
   , 'View/Sites'
   , 'View/CameraList'
   , 'View/Stream'
+  , 'View/CameraControls'
   , 'underscore'
   , 'backbone'], 
 
@@ -37,8 +38,7 @@ define([
       Cameras.update(site);
     },
     feedView: function(site, cam) {
-      var Stream = require('View/Stream'),
-          Cam;
+      var Stream   = require('View/Stream');
 
       this.camerasList(site);
       Stream.load(cam);

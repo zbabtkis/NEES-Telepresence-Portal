@@ -14,16 +14,19 @@ require([
 	, 'View/Sites'
   	, 'View/Stream'
 	, 'View/Tabs'
+	, 'View/VideoControls'
+	, 'View/CameraControls'
 	, 'Model/Feed'
 	, 'underscore'
 	, 'backbone'], 
 
-	function(Router, Sites, Stream, Tabs, Feed) {
+	function(Router, Sites, Stream, Tabs, VideoControls, CameraControls, Feed) {
 		// Iniitalize major components.
 		Router.initialize();
 		Sites.initialize();
 		Feed.initialize();
-		Stream.initialize();
+		VideoControls.initialize();
+		CameraControls.initialize();
 		Tabs.initialize();
 
 		Backbone.history.start();

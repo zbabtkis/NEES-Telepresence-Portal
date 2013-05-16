@@ -1,74 +1,77 @@
 define([
 	  'Model/FrameRate'
+	, 'View/Stream'
 	, 'backbone'
 	, 'domReady'], 
 
-	function(FrameRate) {
-		var PlayButton, FSButton
-		/** Button that toggles play/pause on feed */
+	function(FrameRate, Stream) {
+		var PlayButton, FullScreenButton, 
+			VideoControls, controls;
+
 		PlayButton = Backbone.View.extend({
-			tagName: 'button',
-			className: 'play-pause',
-			attributes: function() {
-				return {
-					'data-control-option': 'play'
-				};
-			},
+			tagName: 'i',
 			initialize: function() {
-				this.$parent = $('#player-controls');
-				this.$parent.append(this.$el.hide());
-				this.$el.click(this.playPause);
+				this.listenTo(FrameRate, 'change:value', this._getState);
+				this._getState();
 			},
-			enable: function() {
-				this.$el.fadeIn();
+			events: {
+				'click': '_playPause'
 			},
-			disable: function() {
-				this.$el.fadeOut('slow');
-			},
-			playPause: function() {
+			_playPause: function() {
 				// Check current state and change it.
-				if(FrameRate.get('value') != '0') {
+				if(FrameRate.get('value') !== 0) {
 					FrameRate.set('value', 0);
 				} else  {
-					FrameRate.set('value', 5);
+					FrameRate.set('value', 1);
 				}
 			},
-			listen: function() {
-				// Listen for change in framerate -- this could mean video has paused if fr is 0!
-				FrameRate.on('change:value', this.updateButton, this);
-			},
-			updateButton: function() {
+			_getState: function() {
 				// If framerate slider changes from play to pause, only render change for button.
-				if(FrameRate.get('value') != '0') {
-					this.$el.removeClass('play');
+				if(FrameRate.get('value') !== 0) {
+					this.$el.attr('class', 'icon-pause icon icon-2x');
 				} else  {
-					this.$el.addClass('play');
+					this.$el.attr('class', 'icon-play icon icon-2x');
 				}
 			}
 		});
-		FSBtn = Backbone.View.extend({
-			tagName: 'button',
-			initialize: function() {
-				var that = this;
-				this.$parent = $('#player-controls');
-				this.$el.attr('id','fullScreenButton').addClass('camera-action');
-				this.$el.toggle(function() {
-						$(this).toggleClass('small');
-						that.trigger('fullScreen');
-					},
-					function() {
-						$(this).toggleClass('small');
-						that.trigger('fullScreen');
-					}
-				);
-				this.$parent.append(this.$el.hide());
+
+		FullSizeButton = Backbone.View.extend({
+			tagName: 'i',
+			className: 'icon-fullscreen icon icon-2x',
+			events: {
+				'click': 'toggle'
 			},
-			enable: function() {
+			toggle: function() {
+				Stream.trigger('fullScreen');
+			}
+		});
+
+		VideoControls = Backbone.View.extend({
+			el: '#player-controls',
+			initialize: function() {
+				Stream.on('loadFail', this._disable, this);
+				Stream.on('loadSuccess', this._enable, this);
+
+				var fsButton = new FullSizeButton();
+					pButton  = new PlayButton();
+
+				this.$el.hide();
+
+				this.$el.append(pButton.$el);
+				this.$el.append(fsButton.$el);
+			},
+			_enable: function() {
 				this.$el.fadeIn();
 			},
-			disable: function() {
+			_disable: function() {
 				this.$el.fadeOut('slow');
 			}
 		});
+
+		return {
+			initialize: function() {
+				controls = new VideoControls();
+			}
+		};
 	}
 );

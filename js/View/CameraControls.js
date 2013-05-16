@@ -1,29 +1,39 @@
-define(['underscore', 'backbone', 'domReady'], function() {
+define(['vendor/Kendo/kendo.slider.min' ,'underscore', 'backbone', 'domReady'], function() {
 	'use strict';
 
-	var ActionButton;
+	var SliderPan, sliderPan,
+		SliderTilt, sliderTilt;
 
-	ActionButton = Backbone.View.extend({
-		tagName: 'button',
-		className: function() {
-			var value = this.options.value ? this.options.value : 'action';
-			return 'camera-action ' + this.options.action + '-' + value;
-		},
-		defaults: {
-			'title': 'Camera Action',
-			'action': 'none',
-			'value': 'none'
-		},
-		// Semantic robotic commands.
-		attributes: function() {
-			return {
-				'data-action': this.options.action,
-				'data-value': this.options.value,
-				'alt': this.options.title,
-				'title': this.options.title
-			};
+	SliderPan = Backbone.View.extend({
+		el: '#slider-pan',
+		initialize: function() {
+			this.$el.kendoSlider({
+				orientation: "horizontal",
+                min: -50,
+                max: 50,
+                smallStep: 2,
+                largeStep: 1,
+			});
 		}
 	});
 
-	return ActionButton;
+	SliderTilt = Backbone.View.extend({
+		el: '#slider-tilt',
+		initialize: function() {
+			this.$el.kendoSlider({
+				orientation: "vertical",
+                min: -50,
+                max: 50,
+                smallStep: 2,
+                largeStep: 1,
+			});
+		}
+	});
+
+	return {
+		initialize: function() {
+			sliderPan = new SliderPan();
+			sliderTilt = new SliderTilt();
+		}
+	};
 })

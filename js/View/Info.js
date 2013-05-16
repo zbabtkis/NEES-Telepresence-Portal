@@ -6,7 +6,8 @@ define([
 	function() {
 	'use strict'
 
-	var InfoView, info;
+	var InfoView, info,
+		$ = jQuery;
 
 	InfoView = Backbone.View.extend({
 		tagName: 'article',

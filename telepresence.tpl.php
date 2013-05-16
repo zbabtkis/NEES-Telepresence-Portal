@@ -1,4 +1,4 @@
-<script data-main="<?php print $module_path; ?>/js/main" src="<?php print $module_path; ?>/js/libs/require.js"></script>
+<script data-main="<?php print $module_path; ?>/js/app" src="<?php print $module_path; ?>/js/vendor/Require/require.js"></script>
 <div id="TPS-Viewer">
 	<aside id='tps-viewer-menu'>
 		<nav id='tps-tabs'>

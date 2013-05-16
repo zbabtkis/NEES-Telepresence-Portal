@@ -1,0 +1,7 @@
+<ul id='camera-list'>
+	<% _.each(cams, function(cam) { %> 
+		<li class='camera' data-camera="<%= cam.id %>"">
+			<%= cam.title %>
+		</li> 
+	<% }); %>
+</ul>

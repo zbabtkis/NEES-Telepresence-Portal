@@ -1,8 +1,9 @@
-define(['underscore'
+define([
+	  'underscore'
 	, 'backbone'
 	, 'domReady'], 
 
-	function($) {
+	function() {
 	'use strict'
 
 	var InfoView, info;
@@ -33,4 +34,4 @@ define(['underscore'
 		},
 		render: info.render
 	}
-}(jQuery));
+});

@@ -1,7 +1,7 @@
 define([
-	'Model/Robot'
-	,'libs/backbone'
-	, 'libs/domReady'],
+	  'Model/Robot'
+	, 'backbone'
+	, 'domReady'],
 
 	function($) {
 	var CameraControlView, cameraControls;

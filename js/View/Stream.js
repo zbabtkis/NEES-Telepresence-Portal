@@ -2,29 +2,39 @@ define([
 	  'View/FeedImage'
 	, 'View/VideoControls'
 	, 'Model/Feed'
-	, 'libs/backbone'
-	, 'libs/underscore'
-	, 'libs/domReady'],	
+	, 'spin'
+	, 'backbone'
+	, 'underscore'
+	, 'domReady'],	
 
-	function($) {
+	function(image, controls, feed, Spinner) {
 	'use strict';
 
-	var StreamView, stream;
+	var $ = jQuery,
+		Stream, stream;
 
-	StreamView = Backbone.View.extend({
+	Stream = Backbone.View.extend({
 		el: '#stream',
 		initialize: function() {
 			_.bindAll(this);
+			
 			this.addFancyElements();
+			
 			this.$el.append("<h1 class='telepresence-message'>Select a stream</h1>");
 		},
-		render: function() {
+		$media: $('<img />'),
+		render: function(feed) {
 			var that = this;
+
+			this.$media.attr('src', feed);
+
+			console.log(feed);
+
 			// Check for images loaded before appending.
-			app.View.FeedImage.$el.imagesLoaded(function() {
+			this.$media.load(function() {
 				that.$el.html('');
 				// Append new stream image to view.
-				that.$el.append(app.View.FeedImage.$el);
+				that.$el.append(that.$media);
 				// Resize wrapper to match image size.
 				that.resize();
 				that.$el.append(that.translucent);
@@ -84,10 +94,20 @@ define([
 		}
 	});
 
-	stream = new StreamView();
-
 	return {
-		resize: stream.resize,
-		fullScreen: stream.fullScreen
+		initialize: function() {
+			stream = new Stream();
+		},
+		load: function(id) {
+			var Cameras = require('Collection/Cameras'),
+				Cam     = Cameras.get(id),
+				feed    = Cam.get('feed');
+
+			stream.render(feed);
+			feed.getStream();
+
+			this.resize = stream.resize;
+			this.fullScreen = stream.fullScreen;
+		}
 	};
-}(jQuery))
+});

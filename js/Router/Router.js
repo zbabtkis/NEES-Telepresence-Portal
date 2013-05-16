@@ -1,48 +1,56 @@
-define(['underscore','backbone'], function () {
+define([
+    'View/Info'
+  , 'View/Sites'
+  , 'View/CameraList'
+  , 'View/Stream'
+  , 'underscore'
+  , 'backbone'], 
+
+  function () {
 
   'use strict';
 
-  var _ = require('underscore'),
-      router;
+  var router;
 
   var Router = Backbone.Router.extend({
     routes: {
-      '': 'sitesPage', // Displays nothing -- user must select view -- maybe we should default to one.
-      'sites': 'sitesPage',
-      'help': 'helpPage', // Displays map for selecting site.
-      'sites/:site': 'sitesPage', // Display list of site views.
-      'sites/:site/:view': 'feedPage'
+      '': 'sitesList',
+      'sites': 'sitesList',
+      'help': 'helpPage',
+      'sites/:site': 'camerasList',
+      'sites/:site/:cam': 'feedView'
     },
     helpPage: function() {
-      require(['View/Info'], function(Help) {
-        Help.render();
-      });
+      var Info = require('View/Info');
+
+      Info.render();
     },
-    sitesPage: function (s) {
-      require(['View/Sites'], function(view) {
-        view.render();
-      });
-      // Render the second menu layer (site views) under the site list
-      if (s) {
-        require(['Model/Cameras'], function(cameras) {
-          // If pushState, change %20 to space.
-          s = unescape(s);
-          cameras.updateViewsList(s);
-        });
-      }
+    sitesList: function() { 
+      var Sites = require('View/Sites');
+
+      Sites.render();
     },
-    feedPage: function(loc, view) {
-      this.sitesPage(loc);
-      require(['Model/Feed'], function(feed) {
-        feed.set({loc:loc, type: view});
-      });
+    camerasList: function(site) {
+      var Cameras = require('View/CameraList');
+
+      this.sitesList();
+      Cameras.update(site);
+    },
+    feedView: function(site, cam) {
+      var Stream = require('View/Stream'),
+          Cam;
+
+      this.camerasList(site);
+      Stream.load(cam);
     }
   });
 
-  router = new Router();
-
   return {
-    navigate: router.navigate
+    initialize: function() {
+       router = new Router();
+
+       this.navigate = router.navigate
+    }
   };
 
 });

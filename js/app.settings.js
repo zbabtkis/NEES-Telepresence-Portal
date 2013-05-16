@@ -10,45 +10,46 @@ define(function () {
       {
         // Display purposes only.
         loc: "Garner Valley SFSI Field Site",
-        // For associating a site with its camera views - you can 
-        // use any number.
-        site_id: 1,
+        safe_name: "gvda",
       },
       {
         loc: "Wildlife Liquefaction Array",
-        site_id: 2,
+        safe_name: "wla",
       }
     ],
     // Site specific views that get loaded when user clicks site.
-    views: [
+    cameras: [
       {
         // This is the name that will be used in the request to 
         // the REST server. */
+        site_id: "gvda",
         loc: "Garner Valley SFSI Field Site",
         // This will also appear in the REST request.
         type: "Full-Size",
         // Display purposes only.
         title: "Full-Size",
-        // Associate with location of site_id 1.
-        site_id: 1
+        id: "full-size",
       },
       {
+        site_id: "gvda",
         loc: "Garner Valley SFSI Field Site",
         type: "Inside",
         title: "Inside",
-        site_id: 1
+        id: "inside",
       },
       {
+        site_id: "wla",
         loc: "Wildlife Liquefaction Array",
         type: "Full-Size",
         title: "Full-Size",
-        site_id: 2
+        id: 'full-size',
       },
       {
+        site_id: "wla",
         loc: "Wildlife Liquefaction Array",
         type: "Internal - when personnel onsite",
         title: "Internal - when personnel onsite",
-        site_id: 2
+        id: 'internal',
       }
     ]
   };

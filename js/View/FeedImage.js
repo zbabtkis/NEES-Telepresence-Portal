@@ -1,12 +1,17 @@
-define(['libs/domReady'], function() {
+define([
+	  'View/Stream'
+	, 'View/VideoControls'
+	, 'View/CameraControls'
+	, 'Model/Feed'
+	, 'Model/Robot'
+	, 'underscore'
+	, 'backbone'
+	, 'domReady'],
+
+	function(StreamView, videoControls, cameraControls, feedModel, robot) {
 	'use strict';
 
-	var StreamView     = require('View/Stream'),
-		videoControls  = require('View/VideoControls'),
-		cameraControls = require('Vide/CameraControls'),
-		feedModel      = require('Model/Feed'),
-		robotModel     = require('Model/Robot'),
-		FeedImage, feed;
+	var FeedImage, feed;
 
 	FeedImage = Backbone.View.extend({
 		tagName: 'img',
@@ -72,7 +77,7 @@ define(['libs/domReady'], function() {
 			};
 
 			// Send command to Robot.
-			app.Model.Robot.robotCommand('position', args);
+			robot.robotCommand('position', args);
 		}
 	});
 
@@ -81,4 +86,4 @@ define(['libs/domReady'], function() {
 	return {
 
 	};
-}(jQuery));
+});

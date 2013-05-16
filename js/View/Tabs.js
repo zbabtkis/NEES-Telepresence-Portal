@@ -1,8 +1,10 @@
-define(['underscore'
+define([
+	  'View/MenuHeader'
+	, 'underscore'
 	, 'backbone'
 	, 'domReady'], 
 
-	function($) {
+	function(MenuHeader) {
 	'use strict'
 
 	var Tabs, tabs;
@@ -29,14 +31,14 @@ define(['underscore'
 		showList: function() {
 			$('#info-view').slideUp('fast', function() {
 				$('#info-view').hide();
-				app.View.MenuHeader.trigger('changeMenu','Site Cameras');
+				MenuHeader.trigger('changeMenu','Site Cameras');
 				$('#nav').slideDown();
 			});
 		},
 		showHelp: function() {
 			$('#nav').slideUp('fast', function() {
 				$('#nav').hide();
-				app.View.MenuHeader.trigger('changeMenu', 'Help');
+				MenuHeader.trigger('changeMenu', 'Help');
 				$('#info-view').slideDown();
 			});
 		},
@@ -52,4 +54,4 @@ define(['underscore'
 	return {
 		initialize: initialize
 	}
-}(jQuery));
+});

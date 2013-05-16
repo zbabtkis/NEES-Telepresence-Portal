@@ -23,7 +23,7 @@ define([
     }
   });
 
-  var sites = new Site();
+  var sites = new Sites();
 
   return sites;
 });

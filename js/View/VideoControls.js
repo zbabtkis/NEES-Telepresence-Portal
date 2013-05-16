@@ -1,4 +1,9 @@
-define(['Model/FrameRate','libs/backbone','domReady'], function($) {
+define([
+	  'Model/FrameRate'
+	, 'backbone'
+	, 'domReady'], 
+
+	function(FrameRate) {
 		var PlayButton, FSButton
 		/** Button that toggles play/pause on feed */
 		PlayButton = Backbone.View.extend({
@@ -22,19 +27,19 @@ define(['Model/FrameRate','libs/backbone','domReady'], function($) {
 			},
 			playPause: function() {
 				// Check current state and change it.
-				if(app.Model.FrameRate.get('value') != '0') {
-					app.Model.FrameRate.set('value', 0);
+				if(FrameRate.get('value') != '0') {
+					FrameRate.set('value', 0);
 				} else  {
-					app.Model.FrameRate.set('value', 5);
+					FrameRate.set('value', 5);
 				}
 			},
 			listen: function() {
 				// Listen for change in framerate -- this could mean video has paused if fr is 0!
-				app.Model.FrameRate.on('change:value', this.updateButton, this);
+				FrameRate.on('change:value', this.updateButton, this);
 			},
 			updateButton: function() {
 				// If framerate slider changes from play to pause, only render change for button.
-				if(app.Model.FrameRate.get('value') != '0') {
+				if(FrameRate.get('value') != '0') {
 					this.$el.removeClass('play');
 				} else  {
 					this.$el.addClass('play');
@@ -65,5 +70,5 @@ define(['Model/FrameRate','libs/backbone','domReady'], function($) {
 				this.$el.fadeOut('slow');
 			}
 		});
-	}(jQuery)
+	}
 );

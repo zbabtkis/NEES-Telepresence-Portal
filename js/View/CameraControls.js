@@ -1,9 +1,9 @@
-define(['backbone', 'domReady'], function() {
+define(['underscore', 'backbone', 'domReady'], function() {
 	'use strict';
 
 	var ActionButton;
 
-	CameraButtonView = Backbone.View.extend({
+	ActionButton = Backbone.View.extend({
 		tagName: 'button',
 		className: function() {
 			var value = this.options.value ? this.options.value : 'action';
@@ -24,4 +24,6 @@ define(['backbone', 'domReady'], function() {
 			};
 		}
 	});
+
+	return ActionButton;
 })

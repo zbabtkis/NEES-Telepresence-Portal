@@ -11,7 +11,6 @@ define([
 	var $ = jQuery,
 		Sites, sites;
 
-
 	Sites = Backbone.View.extend({
 		tagName: 'section',
 		id: 'sites',
@@ -21,18 +20,36 @@ define([
 			_.bindAll(this);
 		},
 		render: function() {
-			var html;
+			var models = collection.toJSON(),
+				html;
 
-			html = that.template({sites: collection});
+			html = this.template({sites: models});
 
 			this.$el.html(html);
 			this.$parent.html(this.$el);
 
+			// Re-bind events after view has rendered
+			this.delegateEvents();
+
 			return this;
+		},
+		events: {
+			'click .site': 'listCameras'
+		},
+		listCameras: function(e) {
+			var $camera = $(e.target),
+				Router = require('Router/Router');
+
+			Router.navigate('/sites/' + $camera.data('location'), {trigger: true});
 		}
 	});
 
-	sites = new Sites();
-
-	return sites;
+	return {
+		initialize: function() {
+			sites = new Sites();
+		},
+		render: function() {
+			sites.render();
+		}
+	};
 });

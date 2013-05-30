@@ -80,13 +80,18 @@ function telepresence_camera_form() {
 	$form['home']['value_zoom'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Default Zoom',
-		'#description' => 'Default pan to location (from 0 - 20).'
+		'#description' => 'Default zoom to location (from 0 - 20).'
 		);
 
 	$form['home']['value_focus'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Default Focus',
-		'#description' => 'Default pan to location (from 0 - 20).'
+		'#description' => 'Default focus to (from 0 - 20).'
+		);
+	$form['home']['value_iris'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Default Iris',
+		'#description' => 'Default iris to (from 0 - 20).'
 		);
 
 	$form['id'] = array(
@@ -109,7 +114,7 @@ function telepresence_camera_form() {
 function telepresence_add_camera() {
 	$page = "";
 
-	$t_head = array('id', 'site name','site safe name','camera name','camera safe name', 'pan value', 'tilt value', 'zoom value', 'focus value', 'admin');
+	$t_head = array('id', 'site name','site safe name','camera name','camera safe name', 'pan value', 'tilt value', 'zoom value', 'focus value', 'iris value', 'admin');
 
 	$rows = telepresence_find_camera();
 

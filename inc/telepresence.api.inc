@@ -69,6 +69,7 @@ function telepresence_save_camera($id = null, $values) {
 	$tilt  = ($values['value_tilt'] != '')  ? $values['value_tilt']  : 50;
 	$zoom  = ($values['value_zoom'] != '')  ? $values['value_zoom']  : 0;
 	$focus = ($values['value_focus'] != '') ? $values['value_focus'] : 0;
+	$iris  = ($values['value_iris'] != '')  ? $values['value_iris']  : 0;
 
 	$private_query = array(
 		'site_name'        => $values['site_name'],
@@ -78,14 +79,16 @@ function telepresence_save_camera($id = null, $values) {
 		'value_pan'        => $pan,
 		'value_tilt'       => $tilt,
 		'value_zoom'       => $zoom,
-		'value_focus'      => $focus
+		'value_focus'      => $focus,
+		'value_iris'       => $iris
 		);
 
 	$public_query = array(
 		'value_pan'        => $pan,
 		'value_tilt'       => $tilt,
 		'value_zoom'       => $zoom,
-		'value_focus'      => $focus
+		'value_focus'      => $focus,
+		'value_iris'       => $iris
 		);
 
 	$query = user_access('administer telepresence') ? $private_query : $public_query;

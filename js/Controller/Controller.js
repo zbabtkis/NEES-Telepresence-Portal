@@ -1,12 +1,14 @@
 define([
 	  'Collection/Cameras'
+	, 'Model/FrameRate'
 	, 'View/Tabs'
 	, 'View/Stream'
 	, 'View/CameraControls'
+	, 'View/VideoControls'
 	, 'underscore'
 	, 'backbone'],
 
-	function(Cameras, Tabs, Stream, CameraControls) {
+	function(Cameras, FrameRate, Tabs, Stream, CameraControls, VideoControls) {
 		'use strict';
 
 		// Controller constructor.
@@ -33,18 +35,28 @@ define([
 			},
 			setup: function() {
 				Backbone.history.start();
-				Cameras.poll(5000);
+				if(Telepresence.DEBUG) {
+					Cameras.poll(5000);
+				}
 			},
 			openFeed: function(id) {
 				var cam = Cameras.get(id),
 					media;
 
+				function updateStreamView() {
+					Stream.render(cam.get('media'));
+				}
+
 				this.unload();
 
-				cam.loadMedia();
-				Stream.render(cam.get('media'));
+				FrameRate.on('change:value', cam.loadMedia);
 
-				this.listenTo(cam, 'change', this.saveCamera);
+				cam.loadMedia();
+				updateStreamView();
+
+				cam.on('change', this.saveCamera, cam);
+				cam.on('change:media', updateStreamView, cam);
+
 				this.bindData(cam);
 
 				this._currentId = id;
@@ -64,12 +76,11 @@ define([
 			updateWidgets: function(camera ) {
 				var cam = camera || Cameras.get(this._currentId);
 
-				console.log('change detected');
-
 				CameraControls.set('sliderPan', cam.get('value_pan'));
 				CameraControls.set('sliderTilt', cam.get('value_tilt'));
 				CameraControls.set('sliderZoom', cam.get('value_zoom'));
 				CameraControls.set('sliderFocus', cam.get('value_focus'));
+				CameraControls.set('sliderIris', cam.get('value_iris'));
 			},
 			saveCamera: function(cam) {
 				Backbone.sync('update', cam);

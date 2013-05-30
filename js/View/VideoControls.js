@@ -2,6 +2,7 @@ define([
 	  'Model/FrameRate'
 	, 'View/Stream'
 	, 'vendor/Kendo/kendo.numerictextbox.min'
+	, 'backbone.kendowidget'
 	, 'backbone'
 	, 'domReady'], 
 
@@ -49,58 +50,44 @@ define([
 			}
 		});
 
-		FramerateFlipper = Backbone.View.extend({
+		FramerateFlipper = Backbone.KendoWidget.extend({
 			el: '#framerate-selector',
-			initialize: function() {
-				var fr = this.$el.kendoNumericTextBox({
-					min: 0,
-					max: 10,
-					decimals: 0,
-					format: "# fps"
-				}).data("kendoNumericTextBox");
-
-				fr.bind('change', this.change);
-				FrameRate.on('change:value', this.update, fr);
-
+			options: {
+				min: 0,
+				max: 10,
+				decimals: 0,
+				format: "# fps"
 			},
-			change: function(e) {
-				FrameRate.set('value', e.sender._value);
-			},
-			update: function(e) {
-				var value = e.get('value');
-
-				this.value(value);
-			}
+			widget: 'kendoNumericTextBox',
+			actionBind: 'updateFrameRate'
 		});
 
-
-		VideoControls = Backbone.View.extend({
-			el: '#player-controls',
-			initialize: function() {
-				Stream.on('loadFail', this._disable, this);
-				Stream.on('loadSuccess', this._enable, this);
-
-				var fsButton = new FullSizeButton(),
-					pButton  = new PlayButton(),
-					frFlipper = new FramerateFlipper();
-
-				this.$el.hide();
-
-				this.$el.append(pButton.$el);
-				this.$el.append(fsButton.$el);
-			},
-			_enable: function() {
-				this.$el.fadeIn();
-			},
-			_disable: function() {
-				this.$el.fadeOut('slow');
-			}
-		});
+		var Controls = new Object();
 
 		return {
 			initialize: function() {
-				controls = new VideoControls();
+				var playButton   = new PlayButton();
+				var fullScreenButton  = new FullSizeButton();
+				Controls.framerateFlipper  = new FramerateFlipper();
+			},
+			enable: function() {
+				var AppController = this;
+
+				_.each(Controls, function(control) {
+					control.enable();
+					AppController.listenTo(control, 'valueChange', AppController.videoControl);
+				});
+			},
+			disable: function() {
+				var AppController = this;
+
+				_.each(Controls, function(control) {
+					control.disable();
+					AppController.stopListening(control, 'valueChange', AppController.videoControl);
+				});
+			},
+			set: function(ctrl, val) {
+				Controls[ctrl].value(val);
 			}
-		};
-	}
-);
+		}
+});

@@ -1,56 +1,15 @@
-define(['Collection/Cameras' ,'vendor/Kendo/kendo.slider.min' ,'underscore', 'backbone', 'domReady'], function(cameras) {
+define(['Collection/Cameras' ,'vendor/Kendo/kendo.slider.min', 'vendor/Kendo/kendo.dropdownlist.min', 'backbone.kendowidget' ,'underscore', 'backbone', 'domReady'], function(cameras) {
 	'use strict';
 
 	var SliderPan, SliderTilt, SliderZoom,
-		SliderFocus,
+		SliderFocus, SliderIris, LocationPicker,
 		$ = jQuery;
 
 	$('.k-slider-selection').css('background-color', 'none');
 
 	$('.k-button').click(function(e) {
 		e.preventDefault();
-	})
-
-	function fixWidth() {
-		var stream = $('#stream'),
-			video = $("#video"),
-			width = video.width(),
-			tilt = $('.slider-tilt'),
-			newWidth = width - tilt.width() - 40;
-
-		stream.width(newWidth);
-	}
-
-	Backbone.KendoWidget = Backbone.View.extend({
-		initialize: function() {
-			var _this = this, widget;
-
-			widget = this.$el[this.widget](this.options).data(this.widget);
-
-			widget.bind('change', function(e) {
-				var obj = {
-					boundTo: _this.dataBind,
-					action: _this.actionBind,
-					value: e.value
-				};
-
-				_this.trigger('valueChange', obj);
-			});
-
-			// Controls should be disabled by default.
-			widget.enable(false);
-
-			this.enable = function() {
-				widget.enable(true);
-			}
-			this.disable = function() {
-				widget.enable(false);
-			}
-			this.value = function(val) {
-				widget.value(val);
-			}
-		}
-	})
+	});
 
 	SliderPan = Backbone.KendoWidget.extend({
 		el: '#slider-pan',
@@ -112,20 +71,67 @@ define(['Collection/Cameras' ,'vendor/Kendo/kendo.slider.min' ,'underscore', 'ba
 		actionBind: 'focusTo'
 	});
 
+	SliderIris = Backbone.KendoWidget.extend({
+		el: '#iris-control',
+		options: {
+			orientation: 'vertical',
+			min: -10,
+			max: 10,
+			smallStep: 1,
+			largeStep: 20,
+			showButtons: true
+		},
+		widget: 'kendoSlider',
+		dataBind: 'value_iris',
+		actionBind: 'irisTo'
+	});
+
+	// @TODO -- Replace with actual model.
+	var locationData = [
+		{text: 'Home', value: '1'},
+		{text: 'River', value: '2'},
+		{text: 'Hut', value: '3'},
+		{text: 'Shurbs', value: '4'}
+	]
+
+	LocationPicker = Backbone.KendoWidget.extend({
+		el: '#location-picker',
+		widget: 'kendoDropDownList',
+		options: {
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: locationData,
+            index: 0,
+            change: function(e) {
+            	console.log(e);
+            }
+        }
+	});
+
 	var Controls = new Object();
 
-	$(window).resize(fixWidth);
+	// Kendo currently has no way of modifying these -- FIX THIS WHEN IT DOES.
+	function fixLabels() {
+		$('.zoom-control').eq(0).find('.k-label').eq(0).html('In');
+		$('.zoom-control').eq(0).find('.k-label').eq(1).html('Out');
+
+		$('.focus-control').eq(0).find('.k-label').eq(0).html('In');
+		$('.focus-control').eq(0).find('.k-label').eq(1).html('Out');
+
+		$('.iris-control').eq(0).find('.k-label').eq(0).html('Open');
+		$('.iris-control').eq(0).find('.k-label').eq(1).html('Close');
+	}
 
 	return {
-		initialize: function(cam) {
-			var model = cameras.get(cam);
+		initialize: function() {
+			Controls.sliderPan      = new SliderPan();
+			Controls.sliderTilt     = new SliderTilt();
+			Controls.sliderZoom     = new SliderZoom();
+			Controls.sliderFocus    = new SliderFocus();
+			Controls.sliderIris     = new SliderIris();
+			Controls.locationPicker = new LocationPicker();
 
-			Controls.sliderPan   = new SliderPan();
-			Controls.sliderTilt  = new SliderTilt();
-			Controls.sliderZoom  = new SliderZoom();
-			Controls.sliderFocus = new SliderFocus();
-
-			fixWidth();
+			fixLabels();
 		},
 		enable: function() {
 			var AppController = this;
@@ -151,4 +157,4 @@ define(['Collection/Cameras' ,'vendor/Kendo/kendo.slider.min' ,'underscore', 'ba
 			Controls[ctrl].value(val);
 		}
 	}
-})
+});

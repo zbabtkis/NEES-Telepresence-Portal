@@ -1,12 +1,15 @@
 define([
 	  'Model/FrameRate'
 	, 'View/Stream'
+	, 'vendor/Kendo/kendo.numerictextbox.min'
 	, 'backbone'
 	, 'domReady'], 
 
 	function(FrameRate, Stream) {
-		var PlayButton, FullScreenButton, 
-			VideoControls, controls;
+		var PlayButton, FullScreenButton,
+			FramerateFlipper, framerateFlipper,
+			VideoControls, controls,
+			$ = jQuery;
 
 		PlayButton = Backbone.View.extend({
 			tagName: 'i',
@@ -46,14 +49,40 @@ define([
 			}
 		});
 
+		FramerateFlipper = Backbone.View.extend({
+			el: '#framerate-selector',
+			initialize: function() {
+				var fr = this.$el.kendoNumericTextBox({
+					min: 0,
+					max: 10,
+					decimals: 0,
+					format: "# fps"
+				}).data("kendoNumericTextBox");
+
+				fr.bind('change', this.change);
+				FrameRate.on('change:value', this.update, fr);
+
+			},
+			change: function(e) {
+				FrameRate.set('value', e.sender._value);
+			},
+			update: function(e) {
+				var value = e.get('value');
+
+				this.value(value);
+			}
+		});
+
+
 		VideoControls = Backbone.View.extend({
 			el: '#player-controls',
 			initialize: function() {
 				Stream.on('loadFail', this._disable, this);
 				Stream.on('loadSuccess', this._enable, this);
 
-				var fsButton = new FullSizeButton();
-					pButton  = new PlayButton();
+				var fsButton = new FullSizeButton(),
+					pButton  = new PlayButton(),
+					frFlipper = new FramerateFlipper();
 
 				this.$el.hide();
 

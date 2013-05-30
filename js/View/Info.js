@@ -26,13 +26,5 @@ define([
 
 	info = new InfoView()
 
-	return {
-		show: function() {
-			info.$el.show();
-		},
-		hide: function() {
-			info.$el.hide();
-		},
-		render: info.render
-	}
+	return info;
 });

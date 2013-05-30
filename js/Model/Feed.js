@@ -1,10 +1,11 @@
 define([
-      'Model/FrameRate'
+      'Collection/Cameras'
+    , 'Model/FrameRate'
     , 'app.settings'
     , 'underscore'
     , 'backbone'],
 
-    function(FrameRate, settings) {
+    function(Cameras, FrameRate) {
       var $ = jQuery,
           FeedModel, feed;
 
@@ -13,17 +14,18 @@ define([
         initialize: function() {
           _.bindAll(this);
 
-          this.on('change:type', this.updateFeed);
-          this.on('change:loc', this.updateFeed);
           this.listenTo(FrameRate, 'change:value', this.getFeed);
         },
         defaults: {
-          'baseUrl': settings.baseURL
+          'baseUrl': Drupal.settings.flex_api
         },
         // update requestAddress with location/view of current selection
-        updateFeed: function() {
+        updateFeed: function(camera_id) {
+          var camera = Cameras.get(camera_id)
+            .toJSON();
+
           this.set({
-            'uri': this.get('loc') + '/' + this.get('type'),
+            'uri': model.site_name + '/' + camera.camera_name,
             'requestAddr': this.get('baseUrl') + this.get('uri')
           });
 
@@ -70,27 +72,13 @@ define([
         _play: function() {
           this.set('_type','mjpeg' + '/' + FrameRate.get('value'));
           this.set('fullRequest', this.get('requestAddr') + '/' + this.get('_type'));
-        },
-        updateFramerate: function(f){
-          var v = f.get('value');
-          if(v > 0) {
-            this.render('mjpeg');
-            this.playerControls.toggleDisplay('play');
-          } else {
-            this.render('jpeg');
-            this.playerControls.toggleDisplay('pause');
-          }
         }
       });
 
       return {
         initialize: function(){
           feed = new FeedModel();
-
-          this.updateFramerate = feed.updateFramerate;
-          this.changeFeed = function(obj) {
-            feed.set(obj);
-          };
+          this.getCam = feed.updateFeed;
         }
       };
 

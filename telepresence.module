@@ -1,5 +1,8 @@
 <?php
 
+require_once('inc/telepresence.api.inc');
+require_once('inc/telepresence.admin.inc');
+
 function telepresence_permission() {
 	$perms = array();
 	$perms['access telepresence'] = array(
@@ -23,64 +26,42 @@ function telepresence_menu() {
 	$items['admin/config/telepresence'] = array(
 		'title' => 'Telepresence Configuration',
 		'description' => t('Configuration options for the Telepresence application'),
-		'page callback' => t('drupal_get_form'),
+		'page callback' => 'drupal_get_form',
 		'page arguments' => array('telepresence_config'),
 		'access arguments' => array('administer telepresence'),
 		'type' => MENU_NORMAL_ITEM
 	);
+	$items['admin/manage-telepresence-cameras'] = array(
+		'title' => 'Manage Telepresence Cameras',
+		'page callback' => 'telepresence_add_camera',
+		'access arguments' => array('administer telepresence'),
+		'type' => MENU_NORMAL_ITEM
+		);
+
+	$items['telepresence/api/cameras'] = array(
+		'page callback' => 'telepresence_api',
+		'access arguments' => array('access telepresence'),
+		'type' => MENU_CALLBACK
+		);
 	return $items;
-}
-
-function telepresence_config() {
-	$form = array();
-
-	$form['telepresence_about'] = array(
-		'#title' => t('About'),
-		'#type' => 'text_format',
-		'#default_value' => telepresence_get_settings()
-	);
-	$form['submit'] = array(
-		'#type' => 'submit',
-		'#value' => 'save',
-		'#submit' => array('telepresence_save_settings')
-	);
-	return($form);
-}
-
-function telepresence_save_settings($form, &$form_state) {
-	try {
-		db_truncate('telepresence')->execute();
-
-		db_insert('telepresence')
-		->fields(array(
-			'about' => $form_state['input']['telepresence_about']['value'])
-		)
-		->execute();
-	} catch (Exception $e) {
-		dsm($e);
-	}
-}
-
-function telepresence_get_settings() {
-	$r = db_select('telepresence', 't')
-		->fields('t')
-		->execute()
-		->fetchAssoc();
-	return $r['about'];
 }
 
 function telepresence_page() {
 	$about       = telepresence_get_settings();
 	$module_path = drupal_get_path('module', 'telepresence');
+	$flex_api    = variable_get('telepresence_api', '');
+	$module_api  = '/telepresence/api';
 
 	drupal_add_css($module_path . '/css/font-awesome/css/font-awesome.min.css');
 	drupal_add_css($module_path . '/css/kendo.common.min.css');
-	drupal_add_css($module_path . '/css/kendo.black.min.css');
+	drupal_add_css($module_path . '/css/kendo.metroblack.min.css');
 
 	drupal_add_js(
 		array(
 			'modulePath'         => $module_path,
-			'telepresence_about' => $about
+			'telepresence_about' => $about,
+			'flex_api'           => $flex_api,
+			'module_api'         => $module_api
 		),
 		'setting'
 	);

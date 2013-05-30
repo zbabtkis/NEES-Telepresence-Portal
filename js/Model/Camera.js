@@ -1,6 +1,5 @@
 define([
     'Model/FrameRate'
-  , 'app.settings'
   , 'underscore'
   , 'backbone'], 
 
@@ -23,29 +22,6 @@ define([
 
 			FrameRate.on('change:value', this.loadMedia);
 		},
-    _polyfill: function() {
-      var that = this,
-          fr = FrameRate.get('value'),
-          valFr = 1000;
-
-      if(fr != 0 && fr <= 10) {
-        var valFr = (11 - fr) * 1000;
-      } else {
-        this.set('media', this.get('feed') + '/jpeg?reset=' + Math.random());
-        return 0;
-      }
-      
-      // Refresh image at interval by resetting the fullRequest address with a random number appended to it to trigger change.
-      this.intervalId = setInterval(function() {
-        if(FrameRate.get('value') != 0) {
-          that.set('media', that.get('feed') + '/jpeg?reset=' + Math.random()); 
-        } else {
-          clearInterval(that.intervalId);
-        }
-      }, valFr);
-
-      return this;
-    },
     loadMedia: function() {
       var fr = FrameRate.get('value');
 
@@ -138,12 +114,46 @@ define([
       var _this = this,
         val = (10 + val) + ',9';
 
-        $.ajax({
-          url: _this.get('robotic'),
-          data: 'ctrl=afocus&amp;imagewidth=20&amp;value=?' + val,
-          dataProcess: false,
-          dataType: 'jsonp'
-        });
+      $.ajax({
+        url: _this.get('robotic'),
+        data: 'ctrl=afocus&amp;imagewidth=20&amp;value=?' + val,
+        dataProcess: false,
+        dataType: 'jsonp'
+      });
+    },
+    _irisTo: function(val) {
+      var _this = this,
+        val = (10 + val) + ',9';
+
+      $.ajax({
+        url: _this.get('robotic'),
+        data: 'ctrl=airis&amp;imagewidth=20&amp;value=?' + val,
+        dataProcess: false,
+        dataType: 'jsonp'
+      });
+    },
+    _polyfill: function() {
+      var that = this,
+          fr = FrameRate.get('value'),
+          valFr = 1000;
+
+      if(fr != 0 && fr <= 10) {
+        var valFr = (11 - fr) * 1000;
+      } else {
+        this.set('media', this.get('feed') + '/jpeg?reset=' + Math.random());
+        return 0;
+      }
+      
+      // Refresh image at interval by resetting the fullRequest address with a random number appended to it to trigger change.
+      this.intervalId = setInterval(function() {
+        if(FrameRate.get('value') != 0) {
+          that.set('media', that.get('feed') + '/jpeg?reset=' + Math.random()); 
+        } else {
+          clearInterval(that.intervalId);
+        }
+      }, valFr);
+
+      return this;
     },
 	});
 

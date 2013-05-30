@@ -1,7 +1,7 @@
 require.config({
 	paths: {
 		'backbone': 'vendor/Backbone/backbone',
-		'backbone.poller': 'vendor/Backbone/backbone.poller',
+		'backbone.kendowidget': 'vendor/Backbone/backbone.kendowidget',
 		'underscore': 'vendor/Underscore/underscore',
 		'domReady': 'vendor/Require/domReady',
 		'spin': 'vendor/Spin/spin',
@@ -12,9 +12,13 @@ require.config({
 
 window.Telepresence = {
 	DEBUG: true,
-	debug: function(args) {
+	debug: function(first) {
 		if(this.DEBUG) {
-			console.log(args);
+			if(typeof args !== 'Object') {
+				console.log("Telepresence DEBUG: ", first)
+			} else {
+				console.log.apply(console, arguments);
+			}
 		}
 	},
 	version: "2.0.1"
@@ -23,12 +27,15 @@ window.Telepresence = {
 require([
 	  'Router/Router'
 	, 'Controller/Controller'
+	, 'Controller/VideoController'
 	, 'underscore'
 	, 'backbone'], 
 
-	function(Router, Controller) {
+	function(Router, Controller, VideoController) {
+		jQuery('#telepresence-wrap').draggable();
 		// Iniitalize major components.
 		Router.initialize();
 		Controller.initialize();
+		VideoController.initialize();
 	}
 );

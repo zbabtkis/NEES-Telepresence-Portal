@@ -41,7 +41,6 @@
     float: left;
     width: 26px;
     height: 480px;
-    float: right;
 }
 
 #player-controls {
@@ -104,12 +103,14 @@
 
 #telepresence-dashboard {
 	clear: both;
+	margin-top: 60px;
 }
 
 #site-list {
 	margin: 0;
 	padding: 0;
 	background: #222;
+	border: 1px solid #333;
 }
 .site, .camera {
 	cursor: pointer;
@@ -161,7 +162,14 @@ float: right;
 	overflow: visible;
 	padding: 15px;
 	float: left;
-	width: 100%;
+	width: 1176px !important;
+}
+#telepresence-wrap header {
+	background: #222;
+	margin: 0;
+	padding: 15px;
+	margin-bottom: 10px;
+	color: white;
 }
 #telepresence-wrap h3, #telepresence-wrap h4, #telepresence-wrap h5 {
 	color: #eee;
@@ -169,7 +177,7 @@ float: right;
 }
 #telepresence-menu {
 	float: left;
-	width: 30%;
+	width: 33%;
 }
 #video {
 	width: 65%;
@@ -191,6 +199,7 @@ float: right;
 }
 #stream .telepresence-message {
 	top: 50%;
+	margin-top: -1em;
 	position: relative;
 	width: 100%;
 	text-align: center;
@@ -259,7 +268,7 @@ label {
 label[for='slider-tilt'] {
 	float: right;
 	margin-top: 240px;
-	margin-left: 10px;
+	margin-left: 5px;
 }
 
 label[for='slider-pan'] {
@@ -268,6 +277,7 @@ label[for='slider-pan'] {
 
 .tp-row {
 	margin-top: 10px;
+	margin-bottom: 25px;
 	float: left;
 }
 
@@ -284,18 +294,18 @@ label[for='slider-pan'] {
 	float: left;
 }
 
+.input-control {
+	margin-bottom: 10px;
+}
+
 .slider-controls {
 	float: right;
 }
 
 .control {
-	padding: 20px 15px 0 0;
+	padding-right: 25px;
 	float: right;
-}
-
-.control label {
-	float: right;
-	margin: -20px -10px;
+	text-align: center;
 }
 
 .k-label {

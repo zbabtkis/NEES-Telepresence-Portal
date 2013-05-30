@@ -62,6 +62,11 @@ function telepresence_schema() {
 				'type' => 'int',
 				'not_null' => true,
 				'default_value' => 0
+			),
+			'value_iris' => array(
+				'type' => 'int',
+				'not_null' => true,
+				'default_value' => 0
 			)
 		),
 		'primary key' => array('id')

@@ -1,4 +1,4 @@
-define(['underscore','backbone'], function(){
+define(['underscore','backbone'], function() {
 	var FrameRate, framerate;
 
 	FrameRate = Backbone.Model.extend({

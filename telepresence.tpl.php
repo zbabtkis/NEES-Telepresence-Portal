@@ -1,6 +1,9 @@
 <script data-main="/<?php print $module_path; ?>/js/app" src="/<?php print $module_path; ?>/js/vendor/Require/require.js"></script>
 
 <div id="telepresence-wrap">
+	<header>
+		<h2>Telepresence</h2>
+	</header>
 	<aside id='telepresence-menu'>
 		<nav id='tp-tabs'>
 			<i id='help-tab' class='icon icon-info-sign icon-2x' alt='Show Help' title='Show Help'></i>
@@ -13,19 +16,31 @@
 			<h3>Controls</h3>
 
 			<div class='input-controls'>
-				<label for='frmaerate-selector'>Framerate</label>
-				<input id='framerate-selector' class='framerate-selector' value='10' />
+				<div class='input-control'>
+					<label for='frmaerate-selector'>Framerate</label>
+					<input id='framerate-selector' class='framerate-selector' value='10' />
+				</div>
+
+				<div class='input-control'>
+					<label for='location-picker'>Location</label>
+					<input id='location-picker' class='location-picker' />
+				</div>
 			</div>
 
 			<div class='slider-controls'>
 				<div class='control'>
+					<label for='iris-control'>Iris</label>
+					<div id='iris-control' class='mini-control iris-control'></div>
+				</div>
+
+				<div class='control'>
 					<label for='focus-control'>Focus</label>
-					<div id='focus-control' class='mini-control'></div>
+					<div id='focus-control' class='mini-control focus-control'></div>
 				</div>
 				
 				<div class='control'>
 					<label for='zoom-control'>Zoom</label>
-					<div id='zoom-control' class='mini-control'></div>
+					<div id='zoom-control' class='mini-control zoom-control'></div>
 				</div>
 			</div>
 

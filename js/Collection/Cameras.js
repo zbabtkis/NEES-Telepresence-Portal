@@ -1,36 +1,71 @@
 define([
-    'Model/Camera'
-  , 'app.settings'
-  , 'underscore'
-  , 'backbone'],
+	  'Model/Camera'
+	, 'underscore'
+	, 'backbone'],
 
-  function(Camera, settings) {
-    var Cameras, cameras;
+  	function(Camera, settings) {
+  	  	var Cameras, cameras;
+		
+  	  	Cameras = Backbone.Collection.extend({
+			model: Camera,
+			url: Drupal.settings.module_api + '/cameras',
+			poll: function(delay) {
+				var _this = this;
+			    
+			    this.poller = setInterval(function() {
+			    	_this.fetch();
+			    }, delay);
+		    },
+		    stopPolling: function() {
+		    	clearInterval(this.poller);
+		    },
+			group: function() {
+				var _this = this,
+					groups;
+				
+				groups = this.groupBy(function(camera) {
+					return camera.get('site_name');
+				});
+	
+				return {
+					toJSON: function() {
+						var struct = [];
 
-    Cameras = Backbone.Collection.extend({
-      model: Camera,
-      // Load site views from app.Settings -- set when site is chosen or updated.
-      updateList: function (site_id) {
-        var cams = settings.cameras,
-            items = [],
-            i;
+						function organize(models, group) {
+							var JSONified = [],
+								safeName;
+			
+							_.each(models, function(model, num) {
+								JSONified.push(model.toJSON());
+							});
 
-        for(i in cams) {
-          // Grab views that are associated with site location by site_id property.
-          if(cams[i].site_id === site_id) {
-            var cam = new Camera(cams[i]);
+							safeName = _this.findWhere({'site_name':group})
+								.get('site_safe_name');
+							
+							struct.push({
+								name: group,
+								models: JSONified,
+								safeName: safeName
+							});
+						}
+			
+				  		// Make model attributes directly available for templating.
+				  		_.each(groups, organize);
+				
+				  		var sorted = _.sortBy(struct, function(group) {
+				  		  return group.name;
+				  		});
+				
+				  		return sorted;
+					},
+					groups: groups
+				};
+			}
+  	  	});
+		
+  	  	cameras = new Cameras();
 
-            items.push(cam);
-          }
-        }
+  	  	window.cameras = cameras;
 
-        // Reset the SiteViewCollection with new set of views.
-        this.reset(items);
-      }
-    });
-
-    cameras = new Cameras();
-
-    return cameras;
-  }
-);
+  		return cameras;
+});

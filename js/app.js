@@ -1,6 +1,7 @@
 require.config({
 	paths: {
 		'backbone': 'vendor/Backbone/backbone',
+		'backbone.poller': 'vendor/Backbone/backbone.poller',
 		'underscore': 'vendor/Underscore/underscore',
 		'domReady': 'vendor/Require/domReady',
 		'spin': 'vendor/Spin/spin',
@@ -9,26 +10,25 @@ require.config({
 	waitSeconds: 2
 });
 
+window.Telepresence = {
+	DEBUG: true,
+	debug: function(args) {
+		if(this.DEBUG) {
+			console.log(args);
+		}
+	},
+	version: "2.0.1"
+}
+
 require([
 	  'Router/Router'
-	, 'View/Sites'
-  	, 'View/Stream'
-	, 'View/Tabs'
-	, 'View/VideoControls'
-	, 'View/CameraControls'
-	, 'Model/Feed'
+	, 'Controller/Controller'
 	, 'underscore'
 	, 'backbone'], 
 
-	function(Router, Sites, Stream, Tabs, VideoControls, CameraControls, Feed) {
+	function(Router, Controller) {
 		// Iniitalize major components.
 		Router.initialize();
-		Sites.initialize();
-		Feed.initialize();
-		VideoControls.initialize();
-		CameraControls.initialize();
-		Tabs.initialize();
-
-		Backbone.history.start();
+		Controller.initialize();
 	}
 );

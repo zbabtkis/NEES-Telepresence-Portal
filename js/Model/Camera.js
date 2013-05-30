@@ -10,16 +10,16 @@ define([
 
   Camera = Backbone.Model.extend({
 		defaults: {
-          'baseUrl': settings.baseURL
+          'baseUrl': Drupal.settings.flex_api
         },
     initialize: function() {
-			var feed = this.get('baseUrl') + this.get('loc') + '/' + this.get('type'),
+			var feed = this.get('baseUrl') + this.get('site_name') + '/' + this.get('camera_name'),
           that = this;
+
+      _.bindAll(this);
 
 			this.set('feed', feed);
       this.set('robotic', feed + '/robotic');
-
-      _.bindAll(this);
 
 			FrameRate.on('change:value', this.loadMedia);
 		},
@@ -64,73 +64,8 @@ define([
 
       return this;
     },
-    action: function(action) {
-      this['_' + action];
-    },
-    _iris: function(value) {
-      var that  = this,
-        actions = ['close', 'open', 'auto']; // Only accept these actions
-      if($.inArray(value, actions)) {
-        if(value == 'close' || value == 'open') { var pre = 'r' } else { var pre = ''}; // Non automatic commands (i.e. close and auto) must be prefixed by 'r' in the GET action.
-        $.ajax({
-          url: that.get('robotic'),
-          data: {'ctrl': pre + 'iris', 'value': value}, // Format should be http://tps.nees.ucsb.edu/path/to/site/view/robot?ctrl=[action]&value=[value]
-          dataType: 'jsonp' // We don't need a returned value for now, and this will allow Cross-Domain HTTPRequest until we add CORS header to robotic script.
-        });
-      }
-    },
-    _focus: function(value) {
-      var that  = this,
-        actions = ['near', 'far', 'auto'];
-      if($.inArray(value, actions)) {
-        if(value == 'near' || value == 'far') { var pre = 'r' } else { var pre = ''};
-        $.ajax({
-          url: that.get('robotic'),
-          data: {'ctrl': pre + 'focus', 'value': value},
-          dataType: 'jsonp'
-        });
-        return this;
-      } else {
-        
-      }
-    },
-    _zoom: function(value) {
-      var that  = this,
-        actions = ['in', 'out'];
-      if($.inArray(value, actions)) {
-        $.ajax({
-          url: that.get('robotic'),
-          data: {ctrl: 'rzoom', value: value},
-          dataType: 'jsonp'
-        });
-        return this;
-      } else {
-        
-      }
-    },
-    _tilt: function(value) {
-      var that  = this,
-        actions = ['up', 'down'];
-      if($.inArray(value, actions)) {
-        $.ajax({
-          url: that.get('robotic'),
-          data: {'ctrl': 'rtilt', 'value': value},
-          dataType: 'jsonp'
-        });
-        return this;
-      } else {
-        
-      }
-    },
-    _pan: function(value) {
-      var that  = this,
-        actions = ['right', 'left'];
-      $.ajax({
-        url: that.get('robotic'),
-        data: {'ctrl': 'rpan', 'value': value},
-        dataType: 'jsonp'
-      });
-      return this;
+    action: function(action, value) {
+      this['_' + action](value);
     },
     _refresh: function() {
       var currentRequest = this.get('media');
@@ -163,7 +98,53 @@ define([
           dataType: 'jsonp'
         });
       }
-    }
+    },
+    _panTo: function(val) {
+      var that = this,
+        val = val + ',13';
+
+      $.ajax({
+        url: that.get('robotic'),
+        data: 'ctrl=apan&amp;imagewidth=100&amp;value=?' + val,
+        dataProcess: false,
+        dataType: 'jsonp'
+      });
+    },
+    _tiltTo: function(val) {
+      var that = this,
+        // Tilting is inverted
+        val = '13,' + (100 - val);
+
+      $.ajax({
+        url: that.get('robotic'),
+        data: 'ctrl=atilt&amp;imageheight=100&amp;value=?' + val,
+        dataProcess: false,
+        dataType: 'jsonp'
+      });
+    },
+    _zoomTo: function(val) {
+      var that = this,
+        // Offset negative zoom
+        val = (10 + val) + ',13';
+
+      $.ajax({
+        url: that.get('robotic'),
+        data: 'ctrl=azoom&amp;imagewidth=20&amp;value=?' + val,
+        dataProcess: false,
+        dataType: 'jsonp'
+      });
+    },
+    _focusTo: function(val) {
+      var _this = this,
+        val = (10 + val) + ',9';
+
+        $.ajax({
+          url: _this.get('robotic'),
+          data: 'ctrl=afocus&amp;imagewidth=20&amp;value=?' + val,
+          dataProcess: false,
+          dataType: 'jsonp'
+        });
+    },
 	});
 
 	return Camera;

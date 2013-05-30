@@ -1,11 +1,11 @@
 define([
-	  'Model/Feed'
+	  'Controller/Controller'
 	, 'spin'
 	, 'backbone'
 	, 'underscore'
 	, 'domReady'],	
 
-	function(feed, Spinner) {
+	function(Controller, Spinner) {
 	'use strict';
 
 	var $ = jQuery,
@@ -27,8 +27,8 @@ define([
 		},
 		media: new Image(),
 		load: function(id) {
-			var Cameras = require('Collection/Cameras'),
-				Cam     = Cameras.get(id),
+
+			var Cam     = Cameras._byId[id],
 				that    = this;
 
 			Cam.on('change:media', function() {
@@ -71,7 +71,7 @@ define([
 			// Append new stream image to view.
 			this.$el.html($(this.media));
 			// Resize wrapper to match image size.
-			this.resize();
+			//this.resize();
 		},
 		resize: function() {
 			var height = $(this.media).height();

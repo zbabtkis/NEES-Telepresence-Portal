@@ -1,9 +1,4 @@
 define([
-    'View/Info'
-  , 'View/Sites'
-  , 'View/CameraList'
-  , 'View/Stream'
-  , 'View/CameraControls'
   , 'underscore'
   , 'backbone'], 
 
@@ -15,33 +10,42 @@ define([
 
   var Router = Backbone.Router.extend({
     routes: {
-      '': 'sitesList',
-      'sites': 'sitesList',
-      'help': 'helpPage',
-      'sites/:site': 'camerasList',
-      'sites/:site/:cam': 'feedView'
+      '': 'list',
+      'sites': 'list',
+      'help': 'help',
+      'sites/:cam': 'camera'
     },
-    helpPage: function() {
-      var Info = require('View/Info');
+    help: function() {
+      require(['View/Info'], 
+        function(Info) {
 
-      Info.render();
+          Info.render();
+      });
     },
-    sitesList: function() { 
-      var Sites = require('View/Sites');
+    list: function() { 
+      var _this = this;
 
-      Sites.render();
+      require(['View/List'], 
+
+        function(List) {        
+          List.render();
+        
+          _this.listenTo(List, 'cameraSelected', function(id) {
+            this.navigate('sites/' + id, {trigger: true});
+          });
+      });
     },
-    camerasList: function(site) {
-      var Cameras = require('View/CameraList');
+    camera: function(id) {
+      var _this = this;
 
-      this.sitesList();
-      Cameras.update(site);
-    },
-    feedView: function(site, cam) {
-      var Stream   = require('View/Stream');
+      require(['Controller/Controller'], 
 
-      this.camerasList(site);
-      Stream.load(cam);
+        function(Controller) {
+
+          _this.list();
+
+          Controller.openFeed(id);
+      });
     }
   });
 

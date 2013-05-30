@@ -1,8 +1,13 @@
 <ul id='site-list'>
-	<% _.each(sites, function(site) { %> 
-		<li class='site' id='site-<%= site.safe_name %>' data-location="<%= site.safe_name %>"">
-			<%= site.loc %>
-		</li> 
+	<% _.each(sites, function(site) { %>
+		<li class='site' data-assoc-list='<%= site.safeName %>'>
+			<%= site.name %>
+		</li>
+		<ul class='cameras' data-assoc-list='<%= site.safeName %>'>
+			<% _.each(site.models, function(camera) { %>
+				<li class='camera' data-id="<%= camera.id %>"><%= camera.camera_name %></li>
+			<% }); %>
+		</ul>
 	<% }); %>
 	<ul id='sub-menu'></ul>
 </ul>

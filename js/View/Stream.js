@@ -1,11 +1,12 @@
 define([
-	  'Controller/Controller'
+	  'text!Templates/Stream.jtpl'
+	, 'Controller/Controller'
 	, 'spin'
 	, 'backbone'
 	, 'underscore'
 	, 'domReady'],	
 
-	function(Controller, Spinner) {
+	function(Template, Controller, Spinner) {
 	'use strict';
 
 	var $ = jQuery,
@@ -13,6 +14,11 @@ define([
 
 	Stream = Backbone.View.extend({
 		el: '#stream',
+		events: {
+			'click img': 'publishClick',
+			'load img': 'loadSuccess',
+			'fail img': 'loadFail'
+		},
 		initialize: function() {
 			_.bindAll(this);
 			
@@ -25,7 +31,7 @@ define([
 
 			this.on('fullScreen', this.fullScreen);
 		},
-		media: new Image(),
+		template: _.template(Template),
 		load: function(id) {
 
 			var Cam     = Cameras._byId[id],
@@ -40,10 +46,12 @@ define([
 			Cam.loadMedia();
 		},
 		render: function(feed) {
-			$(this.media).attr('src', feed);
+			var html = this.template({stream: feed});
 
-			$(this.media).load(this.loadSuccess);
-			$(this.media).error(this.loadFail);
+			this.$el.html(html);
+
+			this.$el.find('img').load(this.loadSuccess);
+			this.$el.find('img').error(this.loadFail);
 
 			// Display spinner while image loads.
 			this.spinner.spin(this.el);
@@ -54,24 +62,24 @@ define([
 			// Display player controls at bottom of screen
 			$('#player-controls').toggleClass('fullScreenControls');
 			// Make stream take up full window.
-			$(this.media).toggleClass('fullScreen');
+			this.$el.toggleClass('fullScreen');
 
 			// Otherwise, app wrapper elongates to match bottom of image.
 			this.resize();
 		},
 		loadFail: function(e) {
+			Telepresence.debug('Image Load Failed');
+
 			this.spinner.stop();
 			this.trigger('loadFail');
 			this.$el.html("<h1 class='telepresence-message'>Unable to load stream</h1>");
 		},
 		loadSuccess: function() {
+			Telepresence.debug('Image Load Success');
+
 			this.spinner.stop();
 			this.trigger('loadSuccess');
 			this.$el.addClass('stream-loaded');
-			// Append new stream image to view.
-			this.$el.html($(this.media));
-			// Resize wrapper to match image size.
-			//this.resize();
 		},
 		resize: function() {
 			var height = $(this.media).height();
@@ -79,6 +87,9 @@ define([
 			if(height) {
 				this.$el.height(height);
 			}
+		},
+		publishClick: function(e) {
+			this.trigger('streamClicked', e);
 		}
 	});
 

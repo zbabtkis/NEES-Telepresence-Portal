@@ -14,7 +14,7 @@ window.Telepresence = {
 	DEBUG: true,
 	debug: function(first) {
 		if(this.DEBUG) {
-			if(typeof args !== 'Object') {
+			if(_.isObject(arguments)) {
 				console.log("Telepresence DEBUG: ", first)
 			} else {
 				console.log.apply(console, arguments);
@@ -28,14 +28,17 @@ require([
 	  'Router/Router'
 	, 'Controller/Controller'
 	, 'Controller/VideoController'
+	, 'View/CameraControls'
 	, 'underscore'
 	, 'backbone'], 
 
-	function(Router, Controller, VideoController) {
-		jQuery('#telepresence-wrap').draggable();
+	function(Router, Controller, VideoController, CameraControls) {
 		// Iniitalize major components.
 		Router.initialize();
-		Controller.initialize();
+
+		// Views
+		CameraControls.initialize();
+
 		VideoController.initialize();
 	}
 );

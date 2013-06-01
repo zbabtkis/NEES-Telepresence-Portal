@@ -1,4 +1,13 @@
-define(['Collection/Cameras' ,'vendor/Kendo/kendo.slider.min', 'vendor/Kendo/kendo.dropdownlist.min', 'backbone.kendowidget' ,'underscore', 'backbone', 'domReady'], function(cameras) {
+define([
+	  'Collection/Cameras'
+	, 'vendor/Kendo/kendo.slider.min'
+	, 'vendor/Kendo/kendo.dropdownlist.min'
+	, 'backbone.kendowidget'
+	, 'underscore'
+	, 'backbone'
+	, 'domReady'], 
+
+	function(cameras) {
 	'use strict';
 
 	var SliderPan, SliderTilt, SliderZoom,
@@ -112,14 +121,29 @@ define(['Collection/Cameras' ,'vendor/Kendo/kendo.slider.min', 'vendor/Kendo/ken
 
 	// Kendo currently has no way of modifying these -- FIX THIS WHEN IT DOES.
 	function fixLabels() {
-		$('.zoom-control').eq(0).find('.k-label').eq(0).html('In');
-		$('.zoom-control').eq(0).find('.k-label').eq(1).html('Out');
+		// Change zoom slider labels.
+		$('.zoom-control').eq(0)
+			.find('.k-label').eq(0)
+			.html('In');
+		$('.zoom-control').eq(0)
+			.find('.k-label').eq(1)
+			.html('Out');
 
-		$('.focus-control').eq(0).find('.k-label').eq(0).html('In');
-		$('.focus-control').eq(0).find('.k-label').eq(1).html('Out');
+		// Change focus slider labels.
+		$('.focus-control').eq(0)
+			.find('.k-label').eq(0)
+			.html('In');
+		$('.focus-control').eq(0)
+			.find('.k-label').eq(1)
+			.html('Out');
 
-		$('.iris-control').eq(0).find('.k-label').eq(0).html('Open');
-		$('.iris-control').eq(0).find('.k-label').eq(1).html('Close');
+		// Change iris slider labels.
+		$('.iris-control').eq(0)
+			.find('.k-label').eq(0)
+			.html('Open');
+		$('.iris-control').eq(0)
+			.find('.k-label').eq(1)
+			.html('Close');
 	}
 
 	return {

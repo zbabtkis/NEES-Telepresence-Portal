@@ -9,12 +9,12 @@ define([
   	  	Cameras = Backbone.Collection.extend({
 			model: Camera,
 			url: Drupal.settings.module_api + '/cameras',
-			poll: function(delay) {
+			poll: function() {
 				var _this = this;
 			    
 			    this.poller = setInterval(function() {
 			    	_this.fetch();
-			    }, delay);
+			    }, 5000);
 		    },
 		    stopPolling: function() {
 		    	clearInterval(this.poller);

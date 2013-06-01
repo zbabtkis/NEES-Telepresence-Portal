@@ -1,160 +1,127 @@
 define([
-    'Model/FrameRate'
-  , 'underscore'
-  , 'backbone'], 
+		'Model/FrameRate'
+	, 'underscore'
+	, 'backbone'], 
 
-  function(FrameRate, settings) {
-	var Camera,
-      $ = jQuery;
+	function(FrameRate, settings) {
+	var _robotic, _polyfill, Camera;
 
-  Camera = Backbone.Model.extend({
+	// Adds robotic functionality to Backbone's model for triggering changes on a flextps camera.
+	_robotic = function(action) {
+		var _this = this;
+
+		console.log(this);
+
+		jQuery.ajax({
+			url: _this.get('robotic'),
+			data: action,
+			dataProcess: false,
+			dataType: 'jsonp'
+		});
+	};
+
+	_polyfill = function() {
+		var _this = this,
+			fameRate = FrameRate.get('value'),
+			valFr = 1000;
+
+		function setFeed() {
+			this.set('media', this.get('feed') + '/jpeg?reset=' + Math.random());
+		}
+
+		if(fameRate != 0 && fameRate <= 10) {
+			var valFr = (11 - fameRate) * 1000;
+		} else {
+			setFeed();
+			return 0;
+		}
+		
+		// Refresh image at interval by resetting the fullRequest address with a random number appended to it to trigger change.
+		this.intervalId = setInterval(function() {
+			if(fameRate != 0) {
+				setFeed();
+			} else {
+				clearInterval(that.intervalId);
+			}
+		}, valFr);
+
+		return this;
+	}
+
+	Camera = Backbone.Model.extend({
 		defaults: {
-          'baseUrl': Drupal.settings.flex_api
-        },
-    initialize: function() {
-			var feed = this.get('baseUrl') + this.get('site_name') + '/' + this.get('camera_name'),
-          that = this;
-
-      _.bindAll(this);
+			'baseUrl': Drupal.settings.flex_api
+		},
+		initialize: function() {
+			var feed = this.get('baseUrl') + this.get('site_name') + '/' + this.get('camera_name');
 
 			this.set('feed', feed);
-      this.set('robotic', feed + '/robotic');
+			this.set('robotic', feed + '/robotic');
 
 			FrameRate.on('change:value', this.loadMedia);
+
+			this.on('change', function() {
+				Backbone.sync('update', this);
+			});
 		},
-    loadMedia: function() {
-      var fr = FrameRate.get('value');
+		loadMedia: function() {
+			var frameRate = FrameRate.get('value');
+			// Break and use polyfill if browser doesn't support mjpeg.
+			if(jQuery.browser.msie && jQuery.browser.version < 10.0) _polyfill.apply(this, null);
 
-      // Break and use polyfill if browser doesn't support mjpeg.
-      if($.browser.msie && $.browser.version < 10.0) {
-        this._polyfill();
+			if(frameRate === 0) {
+				this.set('media', this.get('feed') + '/' + 'jpeg');
+			} else {
+				this.set('media', this.get('feed') + '/mjpeg/' + frameRate);
+			}
 
-        return this;
-      }
+			return this;
+		},
+		action: function(action, value) {
+			this['_' + action](value);
+		},
+		_refresh: function() {
+			var currentRequest = this.get('media');
+			var time = '?timestamp=' + Date.now();
+			// Allow view to detect change in feed by appending current time to url.
+			this.set('media', currentRequest + time);
+		},
+		_screenshot: function() {
+			var loc = this.get('feed') + '/jpeg?attachment=true';
+			window.location.href = loc;
+		},
+		_home: function() {
+			_robotic.call(this, '?ctrl=home');
+		},
+		_position: function(args) {
+			_robotic.call(this, "?ctrl=apan&amp;imagewidth=" + args.imgWidth + "&amp;value=?" + args.width);
+			_robotic.call(this, "?ctrl=atilt&amp;imageheight=" + args.imgHeight + "&amp;value=?" + args.height);
+		},
+		_panTo: function(val) {
+			var action = 'ctrl=apan&amp;imagewidth=100&amp;value=?' + val + ',13';
 
-      if(fr == 0) {
-        this.set('media', this.get('feed') + '/' + 'jpeg');
-      } else {
-        this.set('media', this.get('feed') + '/mjpeg/' + fr);
-      }
+			_robotic.call(this, action);
+		},
+		_tiltTo: function(val) {
+			var action = 'ctrl=atilt&amp;imageheight=100&amp;value=?13,' + (100 - val);
 
-      return this;
-    },
-    action: function(action, value) {
-      this['_' + action](value);
-    },
-    _refresh: function() {
-      var currentRequest = this.get('media');
-      var time = '?timestamp=' + Date.now();
-      // Allow view to detect change in feed by appending current time to url.
-      this.set('media', currentRequest + time);
-    },
-    _home: function() {
-      var that = this;
-      $.ajax({
-        url: that.get('robotic'),
-        data: {'ctrl': 'home'},
-        dataType: 'jsonp'
-      });
-      return this;
-    },
-    _screenshot: function() {
-      var loc = this.get('feed') + '/jpeg?attachment=true';
-      window.location.href = loc;
-    },
-    _position: function(args) {
-      var that, actions = [], action, pan, tilt, i;
+			_robotic.call(this, action);
+		},
+		_zoomTo: function(val) {
+			var action = 'ctrl=azoom&amp;imagewidth=20&amp;value=?' + (10 + val) + ',13';
 
-      that = this;
-      actions['pan'] = "?ctrl=apan&amp;imagewidth=" + args.imgWidth + "&amp;value=?" + args.width;
-      actions['tilt'] = "?ctrl=atilt&amp;imageheight=" + args.imgHeight + "&amp;value=?" + args.height;
-      for(action in actions) {
-        $.ajax({
-          url: that.get('robotic') + actions[action],
-          dataType: 'jsonp'
-        });
-      }
-    },
-    _panTo: function(val) {
-      var that = this,
-        val = val + ',13';
+			_robotic.call(this, action);
+		},
+		_focusTo: function(val) {
+			var action = 'ctrl=afocus&amp;imagewidth=20&amp;value=?' + (10 + val) + ',9';
 
-      $.ajax({
-        url: that.get('robotic'),
-        data: 'ctrl=apan&amp;imagewidth=100&amp;value=?' + val,
-        dataProcess: false,
-        dataType: 'jsonp'
-      });
-    },
-    _tiltTo: function(val) {
-      var that = this,
-        // Tilting is inverted
-        val = '13,' + (100 - val);
+			_robotic.call(this, action);
+		},
+		_irisTo: function(val) {
+			var action = 'ctrl=airis&amp;imagewidth=20&amp;value=?' + (10 + val) + ',9';
 
-      $.ajax({
-        url: that.get('robotic'),
-        data: 'ctrl=atilt&amp;imageheight=100&amp;value=?' + val,
-        dataProcess: false,
-        dataType: 'jsonp'
-      });
-    },
-    _zoomTo: function(val) {
-      var that = this,
-        // Offset negative zoom
-        val = (10 + val) + ',13';
-
-      $.ajax({
-        url: that.get('robotic'),
-        data: 'ctrl=azoom&amp;imagewidth=20&amp;value=?' + val,
-        dataProcess: false,
-        dataType: 'jsonp'
-      });
-    },
-    _focusTo: function(val) {
-      var _this = this,
-        val = (10 + val) + ',9';
-
-      $.ajax({
-        url: _this.get('robotic'),
-        data: 'ctrl=afocus&amp;imagewidth=20&amp;value=?' + val,
-        dataProcess: false,
-        dataType: 'jsonp'
-      });
-    },
-    _irisTo: function(val) {
-      var _this = this,
-        val = (10 + val) + ',9';
-
-      $.ajax({
-        url: _this.get('robotic'),
-        data: 'ctrl=airis&amp;imagewidth=20&amp;value=?' + val,
-        dataProcess: false,
-        dataType: 'jsonp'
-      });
-    },
-    _polyfill: function() {
-      var that = this,
-          fr = FrameRate.get('value'),
-          valFr = 1000;
-
-      if(fr != 0 && fr <= 10) {
-        var valFr = (11 - fr) * 1000;
-      } else {
-        this.set('media', this.get('feed') + '/jpeg?reset=' + Math.random());
-        return 0;
-      }
-      
-      // Refresh image at interval by resetting the fullRequest address with a random number appended to it to trigger change.
-      this.intervalId = setInterval(function() {
-        if(FrameRate.get('value') != 0) {
-          that.set('media', that.get('feed') + '/jpeg?reset=' + Math.random()); 
-        } else {
-          clearInterval(that.intervalId);
-        }
-      }, valFr);
-
-      return this;
-    },
+			_robotic.call(this, action);
+		}
 	});
 
 	return Camera;

@@ -17,7 +17,8 @@ define([
 		events: {
 			'click img': 'publishClick',
 			'load img': 'loadSuccess',
-			'fail img': 'loadFail'
+			'fail img': 'loadFail',
+			'click .reload': 'reloadFeed'
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -79,7 +80,6 @@ define([
 
 			this.spinner.stop();
 			this.trigger('loadSuccess');
-			this.$el.addClass('stream-loaded');
 		},
 		resize: function() {
 			var height = $(this.media).height();
@@ -90,6 +90,13 @@ define([
 		},
 		publishClick: function(e) {
 			this.trigger('streamClicked', e);
+		},
+		promptReload: function() {
+			this.$el.addClass('stream-ended');
+			this.$el.prepend("<img class='reload' src='http://openclipart.org/image/800px/svg_to_png/171074/reload-icon.png' />");
+		},
+		reloadFeed: function() {
+			console.log("About to load feed");
 		}
 	});
 

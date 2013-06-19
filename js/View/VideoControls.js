@@ -75,7 +75,9 @@ define([
 
 				_.each(Controls, function(control) {
 					control.enable();
-					AppController.listenTo(control, 'valueChange', AppController.videoControl);
+					AppController.listenTo(control, 'valueChange', function(controlObj) {
+						AppController.trigger('change:videoControl', controlObj)
+					});
 				});
 			},
 			disable: function() {
@@ -83,7 +85,7 @@ define([
 
 				_.each(Controls, function(control) {
 					control.disable();
-					AppController.stopListening(control, 'valueChange', AppController.videoControl);
+					AppController.stopListening(control, 'valueChange');
 				});
 			},
 			set: function(ctrl, val) {

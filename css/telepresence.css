@@ -10,7 +10,7 @@
  * ..4) App Controls
  * ....a) Player Controls
  * ....b) Camera Controls
- * ..5) Responsive
+ * ..5) Responsive#
  * -----------------------------------------------
  */
 
@@ -132,6 +132,7 @@
 }
 .cameras {
 	display: none;
+	margin: 0;
 }
 .cameras.active {
 	display: block;
@@ -162,7 +163,6 @@ float: right;
 	overflow: visible;
 	padding: 15px;
 	float: left;
-	width: 1176px !important;
 }
 #telepresence-wrap header {
 	background: #222;
@@ -177,15 +177,97 @@ float: right;
 }
 #telepresence-menu {
 	float: left;
-	width: 33%;
 }
 #video {
 	width: 65%;
+	min-width: 760px;
 	float: right;
 }
-#video img {
+#stream {
+	overflow: hidden;
+}
+#stream .stream-image {
 	width: 100%;
 	background: #000;
+}
+#stream.stream-ended .stream-image {
+	-webkit-animation: blurOut 2s;
+	-moz-animation: blurOut 2s;
+	-o-animation: blurOut 2s;
+	animation: blurOut 2s;
+
+	-webkit-filter: blur(15px);
+	-moz-filter: blur(15px);
+	-o-transition: blur(15px);
+	filter: blur(15px);
+}
+
+#stream.stream-ended .reload {
+	height: 150px;
+	width: 150px;
+	position: absolute;
+	margin-top: 12%;
+	margin-left: 22%;
+}
+
+@keyframes blurOut {
+	from {
+		-webkit-filter: blur(0);
+		-moz-filter: blur(0);
+		-o-transition: blur(0);
+		filter: blur(0);
+	}
+	to {
+		-webkit-filter: blur(15px);
+		-moz-filter: blur(15px);
+		-o-transition: blur(15px);
+		filter: blur(15px);
+	}
+}
+
+@-webkit-keyframes blurOut {
+	from {
+		-webkit-filter: blur(0);
+		-moz-filter: blur(0);
+		-o-transition: blur(0);
+		filter: blur(0);
+	}
+	to {
+		-webkit-filter: blur(15px);
+		-moz-filter: blur(15px);
+		-o-transition: blur(15px);
+		filter: blur(15px);
+	}
+}
+
+@-moz-keyframes blurOut {
+	from {
+		-webkit-filter: blur(0);
+		-moz-filter: blur(0);
+		-o-transition: blur(0);
+		filter: blur(0);
+	}
+	to {
+		-webkit-filter: blur(15px);
+		-moz-filter: blur(15px);
+		-o-transition: blur(15px);
+		filter: blur(15px);
+	}
+}
+
+@-o-keyframes blurOut {
+	from {
+		-webkit-filter: blur(0);
+		-moz-filter: blur(0);
+		-o-transition: blur(0);
+		filter: blur(0);
+	}
+	to {
+		-webkit-filter: blur(15px);
+		-moz-filter: blur(15px);
+		-o-transition: blur(15px);
+		filter: blur(15px);
+	}
 }
 #nvf-frame img.fullScreen {
 	max-height: 100%;

@@ -1,13 +1,14 @@
 define([
-	  'View/MenuHeader'
+	  'Router/Router'
+	, 'View/MenuHeader'
 	, 'underscore'
 	, 'backbone'
 	, 'domReady'], 
 
-	function(MenuHeader) {
+	function(Router, MenuHeader) {
 	'use strict'
 
-	var Tabs, tabs,
+	var Tabs,
 		$ = jQuery;
 
 	Tabs = Backbone.View.extend({
@@ -31,7 +32,9 @@ define([
 		}
 	});
 
-	tabs = new Tabs();
-
-	return tabs;
+	return {
+		initialize: function() {
+			var tabs = new Tabs();
+		}
+	};
 });

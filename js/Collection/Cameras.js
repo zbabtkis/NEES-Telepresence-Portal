@@ -8,16 +8,24 @@ define([
 		
   	  	Cameras = Backbone.Collection.extend({
 			model: Camera,
-			url: Drupal.settings.module_api + '/cameras',
+			url: function() {
+				return Telepresence.nodeActive ? Telepresence.nodeServer : Drupal.settings.module_api + '/cameras';
+			},
 			poll: function() {
 				var _this = this;
-			    
-			    this.poller = setInterval(function() {
-			    	_this.fetch();
-			    }, 5000);
+
+				_.bindAll(this, 'fetch');
+
+				if(Telepresence.nodeActive) {
+					Telepresence.socket.on('cameraUpdated', this.fetch);
+				} else {
+					this.poller = setInterval(this.fetch, 5000);
+				}
 		    },
 		    stopPolling: function() {
-		    	clearInterval(this.poller);
+		    	if(this.poller) {
+		    		clearInterval(this.poller);
+		    	}
 		    },
 			group: function() {
 				var _this = this,
@@ -50,7 +58,9 @@ define([
 						}
 			
 				  		// Make model attributes directly available for templating.
-				  		_.each(groups, organize);
+				  		if(groups.length !== 0) {
+				  			_.each(groups, organize);
+				  		}
 				
 				  		var sorted = _.sortBy(struct, function(group) {
 				  		  return group.name;

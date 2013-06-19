@@ -67,6 +67,7 @@ function telepresence_page() {
 	);
 
 	drupal_add_css($module_path . '/css/telepresence.css');
+	drupal_add_css($module_path . '/css/telepresence-light.css');
 
 	$page = theme('telepresence_template', array('module_path' => $module_path));
 	

@@ -11,7 +11,7 @@ Backbone.KendoWidget = Backbone.View.extend({
 				value: (e.value || e._value || e.sender._value)
 			};
 
-			Telepresence.debug('A kendo widget value has changed',e);
+			Telepresence.debug('A kendo widget value has changed', e);
 
 			_this.trigger('valueChange', obj);
 		});

@@ -1,0 +1,127 @@
+/**
+ * COLORS
+ * @@@@@@@@@@@@@@@@@@@@@
+ * white: #eee;
+ * black: #222;
+ * blue:  #008886;
+
+/** Core */
+
+.theme-light label, .icon {
+	color: #222;
+}
+
+/** App */
+
+/** @TODO: Change to more general page-header selector */
+.theme-light .page-header {
+	background: #008886;
+	color: #eee;
+	margin: 0 !important;
+	padding: 30px !important;
+}
+
+.theme-light #telepresence-wrap {
+	background: #ddd;
+}
+
+/** Camera Navigation List */
+
+.theme-light #site-list {
+	/** @TODO: Remove backround & border from main css */
+	background: none;
+	border: none;
+}
+.theme-light .site {
+	color: #222;
+	background: #999;
+}
+.theme-light .site:hover {
+	color: #eee;
+}
+.theme-light .site.active {
+	background: #008886;
+	color: #eee;
+	border-bottom: none;
+}
+.theme-light .site:after {
+	/** @TODO: Remove from main css */
+	content: "";
+}
+.theme-light .site.active:after {
+	width: 0;
+	height: 0;
+	border-width: 15px;
+	border-style: solid;
+	border-color: transparent transparent #fff;
+	content: "";
+	margin: 15px;
+}
+.theme-light .cameras {
+	background: #fff;
+	border-bottom: 1px solid #aaa;
+	margin-top: 19px;
+}
+.theme-light .camera {
+	color: #333;
+}
+.theme-light .camera:hover {
+	background: #bbb !important;
+}
+
+.theme-light #telepresence-dashboard {
+	margin-top: 55px;
+}
+/** Controls */
+
+.theme-light #controls h3 {
+	color: #222;
+}
+
+.theme-light .input-controls {
+	margin-right: 30px;
+}
+
+.theme-light .control {
+	padding-right: 10px;
+}
+
+.theme-light label[for='slider-pan'] {
+	margin-top: -15px;
+	margin-bottom: 0;
+}
+
+.theme-light label[for='slider-tilt'] {
+	margin-top: 200px;
+	margin-left: 0;
+	text-align: center;
+}
+
+/** Kendo hacks */
+
+.theme-light .k-label {
+	display: none !important;
+}
+
+.theme-light span.k-numerictextbox {
+	background: #111;
+}
+
+.theme-light .k-select {
+	height: 100%;
+}
+
+/** Video */
+
+.theme-light #stream {
+	margin-right: 22px;
+	background: #999;
+}
+
+.theme-light #stream h1 {
+	color: #333;
+}
+
+.theme-light .tp-row {
+	margin-top: 22px;
+}

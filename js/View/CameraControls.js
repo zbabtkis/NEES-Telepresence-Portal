@@ -164,7 +164,10 @@ define([
 
 			_.each(Controls, function(control) {
 				control.enable();
-				AppController.listenTo(control, 'valueChange', AppController.cameraControl);
+				AppController.listenTo(control, 'valueChange', function(widgInfo) {
+					Telepresence.debug('valueChange triggered on AppController');
+					this.trigger('change:cameraControl', widgInfo);
+				});
 			});
 		},
 		disable: function() {
@@ -174,7 +177,7 @@ define([
 
 			_.each(Controls, function(control) {
 				control.disable();
-				AppController.stopListening(control, 'valueChange', AppController.cameraControl);
+				AppController.stopListening(control, 'change:cameraControl');
 			});
 		},
 		set: function(ctrl, val) {

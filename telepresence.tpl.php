@@ -1,9 +1,7 @@
+<script src="http://sticky.eri.ucsb.edu:8888/socket.io/socket.io.js"></script>
 <script data-main="/<?php print $module_path; ?>/js/app" src="/<?php print $module_path; ?>/js/vendor/Require/require.js"></script>
 
 <div id="telepresence-wrap">
-	<header>
-		<h2>Telepresence</h2>
-	</header>
 	<aside id='telepresence-menu'>
 		<nav id='tp-tabs'>
 			<i id='help-tab' class='icon icon-info-sign icon-2x' alt='Show Help' title='Show Help'></i>
@@ -56,7 +54,7 @@
 			<div id="stream" class='left-col'></div>
 
 			<div class='right-col'>
-				<label for='slider-tilt'>Tilt</label>
+				<label for='slider-tilt'>T<br>I<br>L<br>T</label>
 				<div id="slider-tilt" class='slider-tilt'></div>
 			</div>
 		</div>

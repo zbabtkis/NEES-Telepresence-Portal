@@ -10,8 +10,6 @@ define([
 	_robotic = function(action) {
 		var _this = this;
 
-		console.log(this);
-
 		jQuery.ajax({
 			url: _this.get('robotic'),
 			data: action,
@@ -50,36 +48,65 @@ define([
 
 	Camera = Backbone.Model.extend({
 		defaults: {
-			'baseUrl': Drupal.settings.flex_api
+			'baseUrl': Drupal.settings.flex_api,
+			framerate: 1,
+			type: 'mjpeg'
 		},
 		initialize: function() {
-			var feed = this.get('baseUrl') + this.get('site_name') + '/' + this.get('camera_name');
+			if(Telepresence.nodeActive) {
+				var base = Telepresence.nodeServer;
+				this.set('baseUrl', base);
 
-			this.set('feed', feed);
-			this.set('robotic', feed + '/robotic');
+				this.set('feed', this.get('baseUrl') + this.get('id'));
 
-			FrameRate.on('change:value', this.loadMedia);
+				Telepresence.socket.on('streamEnded', function() {
+					alert('Stream ended');
+				});
+			} else {
+				this.set('feed', 
+					  this.get('baseUrl')
+					+ this.get('site_name') + '/'
+					+ this.get('camera_name')
+				);
+			}
+
+			this.set('robotic', this.get('feed') + '/robotic');
+
+			FrameRate.on('change:value', this.loadMedia, this);
 
 			this.on('change', function() {
 				Backbone.sync('update', this);
 			});
 		},
 		loadMedia: function() {
-			var frameRate = FrameRate.get('value');
+			var frameRate = FrameRate.get('value'),
+				socketInfo;
+
+			Telepresence.debug('loading media @ camera', this);
+
 			// Break and use polyfill if browser doesn't support mjpeg.
 			if(jQuery.browser.msie && jQuery.browser.version < 10.0) _polyfill.apply(this, null);
 
+			socketInfo = Telepresence.nodeActive ? '?socketID=' + Telepresence.socket.socket.sessionid : '';
+
 			if(frameRate === 0) {
-				this.set('media', this.get('feed') + '/' + 'jpeg');
+				this.set('media', this.get('feed') + '/' + 'jpeg' + socketInfo);
 			} else {
-				this.set('media', this.get('feed') + '/mjpeg/' + frameRate);
+				this.set('media', this.get('feed') + '/mjpeg/' + frameRate + socketInfo);
 			}
+
+			this.trigger('renderMe');
 
 			return this;
 		},
 		action: function(action, value) {
-			this['_' + action](value);
+			if(Telepresence.nodeActive) {
+				// @TODO: Map to backend actions!
+			} else {
+				this['_' + action](value);
+			}
 		},
+		// @NOTE: All of the below functions can be removed if node backend becomes more sturdy.
 		_refresh: function() {
 			var currentRequest = this.get('media');
 			var time = '?timestamp=' + Date.now();

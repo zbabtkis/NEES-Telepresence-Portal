@@ -1,13 +1,12 @@
-<ul id='site-list'>
+<div id='site-list'>
 	<% _.each(sites, function(site) { %>
-		<li class='site' data-assoc-list='<%= site.safeName %>'>
+		<div class='site' data-assoc-list='<%= site.safeName %>'>
 			<%= site.name %>
-		</li>
+		</div>
 		<ul class='cameras' data-assoc-list='<%= site.safeName %>'>
 			<% _.each(site.models, function(camera) { %>
 				<li class='camera' data-id="<%= camera.id %>"><%= camera.camera_name %></li>
 			<% }); %>
 		</ul>
 	<% }); %>
-	<ul id='sub-menu'></ul>
-</ul>
+</div>

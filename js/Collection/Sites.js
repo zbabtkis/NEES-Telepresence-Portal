@@ -4,7 +4,7 @@ define([
   , 'underscore'
   , 'backbone'], 
 
-  function(Site, settings) {
+  function(Site, settings, _, Backbone) {
   'use strict';
 
   var Sites, sites;

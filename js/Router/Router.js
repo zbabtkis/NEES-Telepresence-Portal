@@ -3,7 +3,7 @@ define([
   , 'underscore'
   , 'backbone'], 
 
-	function (Cameras) {
+	function (Cameras, _, Backbone) {
 		'use strict';
 
 	  	var Router, router;
@@ -17,6 +17,10 @@ define([
 				'sites/:cam': 'camera'
 		    	},
 
+		    	initialize: function() {
+		    		Cameras = new Cameras();
+		    	},
+
 		    	help: function() {
 					require(['View/Info'], function(Info) {	
 						Info.render();
@@ -27,9 +31,11 @@ define([
 					var _this = this;
 
 					require(['View/List'], function(List) {        
-						List.render();
+						var list = new List({collection: Cameras});
+						
+						list.render();
 
-						_this.listenTo(List, 'cameraSelected', function(id) {
+						_this.listenTo(list, 'cameraSelected', function(id) {
 							this.navigate('sites/' + id, {trigger: true, replace: true});
 						});
 					});
@@ -38,7 +44,8 @@ define([
 		    	camera: function(id) {
 					var _this = this;
 
-					define('CameraController',['Collection/Cameras','View/Stream' , 'View/CameraControls'], function(Cameras, Stream, CameraControls) {
+					define('CameraController',['View/Stream' , 'View/CameraControls'], function(Stream, CameraControls) {
+
 						function renderStream() {
 							console.log(this.get('media'));
 							Stream.render(this.get('media'));
@@ -74,8 +81,7 @@ define([
 							}
 							save[widgInfo.boundTo] = widgInfo.value;
 
-							this.set(save);
-							this.action(widgInfo.action, widgInfo.value);
+							this.save(save);
 						}
 
 						function listen(camera) {
@@ -148,16 +154,16 @@ define([
 
 	  	return {
 	    		initialize: function() {
-				router = new Router();
-		
-				Cameras.fetch({
-					success: function() {
-						Backbone.history.start();
-					},
-					fail: function() {
-						alert("There was an error loading the camera feeds. Please try again later.")
-				  	}
-				});
+					router = new Router();
+			
+					Cameras.fetch({
+						success: function() {
+							Backbone.history.start();
+						},
+						fail: function() {
+							alert("There was an error loading the camera feeds. Please try again later.")
+					  	}
+					});
 	    		},
 
 	    		navigate: function(to) {

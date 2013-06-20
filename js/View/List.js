@@ -1,15 +1,14 @@
 define([
 	  'text!Templates/Sites.jtpl'
-	, 'Collection/Cameras'
 	, 'underscore'
+	, 'jquery'
 	, 'backbone'
 	, 'domReady'], 
 
-	function(Template, Cameras) {
+	function(Template, _, $, Backbone) {
 	'use strict';
 
-	var $ = jQuery,
-		List, list;
+	var List, list;
 
 	List = Backbone.View.extend({
 		events: {
@@ -24,7 +23,7 @@ define([
 			_.bindAll(this);
 		},
 		render: function() {
-			var collection = Cameras.group().toJSON(),
+			var collection = this.collection.group().toJSON(),
 				html;
 
 			html = this.template({sites: collection});
@@ -52,7 +51,5 @@ define([
 		}
 	});
 
-	var list = new List
-
-	return list;
+	return List;
 });

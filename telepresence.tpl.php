@@ -1,4 +1,3 @@
-<script src="http://sticky.eri.ucsb.edu:8888/socket.io/socket.io.js"></script>
 <script data-main="/<?php print $module_path; ?>/js/app" src="/<?php print $module_path; ?>/js/vendor/Require/require.js"></script>
 
 <div id="telepresence-wrap">

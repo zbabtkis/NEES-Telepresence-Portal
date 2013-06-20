@@ -3,30 +3,12 @@ define([
 	, 'underscore'
 	, 'backbone'],
 
-  	function(Camera, settings) {
+  	function(Camera, _, Backbone) {
   	  	var Cameras, cameras;
 		
   	  	Cameras = Backbone.Collection.extend({
 			model: Camera,
-			url: function() {
-				return Telepresence.nodeActive ? Telepresence.nodeServer : Drupal.settings.module_api + '/cameras';
-			},
-			poll: function() {
-				var _this = this;
-
-				_.bindAll(this, 'fetch');
-
-				if(Telepresence.nodeActive) {
-					Telepresence.socket.on('cameraUpdated', this.fetch);
-				} else {
-					this.poller = setInterval(this.fetch, 5000);
-				}
-		    },
-		    stopPolling: function() {
-		    	if(this.poller) {
-		    		clearInterval(this.poller);
-		    	}
-		    },
+			url: Telepresence.nodeServer,
 			group: function() {
 				var _this = this,
 					groups;
@@ -72,10 +54,6 @@ define([
 				};
 			}
   	  	});
-		
-  	  	cameras = new Cameras();
 
-  	  	window.cameras = cameras;
-
-  		return cameras;
+  		return Cameras;
 });

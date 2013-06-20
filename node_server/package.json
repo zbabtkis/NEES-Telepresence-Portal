@@ -1,0 +1,29 @@
+{
+  "name": "telepresence",
+  "version": "0.0.1",
+  "description": "Restful telepresence back end that provides websocket support for telepresence app.",
+  "main": "app.js",
+  "dependencies": {
+    "restify": "~2.5.1",
+    "mjpeg-proxy": "https://github.com/zigzackattack/node-mjpeg-proxy/blob/master/node-mjpeg-proxy.tgz?raw=true",
+    "events": "~0.5.0",
+    "socket.io": "~0.9.14",
+    "underscore": "~1.4.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "telepresence",
+    "nees",
+    "eeg",
+    "mjpeg",
+    "video",
+    "feed",
+    "stream"
+  ],
+  "author": "Zachary Babtkis <zackbabtkis@gmail.com>",
+  "license": "BSD"
+}

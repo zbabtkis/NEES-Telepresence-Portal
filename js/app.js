@@ -1,13 +1,33 @@
 require.config({
 	paths: {
-		'backbone': 'vendor/Backbone/backbone',
+		'backbone': 'components/backbone/backbone',
 		'backbone.kendowidget': 'vendor/Backbone/backbone.kendowidget',
-		'underscore': 'vendor/Underscore/underscore',
-		'domReady': 'vendor/Require/domReady',
-		'spin': 'vendor/Spin/spin',
-		'text': 'vendor/Require/text'
+		'underscore': 'components/underscore/underscore',
+		'domReady': 'components/requirejs-domready/domReady',
+		'spin': 'components/spin.js/spin',
+		'text': 'components/requirejs-text/text',
+		'jquery': 'components/jquery/jquery',
+		'modernizr': 'components/modernizr/modernizr',
+		'socketio': 'http://sticky.eri.ucsb.edu:8888/socket.io/socket.io',
+		'kendo': 'components/kendo/js/kendo.web.min'
 	},
-	waitSeconds: 2
+	shim: {
+		'backbone': {
+			deps: ['underscore', 'jquery'],
+			exports: 'Backbone'
+		},
+		'underscore': {
+			exports: "_"
+		},
+		'jquery': {
+			exports: "$"
+		},
+		'socketio': {
+			exports: 'io'
+		},
+		'spin': ['jquery'],
+		'kendo': ['jquery']
+	}
 });
 
 window.Telepresence = {
@@ -28,7 +48,6 @@ window.Telepresence = {
 		}
 	},
 	nodeServer: "http://sticky.eri.ucsb.edu:8888/streams/",
-	nodeActive: false,
 	version: "2.0.1",
 	switchTheme: function(theme) {
 		var body = document.getElementsByTagName('body')[0];
@@ -43,14 +62,13 @@ require([
 	, 'View/VideoControls'
 	, 'View/CameraControls'
 	, 'View/Tabs'
-	, 'underscore'
-	, 'backbone'], 
+	, 'socketio'], 
 
-	function(Router, VideoControls, CameraControls, Tabs) {
+	function(Router, VideoControls, CameraControls, Tabs, io) {
 		var App = function() {
 			var _this = this;
 
-			this.initialize = function() {
+			function initialize() {
 				Telepresence.switchTheme();
 				// Check if Node.js server is active to determine
 				// Backbone saivng mechanism.
@@ -59,29 +77,22 @@ require([
 					dataType: 'json',
 					cache: false,
 					success: function() {
-						Telepresence.nodeActive = true;
-					},
-					error: function() {
-						Telepresence.nodeActive = false;
+						if(typeof io !== 'undefined') {
+							Telepresence.socket = io.connect('http://sticky.eri.ucsb.edu:8888');
+							_bootstrap();
+						} else {
+							alert("Oops, the telepresence app doesn't seem to be working right now. Sorry...");
+						}
 					},
 					fail: function() {
-						Telepresence.nodeActive = false;
-					},
-					complete: function() {
-						_this._bootstrap();
+						alert("Oops, the telepresence app doesn't seem to be working right now. Sorry...");
 					}
 				});
-
-				if(typeof io !== 'undefined') {
-					Telepresence.socket = io.connect('http://sticky.eri.ucsb.edu:8888');
-				} else {
-					Telepresence.nodeActive = false;
-				}
 
 				return Telepresence;
 			};
 
-			this._bootstrap = function() {
+			function _bootstrap() {
 				// Iniitalize major components.
 				Router.initialize();
 
@@ -92,7 +103,7 @@ require([
 			};
 
 			return {
-				initialize: _this.initialize
+				initialize: initialize
 			};
 		}
 

@@ -17,10 +17,6 @@ define([
 				'sites/:cam': 'camera'
 		    	},
 
-		    	initialize: function() {
-		    		Cameras = new Cameras();
-		    	},
-
 		    	help: function() {
 					require(['View/Info'], function(Info) {	
 						Info.render();
@@ -42,111 +38,22 @@ define([
 		    	},
 
 		    	camera: function(id) {
-					var _this = this;
+					var camera = Cameras.get(id);
 
-					define('CameraController',['View/Stream' , 'View/CameraControls'], function(Stream, CameraControls) {
+					this.list();
 
-						function renderStream() {
-							console.log(this.get('media'));
-							Stream.render(this.get('media'));
-						}
+					require(['View/Stream', 'View/VideoControls', 'View/CameraControls'], function(Stream, vControls, cControls) {
+						var stream = new Stream({ model: camera });
 
-						function updateControls() {
-							CameraControls.set('sliderPan', this.get('value_pan'));
-							CameraControls.set('sliderTilt', this.get('value_tilt'));
-							CameraControls.set('sliderZoom', this.get('value_zoom'));
-							CameraControls.set('sliderFocus', this.get('value_focus'));
-							CameraControls.set('sliderIris', this.get('value_iris'));
-						}
+						vControls.destroy();
+						cControls.destroy();
 
-						function updateCameraPosition() {
-							var x, y, scale, args;
-							// Get current point on the graph for sending to Robot model.
-							x = e.pageX - jQuery(e.target).offset().left + ',13';
-							y = '13,' + e.pageY - jQuery(e.target).offset().top;
-							// For camera to set camera position.
-							args = {
-								'width': x,
-								'height': y,
-								'imgWidth': e.target.width,
-								'imgHeight': e.target.height
-							};
-							// Send command to Robot.
-							this.action('position', args);
-						}
+						console.log(camera);
 
-						function executeCameraControl(widgInfo) {
-							var save = {
-								'action': widgInfo.action
-							}
-							save[widgInfo.boundTo] = widgInfo.value;
+						vControls.initialize(camera);
+						cControls.initialize(camera);
 
-							this.save(save);
-						}
-
-						function listen(camera) {
-							Stream.on('loadFail', CameraControls.disable, _this);
-							Stream.on('loadSuccess', CameraControls.enable, _this);
-
-							Stream.on('loadFail', Cameras.stopPolling, Cameras);
-							Stream.on('loadSuccess', Cameras.poll, Cameras);
-
-							camera.on('renderMe', renderStream, camera);
-
-							camera.on('change', updateControls, camera);
-
-							Stream.on('streamClicked', updateCameraPosition, camera);
-
-							_this.on('change:cameraControl', executeCameraControl, camera);
-
-							if(Telepresence.nodeActive) {
-								// Prompt stream reload once 'streamEnded' event is emitted from server.
-								Telepresence.socket.once('streamEnded', function(info) {
-									var strId = parseInt(info.id, 10),
-										strFr = parseInt(info.framerate, 10);
-
-									// If we are viewing stream that has ended.
-									if(strFr === camera.get('id')) {
-										Stream.promptReload();
-									}
-								});	
-							}
-						}
-
-						return {
-							initialize: function(id) {
-								var camera = Cameras.get(id)
-								listen(camera);
-								camera.loadMedia();
-							}
-						}
-				    });
-
-				    	
-				    define('VideoController',['Model/FrameRate','View/Stream','View/VideoControls'], function(FrameRate, Stream, VideoControls) {
-				    	Stream.on('loadFail', VideoControls.disable, _this);
-						Stream.on('loadSuccess', VideoControls.enable, _this);
-						
-						FrameRate.on('change:value', updateViews);
-						
-						_this.on('change:videoControl', videoControl);
-						
-						updateViews();
-					    
-					   	function updateViews() {
-							var val = FrameRate.get('value');
-						
-							VideoControls.set('framerateFlipper', val);
-						}
-
-						function videoControl(obj) {
-							FrameRate.set('value', obj.value);
-						}
-				    });
-
-					require(['CameraController', 'VideoController'], function(CameraController, VideoController) {
-						_this.list();
-						CameraController.initialize(id);
+						camera.loadMedia();
 					});
 		    	}
 
@@ -154,7 +61,8 @@ define([
 
 	  	return {
 	    		initialize: function() {
-					router = new Router();
+					router = new Router(),
+					Cameras = new Cameras();
 			
 					Cameras.fetch({
 						success: function() {

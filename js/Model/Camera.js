@@ -1,39 +1,45 @@
 define([
 	  'Model/FrameRate'
 	, 'underscore'
-	, 'modernizr'
 	, 'backbone'], 
 
-	function(FrameRate, _, Modernizr, Backbone) {
+function(FrameRate, _, Backbone) {
+	'use strict';
+
 	var Camera;
 
 	Camera = Backbone.Model.extend({
 		defaults: {
-			baseUrl: Telepresence.nodeServer,
-			framerate: 1
+			baseUrl: Telepresence.nodeServer + 'streams/',
+			framerate: 1,
+			isOn: false
 		},
 		initialize: function() {
+			var _this = this;
+
+			_.bindAll(this);
+
 			this.set('feed', this.get('baseUrl') + this.get('id'));
 
-			Telepresence.socket.on('streamEnded', function() {
-				alert('Stream ended');
+			Telepresence.socket.on('streamEnded:' + this.get('id'), function(id) {
+				_this.set('isOn', false);
 			});
+
+			Telepresence.socket.on('cameraUpdated:' + this.get('id'), this.fetch);
 
 			FrameRate.on('change:value', this.loadMedia, this);
 
-			_.bindAll(this, 'fetch');
-
-			Telepresence.socket.on('cameraUpdated:' + this.get('id'), this.fetch);
+			this.on('change', function() {
+				Backbone.sync('update', this);
+			});
 		},
 		loadMedia: function() {
 			var frameRate = FrameRate.get('value'),
-				socketInfo = '?socketID=' + Telepresence.socket.socket.sessionid;;
+				socketInfo = '?random=' + Math.random() + '&socketID=' + Telepresence.socket.socket.sessionid;;
 
 			// @TODO: Implement feature detation and use polyfill if browser doesn't support mjpeg.
 			
 			this.set('media', this.get('feed') + '/' + frameRate + socketInfo);
-
-			this.trigger('renderMe');
 
 			return this;
 		},

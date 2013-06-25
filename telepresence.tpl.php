@@ -10,17 +10,17 @@
 		<section id='telepresence-dashboard'></section>
 		<section id='controls'>
 
-			<h3>Controls</h3>
+			<h3 class='header-inner'>Controls</h3>
 
 			<div class='input-controls'>
 				<div class='input-control'>
 					<label for='frmaerate-selector'>Framerate</label>
-					<input id='framerate-selector' class='framerate-selector' value='10' />
+					<div id='framerate-selector' class='framerate-selector' value='10'></div>
 				</div>
 
 				<div class='input-control'>
 					<label for='location-picker'>Location</label>
-					<input id='location-picker' class='location-picker' />
+					<div id='location-picker' class='location-picker'></div>
 				</div>
 			</div>
 
@@ -41,6 +41,14 @@
 				</div>
 			</div>
 
+			<div id='capture'>
+				<h3 class='header-inner'>Capture</h3>
+				<div class='video-controls'>
+				</div>
+				<div id='screenshots'>
+				</div>
+			</div>
+
 		</section>
 	</aside>
 	<div id="video">
@@ -50,7 +58,9 @@
 			<div id="slider-pan" class='slider-pan'></div>
 		</div>
 		<div class='tp-row'>
-			<div id="stream" class='left-col'></div>
+			<div id="stream" class='left-col'>
+				<h1 class='telepresence-message'>Select a stream</h1>
+			</div>
 
 			<div class='right-col'>
 				<label for='slider-tilt'>T<br>I<br>L<br>T</label>

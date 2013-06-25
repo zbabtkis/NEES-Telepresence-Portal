@@ -8,7 +8,7 @@ define([
 		
   	  	Cameras = Backbone.Collection.extend({
 			model: Camera,
-			url: Telepresence.nodeServer,
+			url: Telepresence.nodeServer + 'streams',
 			group: function() {
 				var _this = this,
 					groups;

@@ -26,7 +26,10 @@ require.config({
 			exports: 'io'
 		},
 		'spin': ['jquery'],
-		'kendo': ['jquery']
+		'kendo': {
+			deps: ['jquery'],
+			exports: 'kendo'
+		}
 	}
 });
 
@@ -47,7 +50,7 @@ window.Telepresence = {
 			}
 		}
 	},
-	nodeServer: "http://sticky.eri.ucsb.edu:8888/streams/",
+	nodeServer: "http://sticky.eri.ucsb.edu:8888/",
 	version: "2.0.1",
 	switchTheme: function(theme) {
 		var body = document.getElementsByTagName('body')[0];
@@ -57,14 +60,7 @@ window.Telepresence = {
 	}
 }
 
-require([
-	  'Router/Router'
-	, 'View/VideoControls'
-	, 'View/CameraControls'
-	, 'View/Tabs'
-	, 'socketio'], 
-
-	function(Router, VideoControls, CameraControls, Tabs, io) {
+define(function() {
 		var App = function() {
 			var _this = this;
 
@@ -73,18 +69,16 @@ require([
 				// Check if Node.js server is active to determine
 				// Backbone saivng mechanism.
 				jQuery.ajax({
-					url: 'http://snow-dev.eri.ucsb.edu:8888/',
+					url: Telepresence.nodeServer,
 					dataType: 'json',
 					cache: false,
 					success: function() {
-						if(typeof io !== 'undefined') {
-							Telepresence.socket = io.connect('http://sticky.eri.ucsb.edu:8888');
-							_bootstrap();
-						} else {
-							alert("Oops, the telepresence app doesn't seem to be working right now. Sorry...");
-						}
+						require(['socketio'], function() {
+							var sock = Telepresence.socket = io.connect('http://sticky.eri.ucsb.edu:8888');
+							sock.on('connect', _bootstrap);
+						});
 					},
-					fail: function() {
+					error: function() {
 						alert("Oops, the telepresence app doesn't seem to be working right now. Sorry...");
 					}
 				});
@@ -93,13 +87,21 @@ require([
 			};
 
 			function _bootstrap() {
-				// Iniitalize major components.
-				Router.initialize();
+				require([
+					  'Router/Router'
+					, 'View/VideoControls'
+					, 'View/CameraControls'
+					, 'View/Tabs'], 
 
-				// Views
-				CameraControls.initialize();
-				VideoControls.initialize();
-				Tabs.initialize();
+				function(Router, VideoControls, CameraControls, Tabs) {
+						// Iniitalize major components.
+					Router.initialize();
+
+					// Views
+					CameraControls.initialize();
+					VideoControls.initialize();
+					Tabs.initialize();
+				});
 			};
 
 			return {

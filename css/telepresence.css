@@ -206,8 +206,9 @@ float: right;
 	height: 150px;
 	width: 150px;
 	position: absolute;
-	margin-top: 12%;
-	margin-left: 22%;
+	margin-top: 150px;
+	margin-left: 275px;
+	z-index: 1;
 }
 
 @keyframes blurOut {
@@ -336,11 +337,32 @@ float: right;
 }
 
 /** Camera Controls */
-#controls {
-	margin-top: 30px;
+
+#capture {
+	clear: both;
+	float: left;
 }
-#player-controls {
-	margin-top: 30px;
+
+.header-inner {
+	border-bottom: 1px solid #aaa;
+}
+.video-controls {
+	width: 330px;
+	margin-top: -50px;
+}
+.video-controls .icon {
+	float: right;
+}
+.video-controls .icon:first-child {
+	margin: 0;
+	float: left;
+}
+
+#screenshots {
+	width: 330px;
+	float: left;
+	clear: both;
+	margin-top: 10px;
 }
 
 label {
@@ -355,6 +377,10 @@ label[for='slider-tilt'] {
 
 label[for='slider-pan'] {
 	text-align: center;
+}
+
+#slider-tilt {
+	min-width: 35px;
 }
 
 .tp-row {
@@ -393,7 +419,7 @@ label[for='slider-pan'] {
 .k-label {
 	color: white !important;
 }
-.mini-control {
+.mini-control .k-widget {
 	height: 150px;
 	clear: none;
 }

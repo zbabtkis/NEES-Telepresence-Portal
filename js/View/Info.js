@@ -19,8 +19,9 @@ define([
 			var $parent = $('#telepresence-dashboard'),
 				txt = Drupal.settings.telepresence_about;
 
-			this.$el.html(txt);
-			$parent.html(this.$el);
+			$parent.html(this.$el.html(txt));
+
+			this.$el.before('<h3 class="header-inner">Help</h3>');
 		}
 	});
 

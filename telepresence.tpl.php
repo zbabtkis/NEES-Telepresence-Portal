@@ -1,10 +1,12 @@
-<script data-main="/<?php print $module_path; ?>/js/app" src="/<?php print $module_path; ?>/js/vendor/Require/require.js"></script>
+<script data-main="/<?php print $module_path; ?>/js/app" src="/<?php print $module_path; ?>/components/requirejs/require.js"></script>
 
 <div id="telepresence-wrap">
-	<aside id='telepresence-menu'>
+	<header class='app-header'>
+		<h1>EEG Telepresence</h1>
+	</header>
+	<aside id='telepresence-menu' class='app-content'>
 		<nav id='tp-tabs'>
 			<i id='help-tab' class='icon icon-info-sign icon-2x' alt='Show Help' title='Show Help'></i>
-			<h4></h4>
 			<i id='list-tab' class='icon icon-list icon-2x' alt='Show Sites List' title='Show Sites List'></i>
 		</nav>
 		<section id='telepresence-dashboard'></section>
@@ -40,18 +42,16 @@
 					<div id='zoom-control' class='mini-control zoom-control'></div>
 				</div>
 			</div>
-
-			<div id='capture'>
-				<h3 class='header-inner'>Capture</h3>
-				<div class='video-controls'>
-				</div>
-				<div id='screenshots'>
-				</div>
+		</section>
+		<section id='capture'>
+			<h3 class='header-inner'>Capture</h3>
+			<div class='video-controls'>
 			</div>
-
+			<div id='screenshots'>
+			</div>
 		</section>
 	</aside>
-	<div id="video">
+	<div id="video" class='app-content'>
 
 		<div class='left-col'>
 			<label for='slider-pan'>Pan</label>
@@ -59,7 +59,7 @@
 		</div>
 		<div class='tp-row'>
 			<div id="stream" class='left-col'>
-				<h1 class='telepresence-message'>Select a stream</h1>
+				<h1 class='telepresence-message'>Choose a camera</h1>
 			</div>
 
 			<div class='right-col'>

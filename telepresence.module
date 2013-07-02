@@ -17,8 +17,6 @@ function telepresence_permission() {
 function telepresence_menu() {
 	$items = array();
 	$items['telepresence'] = array(
-		'title' => t('Telepresence'),
-		'description' => t('Video feeds from NEES locations.'),
 		'page callback' => 'telepresence_page',
 		'access arguments' => array('access telepresence'),
 		'type' => MENU_NORMAL_ITEM
@@ -38,6 +36,12 @@ function telepresence_menu() {
 		'type' => MENU_NORMAL_ITEM
 		);
 
+	$items['admin/telepresence/bookmark'] = array(
+		'page callback' => 'bookmark_action',
+		// Change this back to administer when done debugging!!!!!!!
+		'access arguments' => array('access telepresence'),
+		'type' => MENU_CALLBACK);
+
 	$items['telepresence/api/cameras'] = array(
 		'page callback' => 'telepresence_api',
 		'access arguments' => array('access telepresence'),
@@ -54,7 +58,7 @@ function telepresence_page() {
 
 	drupal_add_css($module_path . '/css/font-awesome/css/font-awesome.min.css');
 	drupal_add_css($module_path . '/css/kendo.common.min.css');
-	drupal_add_css($module_path . '/css/kendo.metroblack.min.css');
+	drupal_add_css($module_path . '/css/kendo.metro.min.css');
 
 	drupal_add_js(
 		array(
@@ -67,7 +71,21 @@ function telepresence_page() {
 	);
 
 	drupal_add_css($module_path . '/css/telepresence.css');
+
+	// Both of the following add additional layering and can be used interchangably (you can switch themes using the Telepresence.switchTheme method in the javasctpt console)
+	/**
+	 * OPTIONS
+	 * @@@@@@@
+	 * theme-light
+	 * theme-extra-light
+	 */
+
 	drupal_add_css($module_path . '/css/telepresence-light.css');
+	drupal_add_css($module_path . '/css/telepresence-extra-light.css');
+
+	if(user_access('administer telepresence')) {
+		drupal_add_css($module_path . '/css/admin.css');
+	}
 
 	$page = theme('telepresence_template', array('module_path' => $module_path));
 	

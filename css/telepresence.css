@@ -4,53 +4,17 @@
  * ===============================================
  * Content
  * -------
- * ..1) App Header
- * ..2) App Menu
- * ..3) App Content
- * ..4) App Controls
- * ....a) Player Controls
- * ....b) Camera Controls
- * ..5) Responsive#
+ * ..1) Core
+ * ..2) Header
+ * ..3) Menu
+ * ..4) Controls
+ * ..5) Content
+ * ..6) Responsive
+ * ..7) Icons
+ * ..8) Effects
+ * ..9) Kendo Overrides
  * -----------------------------------------------
  */
-
-.icon {
-	color: white;
-	background: none !important;
-	padding: 15px 20px 15px 0;
-	display: inline-block;
-	width: auto;
-	height: auto;
-	line-height: default;
-	vertical-align: text-top;
-}
-
-#telepresence-wrap.row {
-	margin: 0;
-}
-
-.k-slider-horizontal {
-    display: inline-block;
-    float: left;
-    width: 100%;
-    height: 26px;
-}
-
-.k-slider-vertical {
-    display: inline-block;
-    float: left;
-    width: 26px;
-    height: 480px;
-}
-
-#player-controls {
-	float: left;
-}
-
-#telepresence-wrap input {
-	background: none;
-	color: white;
-}
 
 /** 
  -------------------------------------------------
@@ -58,52 +22,56 @@
  -------------------------------------------------
  */
 
-#page-header, #main-content-header {
-	background-color: #07C;
-	color: white;
-	height: 80px;
-	width: 100%;
-}
-#page-title {
-	float: left;
-	font-size: 26px;
+#telepresence-wrap header {
+	background: #222;
+	margin: 0;
 	padding: 15px;
-	margin-top: 0;
-	padding: 10px;
+	margin-bottom: 20px;
+	color: white;
 }
+
 /** 
  -------------------------------------------------
  2) App Menu
  -------------------------------------------------
  */
-
+#telepresence-menu {
+	float: left;
+	width: 360px;
+}
+#telepresence-menu section {
+	margin-bottom: 15px;
+}
 #menu-header {
 	padding: 0;
 	background: #111;
 	margin: 10px 0 0 0;
 	border-bottom: 1px solid #eee;
 }
-#info-view .inner-view {
-	padding: 5px;
+#tp-tabs {
+	margin-top: 10px;
 }
-#info-view {
-	background: #eee;
-	color: #222;
-}
-
 #help-tab {
 	float: left;
 	padding-top: 0;
 }
-
 #list-tab {
 	float: right;
 	padding-top: 0;
 }
-
-#telepresence-dashboard {
-	clear: both;
-	margin-top: 60px;
+.header-inner {
+	border-bottom: 1px solid #aaa;
+	color: #222;
+	text-align: center;
+}
+.header-inner:first-child {
+	margin-top: -10px;
+}
+#info-view {
+	color: #222;
+}
+#info-view .inner-view {
+	padding: 5px;
 }
 
 #site-list {
@@ -128,7 +96,6 @@
 }
 .site.active:hover {
 	background: #111;
-	cursor: default;
 }
 .cameras {
 	display: none;
@@ -144,40 +111,12 @@
 	background: #00aba9;
 	color: #eee;
 }
-.site.active:after {
-	content: "\25BC";
-	float: right;
-}
-.site:after {
-content: "\25B6";
-float: right;
-}
 
 /** 
  -------------------------------------------------
  3) App Content
  -------------------------------------------------
  */
-#telepresence-wrap {
-	background-color: #101214;
-	overflow: visible;
-	padding: 15px;
-	float: left;
-}
-#telepresence-wrap header {
-	background: #222;
-	margin: 0;
-	padding: 15px;
-	margin-bottom: 10px;
-	color: white;
-}
-#telepresence-wrap h3, #telepresence-wrap h4, #telepresence-wrap h5 {
-	color: #eee;
-	text-align: center;
-}
-#telepresence-menu {
-	float: left;
-}
 #video {
 	width: 65%;
 	min-width: 760px;
@@ -185,95 +124,7 @@ float: right;
 }
 #stream {
 	overflow: hidden;
-}
-#stream .stream-image {
-	width: 100%;
-	background: #000;
-}
-#stream.stream-ended .stream-image {
-	-webkit-animation: blurOut 2s;
-	-moz-animation: blurOut 2s;
-	-o-animation: blurOut 2s;
-	animation: blurOut 2s;
-
-	-webkit-filter: blur(15px);
-	-moz-filter: blur(15px);
-	-o-transition: blur(15px);
-	filter: blur(15px);
-}
-
-#stream.stream-ended .reload {
-	height: 150px;
-	width: 150px;
-	position: absolute;
-	margin-top: 150px;
-	margin-left: 275px;
-	z-index: 1;
-}
-
-@keyframes blurOut {
-	from {
-		-webkit-filter: blur(0);
-		-moz-filter: blur(0);
-		-o-transition: blur(0);
-		filter: blur(0);
-	}
-	to {
-		-webkit-filter: blur(15px);
-		-moz-filter: blur(15px);
-		-o-transition: blur(15px);
-		filter: blur(15px);
-	}
-}
-
-@-webkit-keyframes blurOut {
-	from {
-		-webkit-filter: blur(0);
-		-moz-filter: blur(0);
-		-o-transition: blur(0);
-		filter: blur(0);
-	}
-	to {
-		-webkit-filter: blur(15px);
-		-moz-filter: blur(15px);
-		-o-transition: blur(15px);
-		filter: blur(15px);
-	}
-}
-
-@-moz-keyframes blurOut {
-	from {
-		-webkit-filter: blur(0);
-		-moz-filter: blur(0);
-		-o-transition: blur(0);
-		filter: blur(0);
-	}
-	to {
-		-webkit-filter: blur(15px);
-		-moz-filter: blur(15px);
-		-o-transition: blur(15px);
-		filter: blur(15px);
-	}
-}
-
-@-o-keyframes blurOut {
-	from {
-		-webkit-filter: blur(0);
-		-moz-filter: blur(0);
-		-o-transition: blur(0);
-		filter: blur(0);
-	}
-	to {
-		-webkit-filter: blur(15px);
-		-moz-filter: blur(15px);
-		-o-transition: blur(15px);
-		filter: blur(15px);
-	}
-}
-#nvf-frame img.fullScreen {
-	max-height: 100%;
-}
-#stream {
+	position: relative;
 	height: 480px;
 	width: 700px;
 	margin-right: 10px;
@@ -288,101 +139,41 @@ float: right;
 	text-align: center;
 	color: #777;
 }
+#stream .stream-image {
+	width: 100%;
+}
+#stream.stream-ended .reload {
+	height: 150px;
+	width: 150px;
+	position: absolute;
+	margin-top: 150px;
+	margin-left: 275px;
+	z-index: 1;
+}
+#time-display {
+	color: #222;
+	background: #eee;
+	position: absolute;
+	top: 0;
+	display: block;
+	width: 100%;
+	left: 0;
+	padding: 5px;
+}
 /** 
  -------------------------------------------------
  4) App Controls
  -------------------------------------------------
  */
 
-.fullScreen {
+#controls {
+	float: left;
 	width: 100%;
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 99999999;
 }
-
-.transparentBar {
-	position: absolute;
-	bottom: 0;
-	opacity: 0.2;
-	-moz-opacity: 0.2;
-	-o-opacity: 0.2;
-	-wekbit-opacity: 0.2;
-	background-color: black;
-	z-index: -1;
-}
-.transparentBar:hover {
-	opacity: 0.9;
-	-moz-opacity: 0.9;
-	-o-opacity: 0.9;
-	-webkit-opacity: 0.9;
-}
-.transparentBox {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: #222;
-    opacity: 0.9;
-    z-index: 499;
-}
-
-#video .k-slider-selection {
-	background: none;
-}
-#video .k-label {
-	display: none;
-}
-
-/** Camera Controls */
-
 #capture {
 	clear: both;
 	float: left;
 }
-
-.header-inner {
-	border-bottom: 1px solid #aaa;
-}
-.video-controls {
-	width: 330px;
-	margin-top: -50px;
-}
-.video-controls .icon {
-	float: right;
-}
-.video-controls .icon:first-child {
-	margin: 0;
-	float: left;
-}
-
-#screenshots {
-	width: 330px;
-	float: left;
-	clear: both;
-	margin-top: 10px;
-}
-
-label {
-	color: #ccc;
-}
-
-label[for='slider-tilt'] {
-	float: right;
-	margin-top: 240px;
-	margin-left: 5px;
-}
-
-label[for='slider-pan'] {
-	text-align: center;
-}
-
-#slider-tilt {
-	min-width: 35px;
-}
-
 .tp-row {
 	margin-top: 10px;
 	margin-bottom: 25px;
@@ -397,7 +188,39 @@ label[for='slider-pan'] {
 .right-col {
 	float: left;
 }
+.video-controls {
+	margin-top: -50px;
+}
+.video-controls .icon {
+	float: right;
+}
+.video-controls .icon:first-child {
+	margin: 0;
+	float: left;
+}
+#screenshots {
+	float: left;
+	clear: both;
+	margin-top: 10px;
+}
+label[for='slider-tilt'] {
+	float: right;
+	margin-top: 240px;
+	margin-left: 5px;
+}
 
+label[for='slider-pan'] {
+	text-align: center;
+}
+
+#slider-tilt {
+	min-width: 35px;
+}
+.control {
+	padding-right: 25px;
+	float: right;
+	text-align: center;
+}
 .input-controls {
 	float: left;
 }
@@ -410,19 +233,6 @@ label[for='slider-pan'] {
 	float: right;
 }
 
-.control {
-	padding-right: 25px;
-	float: right;
-	text-align: center;
-}
-
-.k-label {
-	color: white !important;
-}
-.mini-control .k-widget {
-	height: 150px;
-	clear: none;
-}
 /** 
  -------------------------------------------------
  5) Responsive
@@ -459,4 +269,176 @@ label[for='slider-pan'] {
 	.camera-action {
 		margin: 5px;
 	}
+}
+
+/**
+ * -------------------------------------------------
+ * 1. Core
+ * -------------------------------------------------
+ */
+#telepresence-wrap {
+	background-color: #101214;
+	overflow: visible;
+	padding: 15px;
+	float: left;
+	position: relative;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: moz-none;
+	-ms-user-select: none;
+	user-select: none;
+	border-radius: 5px;
+}
+
+#telepresence-wrap input {
+	background: none;
+	color: white;
+}
+#telepresence-wrap label {
+	color: #ccc;
+}
+/**
+ * -------------------------------------------------
+ * 7. Icons
+  * -------------------------------------------------
+ */
+
+.icon {
+	color: white;
+	background: none !important;
+	padding: 15px 20px 15px 0;
+	display: inline-block;
+	width: auto;
+	height: auto;
+	line-height: default;
+	vertical-align: text-top;
+	cursor: pointer;
+}
+
+.icon.bRemover {
+	position: absolute;
+	margin-top: -38px;
+	left: -50px;
+	color: red;
+}
+
+/**
+ * -------------------------------------------------
+ * 8. Effects
+ * -------------------------------------------------
+ */
+
+.app-content {
+	/** Hide app initially */
+	opacity: 0;
+}
+
+.flash {
+	top: 0;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	z-index: 99999;
+}
+
+.inactive {
+	cursor: default;
+	color: #999;
+}
+
+#stream.stream-ended .stream-image {
+	-webkit-animation: blurOut 2s;
+	-moz-animation: blurOut 2s;
+	-o-animation: blurOut 2s;
+	animation: blurOut 2s;
+
+	-webkit-opacity: 0.5;
+	-moz-opacity: 0.5;
+	-o-opacity: 0.5;
+	opacity: 0.5;
+}
+
+@keyframes blurOut {
+	from {
+		-webkit-opacity: 1;
+		-moz-opacity: 1;
+		-o-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-webkit-opacity: 0.5;
+		-moz-opacity: 0.5;
+		-o-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+@-webkit-keyframes blurOut {
+	from {
+		-webkit-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-webkit-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+@-moz-keyframes blurOut {
+	from {
+		-moz-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-moz-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+@-o-keyframes blurOut {
+	from {
+		-o-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-o-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+/**
+ * -------------------------------------------------
+ * 9. Kendo overrides
+ * -------------------------------------------------
+ */
+
+.k-slider-horizontal {
+    display: inline-block;
+    float: left;
+    width: 100%;
+    height: 26px;
+}
+
+.k-slider-vertical {
+    display: inline-block;
+    float: left;
+    width: 26px;
+    height: 480px;
+}
+
+#video .k-slider-selection {
+	background: none;
+}
+#video .k-label {
+	display: none;
+}
+.k-label {
+	color: white !important;
+}
+.mini-control .k-widget {
+	height: 150px;
+	clear: none;
 }

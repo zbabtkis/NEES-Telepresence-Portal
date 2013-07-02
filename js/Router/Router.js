@@ -48,12 +48,23 @@ define([
 						vControls.destroy();
 						cControls.destroy();
 
-						console.log(camera);
-
 						vControls.initialize(camera);
 						cControls.initialize(camera);
 
 						camera.loadMedia();
+
+						// Provide Camera API
+						Telepresence.API.getPosition = function() {
+							var obj = {
+								id: id,
+								position: {
+									h: camera.get('value_pan'),
+									v: camera.get('value_tilt')
+								}
+							}
+
+							return obj;
+						}
 					});
 		    	}
 
@@ -62,7 +73,7 @@ define([
 	  	return {
 	    		initialize: function() {
 					router = new Router(),
-					Cameras = new Cameras();
+					window.Cameras = Cameras = new Cameras();
 			
 					Cameras.fetch({
 						success: function() {

@@ -67,6 +67,11 @@ function telepresence_schema() {
 				'type' => 'int',
 				'not_null' => true,
 				'default_value' => 0
+			),
+			'bookmarks' => array(
+				'type' => 'text',
+				'not_null' => false,
+				'default_value' => null
 			)
 		),
 		'primary key' => array('id')

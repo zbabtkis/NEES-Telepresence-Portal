@@ -1,5 +1,5 @@
 define([
-	  'text!Templates/Sites.jtpl'
+	  'text!Templates/Cameras.jtpl'
 	, 'underscore'
 	, 'jquery'
 	, 'backbone'
@@ -13,7 +13,8 @@ define([
 	List = Backbone.View.extend({
 		events: {
 			'click .site': 'listCameras',
-			'click .camera': 'goToFeed'
+			'click .camera': 'goToFeed',
+			'click .active': 'close'
 		},
 		tagName: 'section',
 		id: 'sites',
@@ -36,8 +37,16 @@ define([
 
 			return this;
 		},
+		close: function(e) {
+			var $site = $(e.currentTarget),
+				assoc = $site.data('assoc-list'),
+				$cameras = $('.cameras[data-assoc-list=' + assoc + ']');
+
+			$site.removeClass('active');
+			$cameras.removeClass('active');
+		},
 		listCameras: function(e) {
-			var $site = $(e.target),
+			var $site = $(e.currentTarget),
 				assoc = $site.data('assoc-list'),
 				$cameras = $('.cameras[data-assoc-list=' + assoc + ']');
 

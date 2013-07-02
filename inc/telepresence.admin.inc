@@ -114,7 +114,7 @@ function telepresence_camera_form() {
 function telepresence_add_camera() {
 	$page = "";
 
-	$t_head = array('id', 'site name','site safe name','camera name','camera safe name', 'pan value', 'tilt value', 'zoom value', 'focus value', 'iris value', 'admin');
+	$t_head = array('id', 'site name','site safe name','camera name','camera safe name', 'pan value', 'tilt value', 'zoom value', 'focus value', 'iris value', 'bookmarks', 'admin');
 
 	$rows = telepresence_find_camera();
 
@@ -171,6 +171,81 @@ function telepresence_save_settings($form, &$form_state) {
 		dsm($e);
 	}
 }
+
+function get_bookmarks($id) {
+	$query = db_select('cameras', 'c')
+		->fields('c', array('bookmarks'))
+		->condition('id', $id, '=')
+		->execute()->fetchAssoc();
+
+	$bookmarks = json_decode($query['bookmarks'], true);
+
+	return $bookmarks ? $bookmarks : array();
+}
+
+function save_bookmarks($id, $bookmarks) {
+	$query = db_update('cameras')
+		->fields(array(
+			'bookmarks' => json_encode($bookmarks)
+			)
+		)
+		->condition('id', $id, '=')
+		->execute();
+
+	if($query) {
+		return true;
+	}
+
+	return false;
+}
+
+function add_bookmark($title, $po, $id) {
+
+	$bookmarks = get_bookmarks($id);
+
+	$bookmarks[$title] = array(
+		'title' => $title,
+		'position' => $po
+	);
+
+	save_bookmarks($id, $bookmarks);
+
+	print json_encode(array('message' => 'success', 'saved' => $bookmarks));
+}
+
+function remove_bookmarks($id, $title) {
+	$bookmarks = get_bookmarks($id);
+
+	unset($bookmarks[$title]);
+
+	save_bookmarks($id, $bookmarks);
+
+	print json_encode(array('message' => 'success', 'saved' => $bookmarks));
+}
+
+function bookmark_action() {
+	switch($_SERVER['REQUEST_METHOD']) {
+		case "POST":
+			$id = $_POST['id'];
+			$po = $_POST['position'];
+			$title = $_POST['title'];
+
+			save_bookmark($title, $po, $id);
+
+			break;
+		case "DELETE":
+			$id = $_DELETE['id'];
+
+			parse_str(file_get_contents("php://input"), $args);
+
+			remove_bookmarks($args['id'], $args['title']);
+
+			break;
+		default:
+			break;
+	}
+}
+
 /**
  * Retrieves current settings from database for easily setting form defaults
  */

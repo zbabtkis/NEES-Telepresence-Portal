@@ -1,7 +1,7 @@
 {
   "name": "telepresence-portal",
   "version": "2.0.1",
-  "main": "telepresence.module",
+  "main": "index.html",
   "dependencies": {
     "backbone": "~1.0.0",
     "underscore": "~1.4.4",
@@ -10,6 +10,10 @@
     "requirejs-domready": "~2.0.1",
     "spin.js": "~1.3.0",
     "modernizr": "~2.6.2",
-    "kendo": "~2013.1.319"
+    "kendo-ui": "~2013.1.319",
+    "bootstrap": "~2.1.1",
+    "backbone.kendoWidget": "https://github.com/zigzackattack/Backbone-KendoWidget.git",
+    "requirejs": "~2.1.6",
+    "datejs": "latest"
   }
 }

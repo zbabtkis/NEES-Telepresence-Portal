@@ -1,0 +1,20 @@
+{
+	"name":"EEG Telepresence",
+	"description":"Remotely view and control EEG site webcams",
+	"version":"1",
+	"app": {
+		"urls": [
+			"*://desole.eri.ucsb.edu"
+		],
+		"launch": {
+			"web_url": "http://desole.eri.ucsb.edu"
+		}
+	},
+	"icons": {
+		"128": "icon_128.png"
+	},
+	"permissions": [
+		"notifications"
+	],
+	"manifest_version": 2
+}

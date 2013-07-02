@@ -1,0 +1,131 @@
+/**
+ * COLORS
+ * @@@@@@@@@@@@@@@@@@@@@
+ * white: #ddd;
+ * black: #222;
+ * blue:  #7ea700;
+
+/** Core */
+
+.theme-light label, .icon {
+	color: #222;
+}
+
+/** App */
+
+/** @TODO: Change to more general page-header selector */
+.theme-light .page-header {
+	background: #7ea700;
+	color: #ddd;
+	margin: 0 !important;
+	padding: 30px !important;
+}
+
+.theme-light #telepresence-wrap {
+	background: #fff;
+}
+
+/** Camera Navigation List */
+
+.theme-light #site-list {
+	/** @TODO: Remove backround & border from main css */
+	background: none;
+	border: none;
+}
+.theme-light .site {
+	color: #ddd;
+	background: #222;
+	padding: 10px;
+	border-left: 6px solid #555;
+}
+.theme-light .site:hover {
+	background: #111;
+}
+.theme-light .site.active, .theme-light .site:hover {
+	border-color: #7ea700;
+}
+.theme-light .site:after {
+	/** @TODO: Remove from main css */
+	content: "";
+}
+.theme-light .site .icon {
+	color: white;
+	padding: 0 15px;
+}
+.theme-light .site span {
+	position: relative;
+	top: 5px;
+}
+.theme-light .site.active:after {
+	width: 0;
+	height: 0;
+	border-width: 15px;
+	border-style: solid;
+	border-color: transparent transparent #ddd;
+	content: "";
+	margin: 30px 10px;
+}
+.theme-light .cameras {
+	background: #ddd;
+	margin-top: 19px;
+}
+.theme-light .camera {
+	color: #333;
+	margin-top: 0;
+}
+.theme-light .camera:hover {
+	background: #7ea700 !important;
+}
+
+.theme-light #telepresence-dashboard {
+	margin-top: 55px;
+}
+/** Controls */
+
+.theme-light #controls h3 {
+	color: #222;
+}
+
+.theme-light .input-controls {
+	margin-right: 30px;
+}
+
+.theme-light .control {
+	padding-right: 10px;
+}
+
+.theme-light label[for='slider-pan'] {
+	margin-top: -15px;
+	margin-bottom: 0;
+}
+
+.theme-light label[for='slider-tilt'] {
+	margin-top: 200px;
+	margin-left: 0;
+	text-align: center;
+}
+
+/** Kendo hacks */
+
+.theme-light .k-label {
+	display: none !important;
+}
+
+.theme-light .k-select {
+	height: 100%;
+}
+
+/** Video */
+
+.theme-light #stream {
+	margin-right: 22px;
+	background: #999;
+}
+
+.theme-light #stream h1 {
+	color: #333;
+}
+
+.theme-light .tp-row {
+	margin-top: 22px;
+}

@@ -1,0 +1,13 @@
+<h3 class='header-inner'>Cameras</h3>
+<div id='site-list'>
+	<% _.each(sites, function(site) { %>
+		<div class='site' data-assoc-list='<%= site.safeName %>'>
+			<i class='icon icon-sitemap icon-2x'></i><span><%= site.name %></span>
+		</div>
+		<ul class='cameras' data-assoc-list='<%= site.safeName %>'>
+			<% _.each(site.models, function(camera) { %>
+				<li class='camera' data-id="<%= camera.id %>"><i class='icon icon-facetime-video'></i> <%= camera.camera_name %></li>
+			<% }); %>
+		</ul>
+	<% }); %>
+</div>

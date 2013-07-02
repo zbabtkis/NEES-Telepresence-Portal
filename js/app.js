@@ -1,15 +1,17 @@
 require.config({
 	paths: {
-		'backbone': 'components/backbone/backbone',
-		'backbone.kendowidget': 'vendor/Backbone/backbone.kendowidget',
-		'underscore': 'components/underscore/underscore',
-		'domReady': 'components/requirejs-domready/domReady',
-		'spin': 'components/spin.js/spin',
-		'text': 'components/requirejs-text/text',
-		'jquery': 'components/jquery/jquery',
-		'modernizr': 'components/modernizr/modernizr',
+		'backbone': '../components/backbone/backbone',
+		'backbone.kendowidget': '../components/backbone.kendoWidget/backbone.kendowidget',
+		'underscore': '../components/underscore/underscore',
+		'domReady': '../components/requirejs-domready/domReady',
+		'spin': '../components/spin.js/spin',
+		'text': '../components/requirejs-text/text',
+		'jquery': '../components/jquery/jquery',
+		'modernizr': '../components/modernizr/modernizr',
 		'socketio': 'http://sticky.eri.ucsb.edu:8888/socket.io/socket.io',
-		'kendo': 'components/kendo/js/kendo.web.min'
+		'kendo': '../components/kendo/js/kendo.web.min',
+		'datejs': '../components/datejs/build/date',
+		'bookmarkr': 'Admin/bookmarkr'
 	},
 	shim: {
 		'backbone': {
@@ -35,7 +37,7 @@ require.config({
 
 window.Telepresence = {
 	defaults: {
-		theme: 'theme-light'
+		theme: 'theme-extra-light'
 	},
 	DEBUG: true,
 	debug: function(first) {
@@ -48,6 +50,7 @@ window.Telepresence = {
 				arguments[arguments.length-1] + at;
 				console.log.apply(console, arguments);
 			}
+			require.config.urlArgs = "v=" +  (new Date()).getTime();
 		}
 	},
 	nodeServer: "http://sticky.eri.ucsb.edu:8888/",
@@ -57,25 +60,36 @@ window.Telepresence = {
 		body.className = theme || this.defaults.theme;
 
 		return body;
+	},
+	API: {
+		getPosition: function() {
+			alert("You haven't selected a camera and position yet.");
+
+			return undefined;
+		}
 	}
 }
 
-define(function() {
+define(['jquery', 'spin', 'domReady'], function($, Spinner) {
 		var App = function() {
 			var _this = this;
 
-			function initialize() {
+			var spinner = new Spinner({
+				color: '#555'
+			}).spin(document.getElementById('telepresence-wrap'));
+
+			function bootstrap() {
 				Telepresence.switchTheme();
 				// Check if Node.js server is active to determine
 				// Backbone saivng mechanism.
-				jQuery.ajax({
+				$.ajax({
 					url: Telepresence.nodeServer,
 					dataType: 'json',
 					cache: false,
 					success: function() {
 						require(['socketio'], function() {
 							var sock = Telepresence.socket = io.connect('http://sticky.eri.ucsb.edu:8888');
-							sock.on('connect', _bootstrap);
+							sock.on('connect', initialize);
 						});
 					},
 					error: function() {
@@ -86,7 +100,7 @@ define(function() {
 				return Telepresence;
 			};
 
-			function _bootstrap() {
+			function initialize() {
 				require([
 					  'Router/Router'
 					, 'View/VideoControls'
@@ -94,21 +108,25 @@ define(function() {
 					, 'View/Tabs'], 
 
 				function(Router, VideoControls, CameraControls, Tabs) {
-						// Iniitalize major components.
+				    // Iniitalize major components.
 					Router.initialize();
 
 					// Views
 					CameraControls.initialize();
 					VideoControls.initialize();
 					Tabs.initialize();
+
+					spinner.stop();
+					delete spinner;
+					$('.app-content').animate({opacity: 1});
 				});
 			};
 
 			return {
-				initialize: initialize
+				bootstrap: bootstrap
 			};
 		}
 
-		var app = new App().initialize();
+		var app = new App().bootstrap();
 	}
 );

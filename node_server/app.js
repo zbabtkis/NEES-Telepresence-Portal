@@ -31,6 +31,7 @@ app.get('/streams', function(req, res, next) {
 });
 
 app.put('/streams/:stream_id', function(req, res, next) {
+	console.log('about to save camera (ln 34 app.js)')
 	req.io.route('saveCamera');
 });
 
@@ -63,8 +64,8 @@ app.get('/screenshots/retrieve', function(req, res, next) {
  */
 app.get('/streams/:cam_id/:framerate/:screenshot?', function(req, res,next) {
 	var   camId = req.params.cam_id
-		, framerate = req.params.framerate
-		, type = (framerate === 0) ? 'jpeg' : 'mjpeg'
+		, framerate = parseInt(req.params.framerate) ? parseInt(req.params.framerate) : null
+		, type = parseInt(framerate) ? 'mjpeg' : 'jpeg'
 		, reqString = 'http://tpm.nees.ucsb.edu/feeds/'
 		, proxy;
 
@@ -86,7 +87,7 @@ app.get('/streams/:cam_id/:framerate/:screenshot?', function(req, res,next) {
 			http.get(reqString, __saveImage);
 		}
 
-		function proxyImage() {
+		function proxyVideo() {
 			// Build request array.
 			reqArr = [
 				  results.site_name
@@ -97,12 +98,32 @@ app.get('/streams/:cam_id/:framerate/:screenshot?', function(req, res,next) {
 
 			// Convert array into telepresence URL.
 			reqString = reqString + reqArr.join('/') + getData;
+
+			console.log(reqString + '(ln 102 app.js)');
 			// Create new proxy for current client.
 			req.proxy = new MjpegProxy(reqString);
 			// Make request to telepresence server.
 			req.proxy.proxyRequest(req, res, next);
 
 			req.io.route('initializeProxyStream');
+		}
+
+		function proxyImage() {
+			reqArr = [
+				  results.site_name
+				, results.camera_name
+				, type
+			];
+
+			http.get(reqString + reqArr.join('/') + getData, function(response) {
+				response.on('data', function(chunk) {
+					res.write(chunk);
+				});
+
+				response.on('end', function() {
+					res.end();
+				});
+			});
 		}
 
 		function __saveImage(response) {
@@ -132,6 +153,8 @@ app.get('/streams/:cam_id/:framerate/:screenshot?', function(req, res,next) {
 
 		if(req.params.screenshot) {
 			takeScreenshot();
+		} else if (framerate > 0) {
+			proxyVideo();
 		} else {
 			proxyImage();
 		}
@@ -145,7 +168,7 @@ app.get('/streams/:cam_id/:framerate/:screenshot?', function(req, res,next) {
 app.io.route('getCamera', function(req) {
 	var query = new DrupalInterface.Query(req.params.stream_id);
 
-	console.log(query);
+	console.log(query + ' (ln 171 app.js)');
 
 	query.on('results:available', function(results) {
 		req.io.respond(results);
@@ -159,15 +182,27 @@ app.io.route('getCameras', function(req) {
 	query.on('results:available', function(results) {
 		req.io.respond(results);
 	});
+
+	app.io.sockets.on('requestGlobalUpdate', function(id) {
+		req.io.broadcast('cameraUpdated:' + id)
+	});
 });
 
 app.io.route('saveCamera', function(req, res) {
 	var Saver = new DrupalInterface.Saver(req.body);
 
+	console.log('save requested (ln 194 app.js)');
+
 	Saver.save();
+
+	// If camera is up to date -- respond with nothing.
+	Saver.emitter.on('noUpdates', function() {
+		req.io.respond('end');
+	});
 
 	Saver.emitter.on('cameraUpdated', function(id) {
 		// Alert all connected clients that camera camera placement has been updated.
+		console.log('broadcasting camera changes to clients' + '(ln 200)');
 		req.io.broadcast('cameraUpdated:' + id);
 		
 		// End HTTP response.

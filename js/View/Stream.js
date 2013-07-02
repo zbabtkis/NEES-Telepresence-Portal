@@ -1,13 +1,14 @@
 define([
 	  'text!Templates/Stream.jtpl'
 	, 'Collection/Cameras'
+	, 'View/Time'
 	, 'spin'
 	, 'backbone'
 	, 'underscore'
 	, 'jquery'
 	, 'domReady'],	
 
-	function(Template, Cameras, Spinner, Backbone, _, $) {
+	function(Template, Cameras, Time, Spinner, Backbone, _, $) {
 	'use strict';
 
 	var Stream;
@@ -22,17 +23,22 @@ define([
 			
 			// Awesome spinny preloader provided by spin.js :).
 			this.spinner = new Spinner({
-				color:'#eee'
+				color:'#222'
 			});
+
+			this.time = new Time();
 
 			this.model.on({
 				'change:media': this.render,
-				'change:isOn': this.promptReload
+				'change:isOn': this.promptReload,
+				'flash': this.flash
 			});
 		},
 		template: _.template(Template),
 		render: function(model) {
 			var html  = this.template({camera: model.toJSON()});
+
+			this.$el.removeClass('stream-ended');
 
 			this.$el.html(html);
 			this.spinner.spin(this.el);
@@ -46,15 +52,26 @@ define([
 			this.spinner.stop();
 			this.model.set('isOn', true);
 			this.trigger('loadSuccess');
+			this.$el.append(this.time.$el);
 		},
 		error: function() {
 			this.spinner.stop();
 			this.model.set('isOn', false);
 			this.trigger('loadFail');
 			this.$el.html("<h1 class='telepresence-message'>Unable to load stream</h1>");
+			this.time.stop();
+		},
+		flash: function() {
+			var vingette = $("<div class='flash' />");
+			vingette.appendTo(this.$el)
+				.delay(100)
+				.fadeOut('fast', function() {
+					this.remove();
+				});
 		},
 		promptReload: function(model, isOn) {
 			if(isOn === false) {
+				this.time.stop();
 				this.$el.addClass('stream-ended');
 				this.$el.prepend("<img class='reload' src='http://openclipart.org/image/800px/svg_to_png/171074/reload-icon.png' />");
 			}
@@ -64,6 +81,7 @@ define([
 			this.$el.removeClass('stream-ended');
 			this.model.loadMedia();
 			this.delegateEvents();
+			this.time.start();
 		}
 	});
 

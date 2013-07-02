@@ -1,18 +1,18 @@
 define([
-	  'Model/FrameRate'
-	, 'Model/Camera'
-	, 'backbone'
+	  'backbone'
 	, 'jquery'
 	, 'Model/ScreenshotDataSource'
 	, 'backbone.kendowidget',
 	, 'domReady'], 
 
-function(FrameRate, Camera, Backbone, $, ScreenshotDataSource) {
+function(Backbone, $, ScreenshotDataSource) {
 	var PlayButton = Backbone.View.extend({
 		tagName: 'i',
 		initialize: function() {
-			this.listenTo(FrameRate, 'change:value', this._getState);
-			this._getState();
+			if(this.model) {
+				this.listenTo(this.model, 'change:framerate', this._getState);
+				this._getState();
+			}
 
 			return this;
 		},
@@ -21,17 +21,13 @@ function(FrameRate, Camera, Backbone, $, ScreenshotDataSource) {
 		},
 		_playPause: function() {
 			// Check current state and change it.
-			if(FrameRate.get('value') !== 0) {
-				FrameRate.set('value', 0);
-			} else  {
-				FrameRate.set('value', 1);
-			}
+			this.set('framerate', this.get('framerate') ? 0 : 1);
 
 			return this;
 		},
 		_getState: function() {
 			// If framerate slider changes from play to pause, only render change for button.
-			if(FrameRate.get('value') !== 0) {
+			if(this.model.get('framerate') !== 0) {
 				this.$el.attr('class', 'icon-pause icon icon-2x');
 			} else  {
 				this.$el.attr('class', 'icon-play icon icon-2x');
@@ -64,7 +60,7 @@ function(FrameRate, Camera, Backbone, $, ScreenshotDataSource) {
 			format: "# fps"
 		},
 		widget: 'kendoNumericTextBox',
-		dataBind: 'value'
+		dataBind: 'framerate'
 	});
 
 	var SnapshotTool = Backbone.View.extend({
@@ -77,6 +73,11 @@ function(FrameRate, Camera, Backbone, $, ScreenshotDataSource) {
 		events: {
 			'click': '_snapshot'
 		},
+		initialize: function() {
+			if(this.model) {
+				this.listenTo(this.options.model, 'change:isOn', this.enable);
+			}
+		},
 		render: function() {
 			$('.video-controls').append(this.$el);
 			this.enable(this.model);
@@ -85,14 +86,13 @@ function(FrameRate, Camera, Backbone, $, ScreenshotDataSource) {
 		},
 		_snapshot: function() {
 			var url = this.model.get('media').split('?')[0]  + '/screenshot?socketID=' + Telepresence.socket.socket.sessionid;
-			$.getJSON(url, function(data) {
-				console.log(data);
-			});
+			this.model.trigger('flash');
+			$.getJSON(url);
 
 			return this;
 		},
-		enable: function(isActive) {
-			if(isActive) {
+		enable: function(isActive, tValue) {
+			if(isActive === true || tValue === true) {
 				this.delegateEvents();
 				this.$el.css({
 					'color': '#000',
@@ -188,7 +188,7 @@ function(FrameRate, Camera, Backbone, $, ScreenshotDataSource) {
 
 			StatefulControls.playButton   = new PlayButton({ model: model });
 			StatefulControls.fullScreenButton  = new FullSizeButton({ model: model });
-			StatefulControls.framerateFlipper  = new FramerateFlipper({ model: FrameRate });
+			StatefulControls.framerateFlipper  = new FramerateFlipper({ model: model });
 			StatefulControls.snapshotTool = new SnapshotTool({ model: model }).render();
 			NonStatefulControls.Download = NonStatefulControls.Download || new DownloadSnapshots({ model: model }).render();
 			NonStatefulControls.Snapshot = NonStatefulControls.Snapshot || new ScreenshotGrid({ model: model });

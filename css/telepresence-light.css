@@ -1,9 +1,9 @@
 /**
  * COLORS
  * @@@@@@@@@@@@@@@@@@@@@
- * white: #eee;
+ * white: #ddd;
  * black: #222;
- * blue:  #008886;
+ * blue:  #7ea700;
 
 /** Core */
 
@@ -15,14 +15,14 @@
 
 /** @TODO: Change to more general page-header selector */
 .theme-light .page-header {
-	background: #008886;
-	color: #eee;
+	background: #7ea700;
+	color: #ddd;
 	margin: 0 !important;
 	padding: 30px !important;
 }
 
 .theme-light #telepresence-wrap {
-	background: #ddd;
+	background: #fff;
 }
 
 /** Camera Navigation List */
@@ -33,40 +33,48 @@
 	border: none;
 }
 .theme-light .site {
-	color: #222;
-	background: #999;
+	color: #ddd;
+	background: #222;
+	padding: 10px;
+	border-left: 6px solid #555;
 }
 .theme-light .site:hover {
-	color: #eee;
+	background: #111;
 }
-.theme-light .site.active {
-	background: #008886;
-	color: #eee;
-	border-bottom: none;
+.theme-light .site.active, .theme-light .site:hover {
+	border-color: #7ea700;
 }
 .theme-light .site:after {
 	/** @TODO: Remove from main css */
 	content: "";
+}
+.theme-light .site .icon {
+	color: white;
+	padding: 0 15px;
+}
+.theme-light .site span {
+	position: relative;
+	top: 5px;
 }
 .theme-light .site.active:after {
 	width: 0;
 	height: 0;
 	border-width: 15px;
 	border-style: solid;
-	border-color: transparent transparent #fff;
+	border-color: transparent transparent #ddd;
 	content: "";
-	margin: 15px;
+	margin: 30px 10px;
 }
 .theme-light .cameras {
-	background: #fff;
-	border-bottom: 1px solid #aaa;
+	background: #ddd;
 	margin-top: 19px;
 }
 .theme-light .camera {
 	color: #333;
+	margin-top: 0;
 }
 .theme-light .camera:hover {
-	background: #bbb !important;
+	background: #7ea700 !important;
 }
 
 .theme-light #telepresence-dashboard {
@@ -101,10 +109,6 @@
 
 .theme-light .k-label {
 	display: none !important;
-}
-
-.theme-light span.k-numerictextbox {
-	background: #111;
 }
 
 .theme-light .k-select {

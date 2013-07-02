@@ -83,25 +83,29 @@ function(Backbone, $) {
 		dataBind: 'value_iris',
 	});
 
-	// @TODO -- Replace with actual model.
-	var locationData = [
-		{text: 'Home', value: '1'},
-		{text: 'River', value: '2'},
-		{text: 'Hut', value: '3'},
-		{text: 'Shurbs', value: '4'}
-	]
-
 	var LocationPicker = Backbone.KendoWidget.extend({
 		el: '#location-picker',
 		widget: 'kendoDropDownList',
 		options: {
             dataTextField: "text",
-            dataValueField: "value",
-            dataSource: locationData,
-            index: 0,
-            change: function(e) {
-            	console.log(e);
-            }
+	        dataValueField: "value",
+	        dataSource: [],
+	        index: 0
+        },
+        emitter: 'reposition',
+        setData: function() {
+        	var locationData = [], titles;
+
+        	if(this.model && this.model.get('bookmarks')) {
+				titles = _.keys(this.model.get('bookmarks'));
+				locationData = [];
+
+				_.each(titles, function(title) {
+					locationData.push({text: title, value: title})
+				});
+			}
+
+			return locationData;
         }
 	});
 

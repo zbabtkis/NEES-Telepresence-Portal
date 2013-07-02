@@ -1,9 +1,8 @@
 define([
-	  'Model/FrameRate'
-	, 'underscore'
+	  'underscore'
 	, 'backbone'], 
 
-function(FrameRate, _, Backbone) {
+function(_, Backbone) {
 	'use strict';
 
 	var Camera;
@@ -13,6 +12,11 @@ function(FrameRate, _, Backbone) {
 			baseUrl: Telepresence.nodeServer + 'streams/',
 			framerate: 1,
 			isOn: false
+		},
+		parse: function(response) {
+			response.bookmarks = JSON.parse(response.bookmarks);
+
+			return response;
 		},
 		initialize: function() {
 			var _this = this;
@@ -27,14 +31,23 @@ function(FrameRate, _, Backbone) {
 
 			Telepresence.socket.on('cameraUpdated:' + this.get('id'), this.fetch);
 
-			FrameRate.on('change:value', this.loadMedia, this);
+			this.on('change:framerate', this.loadMedia);
+
+			this.on('reposition', function(location) {
+				var pos = this.get('bookmarks')[location].position;
+
+				this.set({
+					'value_tilt': pos.v,
+					'value_pan': pos.h
+				});
+			});
 
 			this.on('change', function() {
 				Backbone.sync('update', this);
 			});
 		},
 		loadMedia: function() {
-			var frameRate = FrameRate.get('value'),
+			var frameRate = this.get('framerate'),
 				socketInfo = '?random=' + Math.random() + '&socketID=' + Telepresence.socket.socket.sessionid;;
 
 			// @TODO: Implement feature detation and use polyfill if browser doesn't support mjpeg.
@@ -45,7 +58,7 @@ function(FrameRate, _, Backbone) {
 		},
 		_polyfill: function() {
 			var _this = this,
-				fameRate = FrameRate.get('value'),
+				fameRate = this.get('framerate'),
 				valFr = 1000;
 
 			function setFeed() {

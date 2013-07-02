@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+<head>
+	<meta charset='utf-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1' />
+
+	<link href='./components/bootstrap-css/css/bootstrap.min.css' type='text/css' rel='stylesheet' />
+	<link href='./components/bootstrap-css/css/bootstrap-responsive.min.css' type='text/css' rel='stylesheet' />
+	<link href='./css/font-awesome/css/font-awesome.min.css' type='text/css' rel='stylesheet' />
+	<link href='./css/kendo.common.min.css' type='text/css' rel='stylesheet' />
+	<link href='./css/kendo.metro.min.css' type='text/css' rel='stylesheet' />
+	<link href='./css/telepresence.css' type='text/css' rel='stylesheet' />
+	<link href='./css/telepresence-extra-light.css' type='text/css' rel='stylesheet' />
+	<link href='./css/telepresence-light.css' type='text/css' rel='stylesheet' />
+
+	<script>
+		var Drupal = {
+			settings: {
+				modulePath: '/',
+				telepresence_about: 'Something here...',
+				flex_api: 'http://sticky.eri.ucsb.edu:8888',
+				module_api: 'http://snow-dev.eri.ucsb.edu/telepresence/api/cameras'
+			}
+		}
+	</script>
+	<script data-main="js/App" src="./components/requirejs/require.js"></script>
+</head>
+<body>
+<div class='container'>
+	<div id="telepresence-wrap">
+		<header class='app-header'>
+			<h1>EEG Telepresence</h1>
+		</header>
+		<aside id='telepresence-menu'>
+			<nav id='tp-tabs'>
+				<i id='help-tab' class='icon icon-info-sign icon-2x' alt='Show Help' title='Show Help'></i>
+				<h4></h4>
+				<i id='list-tab' class='icon icon-list icon-2x' alt='Show Sites List' title='Show Sites List'></i>
+			</nav>
+			<section id='telepresence-dashboard'></section>
+			<section id='controls'>
+
+				<h3 class='header-inner'>Controls</h3>
+
+				<div class='input-controls'>
+					<div class='input-control'>
+						<label for='frmaerate-selector'>Framerate</label>
+						<div id='framerate-selector' class='framerate-selector' value='10'></div>
+					</div>
+
+					<div class='input-control'>
+						<label for='location-picker'>Location</label>
+						<div id='location-picker' class='location-picker'></div>
+					</div>
+				</div>
+
+				<div class='slider-controls'>
+					<div class='control'>
+						<label for='iris-control'>Iris</label>
+						<div id='iris-control' class='mini-control iris-control'></div>
+					</div>
+
+					<div class='control'>
+						<label for='focus-control'>Focus</label>
+						<div id='focus-control' class='mini-control focus-control'></div>
+					</div>
+					
+					<div class='control'>
+						<label for='zoom-control'>Zoom</label>
+						<div id='zoom-control' class='mini-control zoom-control'></div>
+					</div>
+				</div>
+
+				<div id='capture'>
+					<h3 class='header-inner'>Capture</h3>
+					<div class='video-controls'>
+					</div>
+					<div id='screenshots'>
+					</div>
+				</div>
+
+			</section>
+		</aside>
+		<div id="video">
+
+			<div class='left-col'>
+				<label for='slider-pan'>Pan</label>
+				<div id="slider-pan" class='slider-pan'></div>
+			</div>
+			<div class='tp-row'>
+				<div id="stream" class='left-col'>
+					<h1 class='telepresence-message'>Select a stream</h1>
+				</div>
+
+				<div class='right-col'>
+					<label for='slider-tilt'>T<br>I<br>L<br>T</label>
+					<div id="slider-tilt" class='slider-tilt'></div>
+				</div>
+			</div>
+
+			<div id="player-controls">
+				<div class="transparentBar"></div>
+			</div>
+		</div>
+	</div>
+</div>

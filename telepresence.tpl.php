@@ -1,4 +1,4 @@
-<script data-main="/<?php print $module_path; ?>/js/app" src="/<?php print $module_path; ?>/components/requirejs/require.js"></script>
+<script data-main="/<?php print $module_path; ?>/public/js/app" src="/<?php print $module_path; ?>/public/components/requirejs/require.js"></script>
 
 <div id="telepresence-wrap">
 	<header class='app-header'>

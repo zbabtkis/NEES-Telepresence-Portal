@@ -56,9 +56,9 @@ function telepresence_page() {
 	$flex_api    = variable_get('telepresence_api', '');
 	$module_api  = '/telepresence/api';
 
-	drupal_add_css($module_path . '/css/font-awesome/css/font-awesome.min.css');
-	drupal_add_css($module_path . '/css/kendo.common.min.css');
-	drupal_add_css($module_path . '/css/kendo.metro.min.css');
+	drupal_add_css($module_path . '/public/css/font-awesome/css/font-awesome.min.css');
+	drupal_add_css($module_path . '/public/css/kendo.common.min.css');
+	drupal_add_css($module_path . '/public/css/kendo.metro.min.css');
 
 	drupal_add_js(
 		array(
@@ -70,7 +70,7 @@ function telepresence_page() {
 		'setting'
 	);
 
-	drupal_add_css($module_path . '/css/telepresence.css');
+	drupal_add_css($module_path . '/public/css/telepresence.css');
 
 	// Both of the following add additional layering and can be used interchangably (you can switch themes using the Telepresence.switchTheme method in the javasctpt console)
 	/**
@@ -80,11 +80,11 @@ function telepresence_page() {
 	 * theme-extra-light
 	 */
 
-	drupal_add_css($module_path . '/css/telepresence-light.css');
-	drupal_add_css($module_path . '/css/telepresence-extra-light.css');
+	drupal_add_css($module_path . '/public/css/telepresence-light.css');
+	drupal_add_css($module_path . '/public/css/telepresence-extra-light.css');
 
 	if(user_access('administer telepresence')) {
-		drupal_add_css($module_path . '/css/admin.css');
+		drupal_add_css($module_path . '/public/css/admin.css');
 	}
 
 	$page = theme('telepresence_template', array('module_path' => $module_path));

@@ -1,0 +1,444 @@
+/**
+ * ===============================================
+ *               NEES Telepresence
+ * ===============================================
+ * Content
+ * -------
+ * ..1) Core
+ * ..2) Header
+ * ..3) Menu
+ * ..4) Controls
+ * ..5) Content
+ * ..6) Responsive
+ * ..7) Icons
+ * ..8) Effects
+ * ..9) Kendo Overrides
+ * -----------------------------------------------
+ */
+
+/** 
+ -------------------------------------------------
+ 1) App Header
+ -------------------------------------------------
+ */
+
+#telepresence-wrap header {
+	background: #222;
+	margin: 0;
+	padding: 15px;
+	margin-bottom: 20px;
+	color: white;
+}
+
+/** 
+ -------------------------------------------------
+ 2) App Menu
+ -------------------------------------------------
+ */
+#telepresence-menu {
+	float: left;
+	width: 360px;
+}
+#telepresence-menu section {
+	margin-bottom: 15px;
+}
+#menu-header {
+	padding: 0;
+	background: #111;
+	margin: 10px 0 0 0;
+	border-bottom: 1px solid #eee;
+}
+#tp-tabs {
+	margin-top: 10px;
+}
+#help-tab {
+	float: left;
+	padding-top: 0;
+}
+#list-tab {
+	float: right;
+	padding-top: 0;
+}
+.header-inner {
+	border-bottom: 1px solid #aaa;
+	color: #222;
+	text-align: center;
+}
+.header-inner:first-child {
+	margin-top: -10px;
+}
+#info-view {
+	color: #222;
+}
+#info-view .inner-view {
+	padding: 5px;
+}
+
+#site-list {
+	margin: 0;
+	padding: 0;
+	background: #222;
+	border: 1px solid #333;
+}
+.site, .camera {
+	cursor: pointer;
+	padding: 6px;
+	margin-top: 5px;
+	list-style: none;
+	color: #ccc;
+}
+.site:hover {
+	background: #008886;
+}
+
+.site.active {
+	background: #111;
+}
+.site.active:hover {
+	background: #111;
+}
+.cameras {
+	display: none;
+	margin: 0;
+}
+.cameras.active {
+	display: block;
+}
+.cameras li{
+	padding-left: 20px;
+}
+.cameras li:hover {
+	background: #00aba9;
+	color: #eee;
+}
+
+/** 
+ -------------------------------------------------
+ 3) App Content
+ -------------------------------------------------
+ */
+#video {
+	width: 65%;
+	min-width: 760px;
+	float: right;
+}
+#stream {
+	overflow: hidden;
+	position: relative;
+	height: 480px;
+	width: 700px;
+	margin-right: 10px;
+	background: #000;
+	float: left;
+}
+#stream .telepresence-message {
+	top: 50%;
+	margin-top: -1em;
+	position: relative;
+	width: 100%;
+	text-align: center;
+	color: #777;
+}
+#stream .stream-image {
+	width: 100%;
+}
+#stream.stream-ended .reload {
+	height: 150px;
+	width: 150px;
+	position: absolute;
+	margin-top: 150px;
+	margin-left: 275px;
+	z-index: 1;
+}
+#time-display {
+	color: #222;
+	background: #eee;
+	position: absolute;
+	top: 0;
+	display: block;
+	width: 100%;
+	left: 0;
+	padding: 5px;
+}
+/** 
+ -------------------------------------------------
+ 4) App Controls
+ -------------------------------------------------
+ */
+
+#controls {
+	float: left;
+	width: 100%;
+}
+#capture {
+	clear: both;
+	float: left;
+}
+.tp-row {
+	margin-top: 10px;
+	margin-bottom: 25px;
+	float: left;
+}
+
+.left-col {
+	float: left;
+	width: 700px;
+}
+
+.right-col {
+	float: left;
+}
+.video-controls {
+	margin-top: -50px;
+}
+.video-controls .icon {
+	float: right;
+}
+.video-controls .icon:first-child {
+	margin: 0;
+	float: left;
+}
+#screenshots {
+	float: left;
+	clear: both;
+	margin-top: 10px;
+}
+label[for='slider-tilt'] {
+	float: right;
+	margin-top: 240px;
+	margin-left: 5px;
+}
+
+label[for='slider-pan'] {
+	text-align: center;
+}
+
+#slider-tilt {
+	min-width: 35px;
+}
+.control {
+	padding-right: 25px;
+	float: right;
+	text-align: center;
+}
+.input-controls {
+	float: left;
+}
+
+.input-control {
+	margin-bottom: 10px;
+}
+
+.slider-controls {
+	float: right;
+}
+
+/** 
+ -------------------------------------------------
+ 5) Responsive
+ -------------------------------------------------
+ */
+
+/** Tablet and Smartphone*/
+@media all and (max-width: 680px) {
+	#tps-viewer-menu {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	#content-wrapper {
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	#options-menu {
+		padding: 0;
+	}
+	#nav {
+		padding: 0;
+	}
+	#player-controls {
+		margin: 5px;
+	}
+	#slider {
+		width: 60%;
+	}
+}
+/** Widescreen */
+@media all and (min-width: 1400px) {
+	.camera-action {
+		margin: 5px;
+	}
+}
+
+/**
+ * -------------------------------------------------
+ * 1. Core
+ * -------------------------------------------------
+ */
+#telepresence-wrap {
+	background-color: #101214;
+	overflow: visible;
+	padding: 15px;
+	float: left;
+	position: relative;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: moz-none;
+	-ms-user-select: none;
+	user-select: none;
+	border-radius: 5px;
+}
+
+#telepresence-wrap input {
+	background: none;
+	color: white;
+}
+#telepresence-wrap label {
+	color: #ccc;
+}
+/**
+ * -------------------------------------------------
+ * 7. Icons
+  * -------------------------------------------------
+ */
+
+.icon {
+	color: white;
+	background: none !important;
+	padding: 15px 20px 15px 0;
+	display: inline-block;
+	width: auto;
+	height: auto;
+	line-height: default;
+	vertical-align: text-top;
+	cursor: pointer;
+}
+
+.icon.bRemover {
+	position: absolute;
+	margin-top: -38px;
+	left: -50px;
+	color: red;
+}
+
+/**
+ * -------------------------------------------------
+ * 8. Effects
+ * -------------------------------------------------
+ */
+
+.app-content {
+	/** Hide app initially */
+	opacity: 0;
+}
+
+.flash {
+	top: 0;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: #fff;
+	z-index: 99999;
+}
+
+.inactive {
+	cursor: default;
+	color: #999;
+}
+
+#stream.stream-ended .stream-image {
+	-webkit-animation: blurOut 2s;
+	-moz-animation: blurOut 2s;
+	-o-animation: blurOut 2s;
+	animation: blurOut 2s;
+
+	-webkit-opacity: 0.5;
+	-moz-opacity: 0.5;
+	-o-opacity: 0.5;
+	opacity: 0.5;
+}
+
+@keyframes blurOut {
+	from {
+		-webkit-opacity: 1;
+		-moz-opacity: 1;
+		-o-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-webkit-opacity: 0.5;
+		-moz-opacity: 0.5;
+		-o-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+@-webkit-keyframes blurOut {
+	from {
+		-webkit-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-webkit-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+@-moz-keyframes blurOut {
+	from {
+		-moz-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-moz-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+@-o-keyframes blurOut {
+	from {
+		-o-opacity: 1;
+		opacity: 1;
+	}
+	to {
+		-o-opacity: 0.5;
+		opacity: 0.5;
+	}
+}
+
+/**
+ * -------------------------------------------------
+ * 9. Kendo overrides
+ * -------------------------------------------------
+ */
+
+.k-slider-horizontal {
+    display: inline-block;
+    float: left;
+    width: 100%;
+    height: 26px;
+}
+
+.k-slider-vertical {
+    display: inline-block;
+    float: left;
+    width: 26px;
+    height: 480px;
+}
+
+#video .k-slider-selection {
+	background: none;
+}
+#video .k-label {
+	display: none;
+}
+.k-label {
+	color: white !important;
+}
+.mini-control .k-widget {
+	height: 150px;
+	clear: none;
+}

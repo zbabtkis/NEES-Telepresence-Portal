@@ -13,6 +13,7 @@
  * ..7) Icons
  * ..8) Effects
  * ..9) Kendo Overrides
+ * ..10) Static Page
  * -----------------------------------------------
  */
 
@@ -314,6 +315,9 @@ label[for='slider-pan'] {
 	line-height: default;
 	vertical-align: text-top;
 	cursor: pointer;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
 }
 
 .icon.bRemover {
@@ -441,4 +445,15 @@ label[for='slider-pan'] {
 .mini-control .k-widget {
 	height: 150px;
 	clear: none;
+}
+
+/**
+ * -------------------------------------------------
+ * 10. Static Page
+ * -------------------------------------------------
+ */
+
+body.static {
+    background: #333;
+    padding: 100px;
 }

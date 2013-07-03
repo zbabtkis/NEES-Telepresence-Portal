@@ -57,7 +57,7 @@ window.Telepresence = {
 	version: "2.0.1",
 	switchTheme: function(theme) {
 		var body = document.getElementsByTagName('body')[0];
-		body.className = theme || this.defaults.theme;
+		body.className = body.className + ' ' + (theme || this.defaults.theme);
 
 		return body;
 	},

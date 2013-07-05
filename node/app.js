@@ -47,6 +47,34 @@ app.get('/axis', function(req, res, next) {
 	});
 });
 
+// Returns current position of camera from AXIS cam server.
+app.get('/sync/:stream', function(req, res, next) {
+	var id = req.params.stream;
+
+	http.get('http://192.168.1.10/axis-cgi/com/ptz.cgi?query=position', function(result) {
+		result.on('data', function(data) {
+			var arr = data.toString().split("\r\n"),
+				obj = {};
+
+			_.each(arr, function(val) {
+				var keyPair = val.split('=');
+				obj[keyPair[0]] = keyPair[1];
+			});
+
+			var query = new DrupalInterface.Query(id);
+
+			query.on('results:available', function(results) {
+				results['value_pan'] = (10 * (parseInt(obj.pan)+180)) / 36;
+				results['value_tilt'] = parseInt(obj.tilt) + 90;
+
+				req.syncData = results;
+
+				req.io.route('saveCamera');
+			});
+		});
+	});
+});
+
 //Forward directly to express.io route handlers.
 app.get('/streams', function(req, res, next) {
 	req.io.route('getCameras');
@@ -60,6 +88,7 @@ app.put('/streams/:stream_id/:center?', function(req, res, next) {
 		query.on('results:available', function(cam) {
 			http.get('http://tpm.nees.ucsb.edu/feeds/' + cam.site_name + '/' + cam.camera_name + '/robotic?ctrl=center&amp;imageheight=' + center.height + '&amp;imagewidth=' + center.width + '&amp;value=?' + center.left + ',' + center.top, function(err, data) {
 				if(err) {
+					res.end('error');
 					return false;
 				} else {
 					res.end('centered');
@@ -229,11 +258,11 @@ app.io.route('getCameras', function(req) {
 });
 
 app.io.route('saveCamera', function(req, res) {
-	var Saver = new DrupalInterface.Saver(req.body);
+	var Saver = new DrupalInterface.Saver(req.syncData || req.body);
 
 	console.log('save requested (ln 194 app.js)');
 
-	Saver.save();
+	Saver.save(req.syncData);
 
 	// If camera is up to date -- respond with nothing.
 	Saver.emitter.on('noUpdates', function() {
@@ -256,7 +285,7 @@ app.io.route('initializeProxyStream', function(req) {
 	// If connecting directly to /stream don't try to listen for socket connection.
 
 	ProxyEmitter.get(req.query.socketID, req.proxyID).once('streamEnded', function() {
-		socket.emit('streamEnded:' + req.params.cam_id);
+		if(socket) socket.emit('streamEnded:' + req.params.cam_id);
 	});
 
 });
@@ -264,7 +293,7 @@ app.io.route('initializeProxyStream', function(req) {
 app.io.route('alertAttachment', function(req) {
 	var socket = app.io.sockets.sockets[req.query.socketID];
 
-	socket.emit('alertAttachment');
+	if(socket) socket.emit('alertAttachment');
 
 	req.io.respond('end');
 });

@@ -1,4 +1,5 @@
 var   MjpegProxy       = require('mjpeg-proxy').MjpegProxy
+	, ProxyEmitter     = require('mjpeg-proxy').emitter
 	, express          = require('express.io')
 	, http             = require('http')
 	, app              = express()
@@ -25,14 +26,49 @@ app.get('/', function(req, res, next) {
 	res.end(JSON.stringify({"app": true}));
 });
 
+app.get('/axis', function(req, res, next) {
+	var location = req.query.Message,
+		camId    = req.query.camera;
+
+	var query = new DrupalInterface.Query(camId);
+
+	query.on('results:available', function(results) {
+		var bookmarks = JSON.parse(results.bookmarks),
+			position  = bookmarks[location].position,
+			tilt      = position.v
+			pan       = position.h;
+
+		results['value_pan'] = pan;
+		results['value_tilt'] = tilt;
+
+		var saver = new DrupalInterface.Saver(results);
+
+		saver.save();
+	});
+});
+
 //Forward directly to express.io route handlers.
 app.get('/streams', function(req, res, next) {
 	req.io.route('getCameras');
 });
 
-app.put('/streams/:stream_id', function(req, res, next) {
-	console.log('about to save camera (ln 34 app.js)')
-	req.io.route('saveCamera');
+app.put('/streams/:stream_id/:center?', function(req, res, next) {
+	if(req.params.center) {
+		var center = req.body;
+		var query = new DrupalInterface.Query(req.params.stream_id);
+
+		query.on('results:available', function(cam) {
+			http.get('http://tpm.nees.ucsb.edu/feeds/' + cam.site_name + '/' + cam.camera_name + '/robotic?ctrl=center&amp;imageheight=' + center.height + '&amp;imagewidth=' + center.width + '&amp;value=?' + center.left + ',' + center.top, function(err, data) {
+				if(err) {
+					return false;
+				} else {
+					res.end('centered');
+				}
+			});
+		});
+	} else {
+		req.io.route('saveCamera');
+	}
 });
 
 app.get('/streams/:stream_id', function(req, res, next) {
@@ -96,12 +132,16 @@ app.get('/streams/:cam_id/:framerate/:screenshot?', function(req, res,next) {
 				, framerate
 			];
 
+			req.proxyID = new Date().valueOf();
+
+			console.log(req.proxyID);
+
 			// Convert array into telepresence URL.
 			reqString = reqString + reqArr.join('/') + getData;
 
-			console.log(reqString + '(ln 102 app.js)');
+			ProxyEmitter.register(req.query.socketID, req.proxyID);
 			// Create new proxy for current client.
-			req.proxy = new MjpegProxy(reqString);
+			req.proxy = new MjpegProxy(reqString, req.query.socketID, req.proxyID);
 			// Make request to telepresence server.
 			req.proxy.proxyRequest(req, res, next);
 
@@ -214,7 +254,8 @@ app.io.route('initializeProxyStream', function(req) {
 	var socket = app.io.sockets.sockets[req.query.socketID];
 
 	// If connecting directly to /stream don't try to listen for socket connection.
-	req.proxy.once('streamEnded', function() {
+
+	ProxyEmitter.get(req.query.socketID, req.proxyID).once('streamEnded', function() {
 		socket.emit('streamEnded:' + req.params.cam_id);
 	});
 

@@ -24,7 +24,7 @@ function(Backbone, $) {
             showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_pan',
+		dataBind: 'value_pan'
 	});
 
 	var SliderTilt = Backbone.KendoWidget.extend({
@@ -38,7 +38,7 @@ function(Backbone, $) {
             showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_tilt',
+		dataBind: 'value_tilt'
 	});
 
 	var SliderZoom = Backbone.KendoWidget.extend({
@@ -52,7 +52,7 @@ function(Backbone, $) {
             showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_zoom',
+		dataBind: 'value_zoom'
 	});
 
 	var SliderFocus = Backbone.KendoWidget.extend({
@@ -80,7 +80,7 @@ function(Backbone, $) {
 			showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_iris',
+		dataBind: 'value_iris'
 	});
 
 	var LocationPicker = Backbone.KendoWidget.extend({
@@ -103,6 +103,7 @@ function(Backbone, $) {
 				_.each(titles, function(title) {
 					locationData.push({text: title, value: title})
 				});
+                
 			}
 
 			return locationData;

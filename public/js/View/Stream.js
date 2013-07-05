@@ -16,7 +16,8 @@ define([
 	Stream = Backbone.View.extend({
 		el: '#stream',
 		events: {
-			'click .reload': 'reload'
+			'click .reload': 'reload',
+            'click': 'getPosition'
 		},
 		initialize: function() {
 			_.bindAll(this);
@@ -82,7 +83,28 @@ define([
 			this.model.loadMedia();
 			this.delegateEvents();
 			this.time.start();
-		}
+		},
+        getPosition: function(e) {
+            var target = $(e.currentTarget),
+                width  = target.width(),
+                height = target.height(),
+                offset = target.offset(),
+                left   = e.pageX - offset.left,
+                top    = e.pageY - offset.top;
+            
+            this.model.center(left, top, width, height);
+            /**var target = $(e.currentTarget),
+                offset = target.offset(),
+                left   = e.pageX - offset.left,
+                top    = e.pageY - offset.top,
+                tilt   = 100- ((top/target.height()) * 100),
+                pan    = (left/target.width()) * 100;
+            
+            this.model.set({
+                'value_pan': pan,
+                'value_tilt': tilt
+            });*/
+        }
 	});
 
 	return Stream;

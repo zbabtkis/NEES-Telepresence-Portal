@@ -56,6 +56,21 @@ function(_, Backbone) {
 
 			return this;
 		},
+        center: function(left, top, width, height) {
+            $.ajax({
+                type: 'PUT',
+                url: Telepresence.nodeServer + 'streams/' + this.get('id') + '/center',
+                data: {
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        },
 		_polyfill: function() {
 			var _this = this,
 				fameRate = this.get('framerate'),

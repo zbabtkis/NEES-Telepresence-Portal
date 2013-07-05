@@ -142,6 +142,7 @@
 }
 #stream .stream-image {
 	width: 100%;
+	cursor: crosshair;
 }
 #stream.stream-ended .reload {
 	height: 150px;

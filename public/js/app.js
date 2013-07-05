@@ -1,16 +1,16 @@
 require.config({
 	paths: {
-		'backbone': '../components/backbone/backbone',
-		'backbone.kendowidget': '../components/backbone.kendoWidget/backbone.kendowidget',
-		'underscore': '../components/underscore/underscore',
-		'domReady': '../components/requirejs-domready/domReady',
-		'spin': '../components/spin.js/spin',
-		'text': '../components/requirejs-text/text',
-		'jquery': '../components/jquery/jquery',
-		'modernizr': '../components/modernizr/modernizr',
+		'backbone': '../bower_components/backbone/backbone',
+		'backbone.kendowidget': '../bower_components/backbone.kendoWidget/backbone.kendowidget',
+		'underscore': '../bower_components/underscore/underscore',
+		'domReady': '../bower_components/requirejs-domready/domReady',
+		'spin': '../bower_components/spin.js/spin',
+		'text': '../bower_components/requirejs-text/text',
+		'jquery': '../bower_components/jquery/jquery',
+		'modernizr': '../bower_components/modernizr/modernizr',
 		'socketio': 'http://sticky.eri.ucsb.edu:8888/socket.io/socket.io',
-		'kendo': '../components/kendo-ui/js/kendo.web.min',
-		'datejs': '../components/datejs/build/date',
+		'kendo': '../bower_components/kendo-ui/js/kendo.web.min',
+		'datejs': '../bower_components/datejs/build/date',
 		'bookmarkr': 'Admin/bookmarkr'
 	},
 	shim: {
@@ -53,7 +53,7 @@ window.Telepresence = {
 			require.config.urlArgs = "v=" +  (new Date()).getTime();
 		}
 	},
-	nodeServer: "http://sticky.eri.ucsb.edu:8888/",
+	nodeServer: "http://mendo.nees.ucsb.edu:8888/",
 	version: "2.0.1",
 	switchTheme: function(theme) {
 		var body = document.getElementsByTagName('body')[0];
@@ -83,12 +83,12 @@ define(['jquery', 'spin', 'domReady'], function($, Spinner) {
 				// Check if Node.js server is active to determine
 				// Backbone saivng mechanism.
 				$.ajax({
-					url: Telepresence.nodeServer,
+					url: Telepresence.nodeServer + 'sync/1',
 					dataType: 'json',
 					cache: false,
 					success: function() {
 						require(['socketio'], function() {
-							var sock = Telepresence.socket = io.connect('http://sticky.eri.ucsb.edu:8888');
+							var sock = Telepresence.socket = io.connect('http://mendo.nees.ucsb.edu:8888');
 							sock.on('connect', initialize);
 						});
 					},

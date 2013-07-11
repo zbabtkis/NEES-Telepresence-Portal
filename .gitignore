@@ -1,6 +1,0 @@
-node/public
-node/node_modules
-node/config/db.json
-public/bower_components
-public/js/dist
-sftp-config.json

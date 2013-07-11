@@ -1,5 +1,10 @@
-var Media = require('../../controller/Media');
+var Media   = require('../../controller/Media')
+  , Cameras = require('../../collection/Cameras');
 
 module.exports = function(app, io) {
-	app.get('/cameras/:cam_id/:framerate', Media.proxy);
+	app.get('/cameras/:id/:framerate', function(req, res, next) {
+		  var camera = new Cameras.get(req.params.id).toJSON();
+
+		  Media.proxy(req, res, camera);
+	});
 };

@@ -6,8 +6,12 @@ var mysql   = require('mysql')
 var db = (function() {
 	var dbConfig
 	  , connection;
+
+	var dbConfig = JSON.parse(fs.readFileSync(__dirname + '/db.json'));
+
+	console.log(dbConfig);
 	
-	connection = mysql.createConnection(fs.readFileSync('./db.json'));
+	connection = mysql.createConnection(dbConfig);
 
 	connection.connect();
 

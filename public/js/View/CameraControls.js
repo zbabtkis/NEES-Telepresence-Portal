@@ -17,70 +17,73 @@ function(Backbone, $) {
 		el: '#slider-pan',
 		options: {
 			orientation: "horizontal",
-            min: 0,
-            max: 100,
+            min: -170,
+            max: 170,
             smallStep: 1,
             largeStep: 20,
             showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_pan'
+		dataBind: 'pan'
 	});
 
 	var SliderTilt = Backbone.KendoWidget.extend({
 		el: '#slider-tilt',
 		options: {
 			orientation: "vertical",
-            min: 0,
-            max: 100,
+            min: -80,
+            max: 80,
             smallStep: 1,
             largeStep: 20,
             showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_tilt'
+		dataBind: 'tilt'
 	});
 
 	var SliderZoom = Backbone.KendoWidget.extend({
 		el: '#zoom-control',
 		options: {
 			orientation: "vertical",
-            min: -10,
-            max: 10,
+            min: 1,
+            max: 9999,
             smallStep: 1,
             largeStep: 20,
             showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_zoom'
+		dataBind: 'zoom',
+		trueValue: function() {
+
+		}
 	});
 
 	var SliderFocus = Backbone.KendoWidget.extend({
 		el: '#focus-control',
 		options: {
 			orientation: 'vertical',
-			min: -10,
-			max: 10,
+			min: 1,
+			max: 9999,
 			smallStep: 1,
 			largeStep: 20,
 			showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_focus',
+		dataBind: 'focus',
 	});
 
 	var SliderIris = Backbone.KendoWidget.extend({
 		el: '#iris-control',
 		options: {
 			orientation: 'vertical',
-			min: -10,
-			max: 10,
+			min: 1,
+			max: 9999,
 			smallStep: 1,
 			largeStep: 20,
 			showButtons: true
 		},
 		widget: 'kendoSlider',
-		dataBind: 'value_iris'
+		dataBind: 'iris'
 	});
 
 	var LocationPicker = Backbone.KendoWidget.extend({

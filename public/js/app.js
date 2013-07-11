@@ -8,7 +8,7 @@ require.config({
 		'text': '../bower_components/requirejs-text/text',
 		'jquery': '../bower_components/jquery/jquery',
 		'modernizr': '../bower_components/modernizr/modernizr',
-		'socketio': 'http://sticky.eri.ucsb.edu:8888/socket.io/socket.io',
+		'socketio': 'http://mendo.nees.ucsb.edu:8888/socket.io/socket.io',
 		'kendo': '../bower_components/kendo-ui/js/kendo.web.min',
 		'datejs': '../bower_components/datejs/build/date',
 		'bookmarkr': 'Admin/bookmarkr'
@@ -32,7 +32,8 @@ require.config({
 			deps: ['jquery'],
 			exports: 'kendo'
 		}
-	}
+	},
+	waitSeconds: 0
 });
 
 window.Telepresence = {
@@ -82,19 +83,10 @@ define(['jquery', 'spin', 'domReady'], function($, Spinner) {
 				Telepresence.switchTheme();
 				// Check if Node.js server is active to determine
 				// Backbone saivng mechanism.
-				$.ajax({
-					url: Telepresence.nodeServer + 'sync/1',
-					dataType: 'json',
-					cache: false,
-					success: function() {
-						require(['socketio'], function() {
-							var sock = Telepresence.socket = io.connect('http://mendo.nees.ucsb.edu:8888');
-							sock.on('connect', initialize);
-						});
-					},
-					error: function() {
-						alert("Oops, the telepresence app doesn't seem to be working right now. Sorry...");
-					}
+				
+				require(['socketio'], function(io) {
+					var sock = Telepresence.socket = io.connect('http://mendo.nees.ucsb.edu:8888');
+					sock.on('connect', initialize);
 				});
 
 				return Telepresence;

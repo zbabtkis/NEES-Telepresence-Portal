@@ -85,7 +85,7 @@ function(Backbone, $, ScreenshotDataSource) {
 			return this;
 		},
 		_snapshot: function() {
-			var url = this.model.get('media').split('?')[0]  + '/screenshot?socketID=' + Telepresence.socket.socket.sessionid;
+			var url = Telepresence.nodeServer + 'screenshots/' + this.model.get('id') + '?socketID=' + Telepresence.socket.socket.sessionid;
 			this.model.trigger('flash');
 			$.getJSON(url);
 

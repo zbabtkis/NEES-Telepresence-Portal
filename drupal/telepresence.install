@@ -34,39 +34,38 @@ function telepresence_schema() {
 			'site_name' => array(
 				'type' => 'text',
 			),
-			'site_safe_name' => array(
-				'type' => 'text',
-			),
 			'camera_name' => array(
 				'type' => 'text',
 			),
-			'camera_safe_name' => array(
+			'pan' => array(
+				'type' => 'int',
+				'not_null' => true,
+				'default_value' => 0
+			),
+			'tilt' => array(
+				'type' => 'int',
+				'not_null' => true,
+				'default_value' => 0
+			),
+			'zoom' => array(
+				'type' => 'int',
+				'not_null' => true,
+				'default_value' => 0
+			),
+			'focus' => array(
+				'type' => 'int',
+				'not_null' => true,
+				'default_value' => 0
+			),
+			'iris' => array(
+				'type' => 'int',
+				'not_null' => true,
+				'default_value' => 0
+			),
+			'ip' => array(
 				'type' => 'text',
-			),
-			'value_pan' => array(
-				'type' => 'int',
 				'not_null' => true,
-				'default_value' => 0
-			),
-			'value_tilt' => array(
-				'type' => 'int',
-				'not_null' => true,
-				'default_value' => 0
-			),
-			'value_zoom' => array(
-				'type' => 'int',
-				'not_null' => true,
-				'default_value' => 0
-			),
-			'value_focus' => array(
-				'type' => 'int',
-				'not_null' => true,
-				'default_value' => 0
-			),
-			'value_iris' => array(
-				'type' => 'int',
-				'not_null' => true,
-				'default_value' => 0
+				'default_value' => '192.168.1.10'
 			),
 			'bookmarks' => array(
 				'type' => 'text',

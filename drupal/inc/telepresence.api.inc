@@ -65,30 +65,24 @@ function telepresence_find_camera($id = null) {
 function telepresence_save_camera($id = null, $values) {
 	$camera = array();
 
-	$pan   = ($values['value_pan'] != '')   ? $values['value_pan']   : 50;
-	$tilt  = ($values['value_tilt'] != '')  ? $values['value_tilt']  : 50;
-	$zoom  = ($values['value_zoom'] != '')  ? $values['value_zoom']  : 0;
-	$focus = ($values['value_focus'] != '') ? $values['value_focus'] : 0;
-	$iris  = ($values['value_iris'] != '')  ? $values['value_iris']  : 0;
+	$pan   = ($values['pan'] != '')   ? $values['pan']   : 50;
+	$tilt  = ($values['tilt'] != '')  ? $values['tilt']  : 50;
+	$zoom  = ($values['zoom'] != '')  ? $values['zoom']  : 0;
+	$focus = ($values['focus'] != '') ? $values['focus'] : 0;
+	$iris  = ($values['iris'] != '')  ? $values['iris']  : 0;
 
 	$private_query = array(
 		'site_name'        => $values['site_name'],
-		'site_safe_name'   => $values['site_safe_name'],
 		'camera_name'      => $values['camera_name'],
-		'camera_safe_name' => $values['camera_safe_name'],
-		'value_pan'        => $pan,
-		'value_tilt'       => $tilt,
-		'value_zoom'       => $zoom,
-		'value_focus'      => $focus,
-		'value_iris'       => $iris
+		'ip'               => $values['ip']
 		);
 
 	$public_query = array(
-		'value_pan'        => $pan,
-		'value_tilt'       => $tilt,
-		'value_zoom'       => $zoom,
-		'value_focus'      => $focus,
-		'value_iris'       => $iris
+		'pan'        => $pan,
+		'tilt'       => $tilt,
+		'zoom'       => $zoom,
+		'focus'      => $focus,
+		'iris'       => $iris
 		);
 
 	$query = user_access('administer telepresence') ? $private_query : $public_query;

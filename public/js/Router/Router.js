@@ -43,7 +43,7 @@ define([
 					this.list();
 
 					require(['View/Stream', 'View/VideoControls', 'View/CameraControls'], function(Stream, vControls, cControls) {
-						var stream = new Stream({ model: camera });
+						var stream;
 
 						vControls.destroy();
 						cControls.destroy();
@@ -51,15 +51,15 @@ define([
 						vControls.initialize(camera);
 						cControls.initialize(camera);
 
-						camera.loadMedia();
+						new Stream({ model: camera }).render();
 
 						// Provide Camera API
 						Telepresence.API.getPosition = function() {
 							var obj = {
 								id: id,
 								position: {
-									h: camera.get('value_pan'),
-									v: camera.get('value_tilt')
+									h: camera.get('pan'),
+									v: camera.get('tilt')
 								}
 							}
 

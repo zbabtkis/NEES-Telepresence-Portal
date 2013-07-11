@@ -42,56 +42,17 @@ function telepresence_camera_form() {
 		'#type' => 'textfield',
 		);
 
-	$form['site_safe_name'] = array(
-		'#title' => t('Site Safe Name'),
-		'#description' => t('(eg. gvda or wla).'),
-		'#type' => 'textfield'
-		);
-
 	$form['camera_name'] = array(
 		'#title' => t('Camera Name'),
 		'#description' => t('eg. Full-Size or Inside'),
 		'#type' => 'textfield',
 		);
 
-	$form['camera_safe_name'] = array(
-		'#title' => t('Camera Safe Name'),
-		'#description' => t('eg. internal'),
-		'#type' => 'textfield',
-		);
 
-	$form['home'] = array(
-		'#title' => 'Default Values',
-		'#type' => 'fieldset'
-		);
-
-	$form['home']['value_pan'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Home Pan',
-		'#description' => 'Default pan to location (from 0 - 100).'
-		);
-
-	$form['home']['value_tilt'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Home Tilt',
-		'#description' => 'Default tilt to location (from 0 - 100).'
-		);
-
-	$form['home']['value_zoom'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Default Zoom',
-		'#description' => 'Default zoom to location (from 0 - 20).'
-		);
-
-	$form['home']['value_focus'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Default Focus',
-		'#description' => 'Default focus to (from 0 - 20).'
-		);
-	$form['home']['value_iris'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Default Iris',
-		'#description' => 'Default iris to (from 0 - 20).'
+	$form['ip'] = array(
+		'#title' => 'Camera IP Address',
+		'#description' => t('eg. 192.168.1.10'),
+		'#type' => 'textfield'
 		);
 
 	$form['id'] = array(
@@ -114,7 +75,7 @@ function telepresence_camera_form() {
 function telepresence_add_camera() {
 	$page = "";
 
-	$t_head = array('id', 'site name','site safe name','camera name','camera safe name', 'pan value', 'tilt value', 'zoom value', 'focus value', 'iris value', 'bookmarks', 'admin');
+	$t_head = array('id', 'site name','camera name', 'pan value', 'tilt value', 'zoom value', 'focus value', 'iris value', 'ip address', 'bookmarks', 'admin');
 
 	$rows = telepresence_find_camera();
 
@@ -230,7 +191,7 @@ function bookmark_action() {
 			$po = $_POST['position'];
 			$title = $_POST['title'];
 
-			save_bookmark($title, $po, $id);
+			add_bookmark($title, $po, $id);
 
 			break;
 		case "DELETE":

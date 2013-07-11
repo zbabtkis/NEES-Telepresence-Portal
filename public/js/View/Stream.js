@@ -1,6 +1,5 @@
 define([
-	  'text!Templates/Stream.jtpl'
-	, 'Collection/Cameras'
+	  'Collection/Cameras'
 	, 'View/Time'
 	, 'spin'
 	, 'backbone'
@@ -8,7 +7,7 @@ define([
 	, 'jquery'
 	, 'domReady'],	
 
-	function(Template, Cameras, Time, Spinner, Backbone, _, $) {
+	function(Cameras, Time, Spinner, Backbone, _, $) {
 	'use strict';
 
 	var Stream;
@@ -30,21 +29,29 @@ define([
 			this.time = new Time();
 
 			this.model.on({
-				'change:media': this.render,
+				'change:framerate': this.render,
 				'change:isOn': this.promptReload,
 				'flash': this.flash
-			});
+			}, this);
+
+			return this;
 		},
-		template: _.template(Template),
-		render: function(model) {
-			var html  = this.template({camera: model.toJSON()});
+		render: function() {
+			var framerate = this.model.get('framerate'),
+				socketInfo = '?random=' + Math.random() + '&socketID=' + Telepresence.socket.socket.sessionid,
+				image;
+
+			image = $('<img />', {
+				className: 'stream-image',
+				src: this.model.url() + '/' + framerate + socketInfo
+			});
 
 			this.$el.removeClass('stream-ended');
 
-			this.$el.html(html);
+			this.$el.html(image);
 			this.spinner.spin(this.el);
 
-			this.$('.stream-image').on({
+			image.on({
 				load: this.load,
 				error: this.error
 			});
@@ -52,13 +59,12 @@ define([
 		load: function() {
 			this.spinner.stop();
 			this.model.set('isOn', true);
-			this.trigger('loadSuccess');
 			this.$el.append(this.time.$el);
 		},
 		error: function() {
 			this.spinner.stop();
 			this.model.set('isOn', false);
-			this.trigger('loadFail');
+			console.log('error')
 			this.$el.html("<h1 class='telepresence-message'>Unable to load stream</h1>");
 			this.time.stop();
 		},
@@ -90,20 +96,13 @@ define([
                 height = target.height(),
                 offset = target.offset(),
                 left   = e.pageX - offset.left,
-                top    = e.pageY - offset.top;
-            
-            this.model.center(left, top, width, height);
-            /**var target = $(e.currentTarget),
-                offset = target.offset(),
-                left   = e.pageX - offset.left,
                 top    = e.pageY - offset.top,
-                tilt   = 100- ((top/target.height()) * 100),
-                pan    = (left/target.width()) * 100;
+                x, y;
+
+            x = 100 * left / width;
+            y = 100 * top / height;
             
-            this.model.set({
-                'value_pan': pan,
-                'value_tilt': tilt
-            });*/
+            this.model.center(x, y);
         }
 	});
 

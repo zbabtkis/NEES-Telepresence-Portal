@@ -8,12 +8,13 @@ function(_, Backbone) {
 	var Camera;
 
 	Camera = Backbone.Model.extend({
+		urlRoot: Telepresence.nodeServer + 'cameras',
 		defaults: {
-			baseUrl: Telepresence.nodeServer + 'streams/',
 			framerate: 1,
 			isOn: false
 		},
 		parse: function(response) {
+			console.log(response);
 			response.bookmarks = JSON.parse(response.bookmarks);
 
 			return response;
@@ -23,43 +24,16 @@ function(_, Backbone) {
 
 			_.bindAll(this);
 
-			this.set('feed', this.get('baseUrl') + this.get('id'));
+			Telepresence.socket.on('change:' + this.get('id'), this.fetch);
 
 			Telepresence.socket.on('streamEnded:' + this.get('id'), function(id) {
 				_this.set('isOn', false);
 			});
-
-			Telepresence.socket.on('cameraUpdated:' + this.get('id'), this.fetch);
-
-			this.on('change:framerate', this.loadMedia);
-
-			this.on('reposition', function(location) {
-				var pos = this.get('bookmarks')[location].position;
-
-				this.set({
-					'value_tilt': pos.v,
-					'value_pan': pos.h
-				});
-			});
-
-			this.on('change', function() {
-				Backbone.sync('update', this);
-			});
-		},
-		loadMedia: function() {
-			var frameRate = this.get('framerate'),
-				socketInfo = '?random=' + Math.random() + '&socketID=' + Telepresence.socket.socket.sessionid;;
-
-			// @TODO: Implement feature detation and use polyfill if browser doesn't support mjpeg.
-			
-			this.set('media', this.get('feed') + '/' + frameRate + socketInfo);
-
-			return this;
 		},
         center: function(left, top, width, height) {
             $.ajax({
                 type: 'PUT',
-                url: Telepresence.nodeServer + 'streams/' + this.get('id') + '/center',
+                url: Telepresence.nodeServer + 'cameras/' + this.get('id') + '/center',
                 data: {
                     left: left,
                     top: top,
@@ -71,6 +45,14 @@ function(_, Backbone) {
                 }
             });
         },
+        goToBookmark: function(location) {
+			var pos = this.get('bookmarks')[location].position;
+
+			this.set({
+				'tilt': pos.v,
+				'pan': pos.h
+			});
+		},
 		_polyfill: function() {
 			var _this = this,
 				fameRate = this.get('framerate'),

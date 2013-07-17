@@ -1,35 +1,28 @@
 var MjpegProxy      = require('mjpeg-proxy').MjpegProxy
   , ProxyEmitter    = require('mjpeg-proxy').emitter
-  , DrupalInterface = require('telepresence-drupal-interface')
+  , Cameras         = require('../collection/Cameras')
   , http            = require('http')
   , _               = require('underscore');
 
-exports.proxy = function(req, res,next) {
-	var   camId = req.params.cam_id
-		, framerate = parseInt(req.params.framerate) ? parseInt(req.params.framerate) : null
-		, type = parseInt(framerate) ? 'mjpeg' : 'jpeg'
-		, reqString = 'http://tpm.nees.ucsb.edu/feeds/';
+exports.proxy = function(req, res, camera) {
+	var framerate = parseInt(req.params.framerate) ? parseInt(req.params.framerate) : null
+	  , type = parseInt(framerate) ? 'mjpeg' : 'jpeg'
+	  , reqString = 'http://tpm.nees.ucsb.edu/feeds/'
+	  , getData = '?status_frame=true&amp;random=' + Math.random()
+	  , reqArr;
 
-	// Query database for stream info
-	var query = new DrupalInterface.Query(camId);
+	reqArr = [
+		camera.site_name
+	  , camera.camera_name
+	  , type
+	  , framerate
+	];
 
-	// When query comes back build the URL request string and create proxy.
-	query.on('results:available', function(results) {
-		var reqArr, getData = '?status_frame=true&amp;random=' + Math.random();
-
-		reqArr = [
-			results.site_name
-		  , results.camera_name
-		  , type
-		  , framerate
-		];
-
-		if (framerate > 0) {
-			proxyVideo(req, res, reqString, reqArr, getData);
-		} else {
-			proxyImage(req, res, reqString, reqArr, getData);
-		}
-	});
+	if (framerate > 0) {
+		proxyVideo(req, res, reqString, reqArr, getData);
+	} else {
+		proxyImage(req, res, reqString, reqArr, getData);
+	}
 }
 
 /**

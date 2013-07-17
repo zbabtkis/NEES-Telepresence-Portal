@@ -11,7 +11,9 @@ require.config({
 		'socketio': 'http://mendo.nees.ucsb.edu:8888/socket.io/socket.io',
 		'kendo': '../bower_components/kendo-ui/js/kendo.web.min',
 		'datejs': '../bower_components/datejs/build/date',
-		'bookmarkr': 'Admin/bookmarkr'
+		'bookmarkr': 'Admin/bookmarkr',
+		'AdminControls': 'Admin/ControlAdmin',
+		'toggle': '../bower_components/backbone.toggleSwitch/backbone.toggleswitch'
 	},
 	shim: {
 		'backbone': {

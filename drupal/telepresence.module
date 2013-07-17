@@ -83,6 +83,8 @@ function telepresence_page() {
 	drupal_add_css($module_path . '/public/css/telepresence-light.css');
 	drupal_add_css($module_path . '/public/css/telepresence-extra-light.css');
 
+	drupal_add_css($module_path . '/public/bower_components/backbone.toggleSwitch/main.css');
+
 	if(user_access('administer telepresence')) {
 		drupal_add_css($module_path . '/public/css/admin.css');
 	}

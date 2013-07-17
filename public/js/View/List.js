@@ -21,7 +21,11 @@ define([
 		template: _.template(Template),
 		initialize: function() {
 			this.$parent = $('#telepresence-dashboard');
-			_.bindAll(this);
+			_.bindAll(this
+				, 'render'
+				, 'close'
+				, 'listCameras'
+				, 'goToFeed');
 		},
 		render: function() {
 			var collection = this.collection.group().toJSON(),

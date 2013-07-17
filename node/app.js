@@ -1,10 +1,8 @@
 var express          = require('express')
-  //, express          = require('express.io')
   , app              = express()
   , server           = require('http').createServer(app)
   , io               = require('socket.io').listen(server);
 
-//app.http().io();
 server.listen(8888);
 
 /**
@@ -16,9 +14,13 @@ app.use(function(req, res, next) {
 	res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, OPTIONS')
 	next();
 });
+
 // Allows us to pull query strings from URL.
 app.use(express.bodyParser());
 
+/**
+ * Require Socket.IO connection before routing
+ */
 app.use(function(req, res, next) {
 	io.on('connection', function(socket) {
 		socket.join(socket.handshake.sessionID);
@@ -27,5 +29,8 @@ app.use(function(req, res, next) {
 	next();
 });
 
+/**
+ * Initialize Routes
+ */
 require('./routes/api')(app, io);
 require('./routes/portal')(app, io);

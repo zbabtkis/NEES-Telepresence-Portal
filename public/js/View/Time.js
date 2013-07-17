@@ -20,7 +20,7 @@ function($, _, Backbone) {
 
 			this.interval = setInterval(function() {
 				var curr = _this.getPacificTime();
-				_this.$el.html(curr)
+				_this.$el.html(curr.toString());
 			}, 1000);
 		},
 		getPacificTime: function() {

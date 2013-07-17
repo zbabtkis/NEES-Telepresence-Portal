@@ -64,10 +64,7 @@ module.exports = (function() {
 
 	sync = function() {
 		db.get('cameras')
-			.on('data', _update)
-			.on('error', function() {
-				emitter.emit('error');
-			});
+			.on('data', _update);
 	};
 
 	get = function(id) {

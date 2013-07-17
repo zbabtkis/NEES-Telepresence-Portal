@@ -14,6 +14,7 @@
     "backbone.kendoWidget": "https://github.com/zigzackattack/Backbone-KendoWidget.git",
     "requirejs": "~2.1.6",
     "datejs": "latest",
-    "bootstrap-css": "~2.3.2"
+    "bootstrap-css": "~2.3.2",
+    "backbone.toggleSwitch": "latest"
   }
 }

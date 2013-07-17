@@ -19,7 +19,14 @@ define([
             'click': 'getPosition'
 		},
 		initialize: function() {
-			_.bindAll(this);
+			_.bindAll(this
+				, 'render'
+				, 'load'
+				, 'error'
+				, 'flash'
+				, 'promptReload'
+				, 'reload'
+				, 'getPosition');
 			
 			// Awesome spinny preloader provided by spin.js :).
 			this.spinner = new Spinner({
@@ -60,6 +67,7 @@ define([
 			this.spinner.stop();
 			this.model.set('isOn', true);
 			this.$el.append(this.time.$el);
+			console.log(this.time);
 		},
 		error: function() {
 			this.spinner.stop();

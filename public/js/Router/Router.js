@@ -43,8 +43,6 @@ define([
 					this.list();
 
 					require(['View/Stream', 'View/VideoControls', 'View/CameraControls'], function(Stream, vControls, cControls) {
-						var stream;
-
 						vControls.destroy();
 						cControls.destroy();
 
@@ -66,6 +64,12 @@ define([
 							return obj;
 						}
 					});
+
+					if(Drupal.admin) {
+						require(['AdminControls'], function(AdminControls) {
+							AdminControls.render().$el.prependTo('#telepresence-wrap');
+						});
+					}
 		    	}
 
 		});

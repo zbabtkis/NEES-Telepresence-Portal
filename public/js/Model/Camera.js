@@ -14,7 +14,6 @@ function(_, Backbone) {
 			isOn: false
 		},
 		parse: function(response) {
-			console.log(response);
 			response.bookmarks = JSON.parse(response.bookmarks);
 
 			return response;
@@ -22,9 +21,15 @@ function(_, Backbone) {
 		initialize: function() {
 			var _this = this;
 
-			_.bindAll(this);
+			_.bindAll(this
+				, 'center'
+				, 'goToBookmark'
+				, '_polyfill');
 
-			Telepresence.socket.on('change:' + this.get('id'), this.fetch);
+			Telepresence.socket.on('change:' + this.get('id'), function() {
+				console.log('fetching');
+				_this.fetch();
+			});
 
 			Telepresence.socket.on('streamEnded:' + this.get('id'), function(id) {
 				_this.set('isOn', false);
@@ -52,6 +57,8 @@ function(_, Backbone) {
 				'tilt': pos.v,
 				'pan': pos.h
 			});
+
+			this.save();
 		},
 		_polyfill: function() {
 			var _this = this,

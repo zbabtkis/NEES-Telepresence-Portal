@@ -96,9 +96,9 @@ function telepresence_add_camera() {
 
 	drupal_add_library('system', 'ui.autocomplete');
 
-	drupal_add_js(drupal_get_path('module', 'telepresence') . '/js/Admin/module.js');
+	drupal_add_js(drupal_get_path('module', 'telepresence') . '/public/js/Admin/module.js');
 
-	drupal_add_js(drupal_get_path('module', 'telepresence') . '/js/Admin/CameraManager.js');
+	drupal_add_js(drupal_get_path('module', 'telepresence') . '/public/js/Admin/CameraManager.js');
 
 	return $page;
 }

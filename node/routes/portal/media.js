@@ -5,6 +5,8 @@ module.exports = function(app, io) {
 	app.get('/cameras/:id/:framerate', function(req, res, next) {
 		  var camera = new Cameras.get(req.params.id).toJSON();
 
-		  Media.proxy(req, res, camera);
+		  console.log(camera);
+
+		  Media.proxy(req, res, camera, io);
 	});
 };

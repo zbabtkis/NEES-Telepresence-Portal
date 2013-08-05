@@ -10,50 +10,15 @@ define([
 			model: Camera,
 			url: Telepresence.nodeServer + 'cameras',
 			group: function() {
-				var _this = this,
-					groups;
+				var groups = _.groupBy(this.toJSON(), function(camera) { return camera.site_name; });
 				
-				groups = this.groupBy(function(camera) {
-					return camera.get('site_name');
+				_.each(groups, function(group, name) {
+					groups[name].safeName = name.replace(/ /g, '-');
 				});
-	
-				return {
-					toJSON: function() {
-						var struct = [];
 
-						function organize(models, group) {
-							var JSONified = [],
-								safeName;
-			
-							_.each(models, function(model, num) {
-								JSONified.push(model.toJSON());
-							});
-
-							safeName = _this.findWhere({'site_name':group})
-								.get('site_safe_name');
-							
-							struct.push({
-								name: group,
-								models: JSONified,
-								safeName: safeName
-							});
-						}
-			
-				  		// Make model attributes directly available for templating.
-				  		if(groups.length !== 0) {
-				  			_.each(groups, organize);
-				  		}
-				
-				  		var sorted = _.sortBy(struct, function(group) {
-				  		  return group.name;
-				  		});
-				
-				  		return sorted;
-					},
-					groups: groups
-				};
-			}
-  	  	});
+				return groups;
+	  		}  	
+	  	});
 
   		return Cameras;
 });

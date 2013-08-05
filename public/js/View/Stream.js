@@ -19,14 +19,21 @@ define([
             'click': 'getPosition'
 		},
 		initialize: function() {
-			_.bindAll(this);
+			_.bindAll(this
+				, 'render'
+				, 'load'
+				, 'error'
+				, 'flash'
+				, 'promptReload'
+				, 'reload'
+				, 'getPosition');
 			
 			// Awesome spinny preloader provided by spin.js :).
 			this.spinner = new Spinner({
 				color:'#222'
 			});
 
-			this.time = new Time();
+			this.time = new Time({model: this.model});
 
 			this.model.on({
 				'change:framerate': this.render,
@@ -64,7 +71,6 @@ define([
 		error: function() {
 			this.spinner.stop();
 			this.model.set('isOn', false);
-			console.log('error')
 			this.$el.html("<h1 class='telepresence-message'>Unable to load stream</h1>");
 			this.time.stop();
 		},

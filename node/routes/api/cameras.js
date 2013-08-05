@@ -20,9 +20,9 @@ module.exports = function(app, io) {
 
 	// Save new camera coordinates.
 	app.put('/cameras/:id', function(req, res, next) {
-		var camera = Cameras.get(req.params.id);
-
-		camera.move(req.body);
+		var camera = Cameras.get(req.params.id)
+			.move(req.body);
+			
 		Cameras.sync();
 
 		res.end()
@@ -31,7 +31,22 @@ module.exports = function(app, io) {
 	// Center camera on viewport coordinate.
 	app.put('/cameras/:id/center', function(req, res, next) {
 		// Calculate new point by x,y vals between 0-100.
-		Cameras.get(req.params.id).center(req.body.left, req.body.top);
+		Cameras.get(req.params.id)
+			.center(req.body.left, req.body.top);
+
+		res.end();
+	});
+
+	app.put('/cameras/:id/autofocus', function(req, res, next) {
+		Cameras.get(req.params.id)
+			.autofocus(req.body.value);
+
+		res.end();
+	});
+
+	app.put('/cameras/:id/autoiris', function(req, res, next) {
+		Cameras.get(req.params.id)
+			.autoiris(req.body.value);
 
 		res.end();
 	});

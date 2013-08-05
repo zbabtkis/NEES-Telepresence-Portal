@@ -1,10 +1,11 @@
 define([
 	  'backbone'
 	, 'jquery'
+	, 'toggle'
 	, 'backbone.kendowidget'
 	, 'domReady'], 
 
-function(Backbone, $) {
+function(Backbone, $, ToggleSwitch) {
 	'use strict';
 
 	$('.k-slider-selection').css('background-color', 'none');
@@ -12,6 +13,8 @@ function(Backbone, $) {
 	$('.k-button').click(function(e) {
 		e.preventDefault();
 	});
+
+	var Controls = new Object();
 
 	var SliderPan = Backbone.KendoWidget.extend({
 		el: '#slider-pan',
@@ -53,9 +56,6 @@ function(Backbone, $) {
 		},
 		widget: 'kendoSlider',
 		dataBind: 'zoom',
-		trueValue: function() {
-
-		}
 	});
 
 	var SliderFocus = Backbone.KendoWidget.extend({
@@ -113,6 +113,44 @@ function(Backbone, $) {
         }
 	});
 
+	var ToggleAutofocus = ToggleSwitch.extend({
+		renderIn: '#toggles .autofocus',
+		setup: function(model) {
+			var _this = this;
+
+			$(this.renderIn).html(this.$el);
+
+			this.model.set('value', false);
+
+			// ToggleSwitch Model.
+			this.model.on('change:value', function(m, value) {
+				Controls.sliderFocus.enable(!value);
+				model.set('autoFocus', value);
+			});
+
+			this.render();
+		}
+	});
+
+	var ToggleAutoiris = ToggleSwitch.extend({
+		renderIn: '#toggles .autoiris',
+		setup: function(model) {
+			var _this = this;
+
+			$(this.renderIn).html(this.$el);
+
+			this.model.set('value', false);
+
+			// ToggleSwitch Model.
+			this.model.on('change:value', function(m, value) {
+				Controls.sliderIris.enable(!value);
+				model.set('autoIris', value);
+			});
+
+			this.render();
+		}
+	});
+
 	// Kendo currently has no way of modifying these -- FIX THIS WHEN IT DOES.
 	function fixLabels() {
 		// Change zoom slider labels.
@@ -140,8 +178,6 @@ function(Backbone, $) {
 			.html('Close');
 	}
 
-	var Controls = new Object();
-
 	return {
 		initialize: function(model) {
 			Controls.sliderPan      = new SliderPan({ model: model });
@@ -150,6 +186,10 @@ function(Backbone, $) {
 			Controls.sliderFocus    = new SliderFocus({ model: model });
 			Controls.sliderIris     = new SliderIris({ model: model });
 			Controls.locationPicker = new LocationPicker({ model: model });
+
+			var toggleAutofocus = new ToggleAutofocus().setup(model);
+			var toggleAutoIris  = new ToggleAutoiris().setup(model);
+			
 
 			fixLabels();
 

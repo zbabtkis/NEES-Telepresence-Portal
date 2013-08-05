@@ -1,5 +1,4 @@
-var http    = require('http')
-  , db      = require('../config/db')
+var db      = require('../config/db')
   , Emitter = require('events').EventEmitter
   , _       = require('underscore')
   , Camera  = require('../model/Camera');
@@ -68,7 +67,6 @@ module.exports = (function() {
 	};
 
 	get = function(id) {
-		console.log('id: ' + id);
 		return id ? _models[id] : _models;
 	};
 

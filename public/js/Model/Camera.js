@@ -14,7 +14,6 @@ function(_, Backbone) {
 			isOn: false
 		},
 		parse: function(response) {
-			console.log(response);
 			response.bookmarks = JSON.parse(response.bookmarks);
 
 			return response;
@@ -22,13 +21,22 @@ function(_, Backbone) {
 		initialize: function() {
 			var _this = this;
 
-			_.bindAll(this);
+			_.bindAll(this
+				, 'center'
+				, 'goToBookmark'
+				, '_polyfill');
 
-			Telepresence.socket.on('change:' + this.get('id'), this.fetch);
+			Telepresence.socket.on('change:' + this.get('id'), function() {
+				console.log('fetching');
+				_this.fetch();
+			});
 
 			Telepresence.socket.on('streamEnded:' + this.get('id'), function(id) {
 				_this.set('isOn', false);
 			});
+
+			this.on('change:autoFocus', this.autoFocus);
+			this.on('change:autoIris', this.autoIris)
 		},
         center: function(left, top, width, height) {
             $.ajax({
@@ -45,6 +53,30 @@ function(_, Backbone) {
                 }
             });
         },
+        autoFocus: function() {
+        	$.ajax({
+                type: 'PUT',
+                url: Telepresence.nodeServer + 'cameras/' + this.get('id') + '/autofocus',
+                data: {
+                    value: this.get('autoFocus')
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        },
+        autoIris: function() {
+        	$.ajax({
+                type: 'PUT',
+                url: Telepresence.nodeServer + 'cameras/' + this.get('id') + '/autoiris',
+                data: {
+                    value: this.get('autoIris')
+                },
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        },
         goToBookmark: function(location) {
 			var pos = this.get('bookmarks')[location].position;
 
@@ -52,6 +84,8 @@ function(_, Backbone) {
 				'tilt': pos.v,
 				'pan': pos.h
 			});
+
+			this.save();
 		},
 		_polyfill: function() {
 			var _this = this,

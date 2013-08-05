@@ -61,7 +61,7 @@
 	padding-top: 0;
 }
 .header-inner {
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #ddd;
 	color: #222;
 	text-align: center;
 }
@@ -225,6 +225,8 @@ label[for='slider-pan'] {
 }
 .input-controls {
 	float: left;
+	border-right: 1px solid #ddd;
+	padding-right: 24px;
 }
 
 .input-control {
@@ -233,6 +235,15 @@ label[for='slider-pan'] {
 
 .slider-controls {
 	float: right;
+}
+
+#toggles .toggle-wrap {
+	float: left;
+	margin-left: 15px;
+	text-align: center;
+}
+#toggles .toggle-wrap:first-child {
+	margin: 0;
 }
 
 /** 
@@ -444,7 +455,7 @@ label[for='slider-pan'] {
 	color: white !important;
 }
 .mini-control .k-widget {
-	height: 150px;
+	height: 170px;
 	clear: none;
 }
 

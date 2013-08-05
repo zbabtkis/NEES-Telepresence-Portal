@@ -4,7 +4,7 @@ var MjpegProxy      = require('mjpeg-proxy').MjpegProxy
   , http            = require('http')
   , _               = require('underscore');
 
-exports.proxy = function(req, res, camera) {
+exports.proxy = function(req, res, camera, io) {
 	var framerate = parseInt(req.params.framerate) ? parseInt(req.params.framerate) : null
 	  , type = parseInt(framerate) ? 'mjpeg' : 'jpeg'
 	  , reqString = 'http://tpm.nees.ucsb.edu/feeds/'
@@ -19,7 +19,7 @@ exports.proxy = function(req, res, camera) {
 	];
 
 	if (framerate > 0) {
-		proxyVideo(req, res, reqString, reqArr, getData);
+		proxyVideo(req, res, reqString, reqArr, getData, io, camera.id);
 	} else {
 		proxyImage(req, res, reqString, reqArr, getData);
 	}
@@ -42,7 +42,7 @@ function proxyImage(req, res, reqString, reqArr, getData) {
 	});
 }
 
-function proxyVideo(req, res, reqString, reqArr, getData) {
+function proxyVideo(req, res, reqString, reqArr, getData, io, id) {
 	var proxyID
 	  , proxy;
 
@@ -58,6 +58,6 @@ function proxyVideo(req, res, reqString, reqArr, getData) {
 	proxy.proxyRequest(req, res);
 
 	ProxyEmitter.get(req.query.socketID, proxyID).once('streamEnded', function() {
-		console.log('stream ended');
+		io.sockets.in(req.sessionId).emit('streamEnded');
 	});
 }

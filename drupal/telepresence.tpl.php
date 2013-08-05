@@ -2,7 +2,7 @@
 
 <div id="telepresence-wrap">
 	<header class='app-header'>
-		<h1>EEG Telepresence</h1>
+		<h1>NEES Telepresence</h1>
 	</header>
 	<aside id='telepresence-menu' class='app-content'>
 		<nav id='tp-tabs'>
@@ -23,6 +23,14 @@
 				<div class='input-control'>
 					<label for='location-picker'>Location</label>
 					<div id='location-picker' class='location-picker'></div>
+				</div>
+				<div id='toggles'>
+					<div class='toggle-wrap'>
+						<label>Auto Focus</label> <div class='autofocus'></div>
+					</div>
+					<div class='toggle-wrap'>
+						<label>Auto Iris</label><div class='autoiris'></div>
+					</div>
 				</div>
 			</div>
 

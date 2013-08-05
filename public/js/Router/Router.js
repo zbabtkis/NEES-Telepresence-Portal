@@ -43,8 +43,6 @@ define([
 					this.list();
 
 					require(['View/Stream', 'View/VideoControls', 'View/CameraControls'], function(Stream, vControls, cControls) {
-						var stream;
-
 						vControls.destroy();
 						cControls.destroy();
 

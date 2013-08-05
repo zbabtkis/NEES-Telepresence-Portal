@@ -10,7 +10,14 @@ function($, _, Backbone) {
 		tagName: 'span',
 		id: 'time-display',
 		initialize: function() {
+			var _this = this;
+
 			this.start();
+
+			this.model.on('change:isOn', function(model, val) {
+				val ? _this.start() : _this.stop();
+				console.log(val);
+			});
 		},
 		stop: function() {
 			clearInterval(this.interval);
@@ -19,9 +26,10 @@ function($, _, Backbone) {
 			var _this = this;
 
 			this.interval = setInterval(function() {
-				var curr = _this.getPacificTime();
-				_this.$el.html(curr)
+				var curr = _this.getPacificTime().toString();
+				_this.$el.html(curr);
 			}, 1000);
+
 		},
 		getPacificTime: function() {
 			var date = new Date();

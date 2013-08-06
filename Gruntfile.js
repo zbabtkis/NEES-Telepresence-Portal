@@ -11,7 +11,6 @@ module.exports = function(grunt) {
 					baseUrl: './public/src',
 					out: './public/build/build.js',
 					findNestedDependencies: true,
-					optimize: 'closure',
 					paths: {
 						'backbone': '../bower_components/backbone/backbone',
 						'backbone.kendowidget': '../bower_components/backbone.kendoWidget/backbone.kendowidget',

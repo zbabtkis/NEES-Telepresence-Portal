@@ -1,7 +1,7 @@
 name = NEES Telepresence
 description = Provides wrapper for NEES Telepresence web app.
 core = 7.x
-version = 7.x-2.0.3
+version = 7.x-2.0.5
 package = NEES
 
 configure = admin/config/telepresence

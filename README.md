@@ -16,13 +16,22 @@ Features
 
 Installation
 ------------
-This module comes pre-configured to connect to the UCSB NEES video feed, so just install it in Drupal and navigate to /telepresence
+You can quickly and easily install the NEES Telepresence Portal by cloning the repo and running the following commands from the root of the cloned directory.
 
-You can change the API url in node_server/node_modules/drupal_telepresence_interface/drupal_tp.js
+```
+npm install
+```
+```
+grunt install
+```
 
-Ultimately this will be accessible via the Drupal admin interface.
+When prompted, enter the Drupal database settings
 
-For the front end to work, run ``` bower install ``` in the 'public' directory.
+```
+grunt setEnv
+```
+
+If you want to use the telepresence app using RequireJS's Asynchronous Module Definition pattern use `dev`, otherwise use `live` to use the compressed and optimized version.
 
 Requirements
 ------------
@@ -63,12 +72,12 @@ To keep the camera position up to date in the browser, the node.js server employ
 Todo
 ----
 
-- [ ] Add function in node_server/app.js to sync database with AXIS API.
-- [ ] Have camera sync to database when camera center requested.
+- [ ] find a better way to keep focus/iris sliders in sync after autofocus/autoiris
+- [ ] make global Telepresence variable a module.
 
 More Information
 ----------------
 
-*[http://www.backbonejs.org Backbone]
-*[http://www.underscorejs.org Underscore]
-*[http://fgnass.github.com/spin.js/ Spin.js]
+* [http://www.backbonejs.org Backbone]
+* [http://www.underscorejs.org Underscore]
+* [http://fgnass.github.com/spin.js/ Spin.js]

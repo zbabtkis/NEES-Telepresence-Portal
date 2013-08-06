@@ -1,6 +1,6 @@
 {
   "name": "telepresence",
-  "version": "2.0.3",
+  "version": "2.0.5",
   "description": "An AXIS video feed portal for NEES @ UCSB",
   "main": "Gruntfile.js",
   "dependencies": {

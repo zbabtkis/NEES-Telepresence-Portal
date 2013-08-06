@@ -40,7 +40,6 @@ module.exports = function(ip) {
 
 		var reqOptions = {
 			hostname: ip
-		  , port:     80
 		  , path:     '/axis-cgi/com/ptz.cgi' + qString
 		  , method:   'GET'
 		  , headers:  {

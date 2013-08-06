@@ -2,6 +2,7 @@
 	baseUrl: "./js",
 	dir: "./js/dist",
 	name: "app",
+	findNestedDependencies: true,
 	paths: {
 		'backbone': '../components/backbone/backbone',
 		'backbone.kendowidget': '../components/backbone.kendoWidget/backbone.kendowidget',

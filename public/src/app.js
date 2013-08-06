@@ -65,7 +65,7 @@ window.Telepresence = {
 		}
 	},
 	nodeServer: "http://mendo.nees.ucsb.edu:8888/",
-	version: "2.0.1",
+	version: "2.0.3",
 	switchTheme: function(theme) {
 		var body = document.getElementsByTagName('body')[0];
 		body.className = body.className + ' ' + (theme || this.defaults.theme);

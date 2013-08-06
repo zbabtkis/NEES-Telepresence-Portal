@@ -1,56 +1,7 @@
-define([
-	  'backbone'
-	, 'jquery'
-	, 'Model/ScreenshotDataSource'
-	, 'backbone.kendowidget',
-	, 'domReady'], 
-
-function(Backbone, $, ScreenshotDataSource) {
-	var PlayButton = Backbone.View.extend({
-		tagName: 'i',
-		initialize: function() {
-			if(this.model) {
-				this.listenTo(this.model, 'change:framerate', this._getState);
-				this._getState();
-			}
-
-			return this;
-		},
-		events: {
-			'click': '_playPause'
-		},
-		_playPause: function() {
-			// Check current state and change it.
-			this.set('framerate', this.get('framerate') ? 0 : 1);
-
-			return this;
-		},
-		_getState: function() {
-			// If framerate slider changes from play to pause, only render change for button.
-			if(this.model.get('framerate') !== 0) {
-				this.$el.attr('class', 'icon-pause icon icon-2x');
-			} else  {
-				this.$el.attr('class', 'icon-play icon icon-2x');
-			}
-
-			return this;
-		}
-	});
-
-	var FullSizeButton = Backbone.View.extend({
-		tagName: 'i',
-		className: 'icon-fullscreen icon icon-2x',
-		events: {
-			'click': 'toggle'
-		},
-		toggle: function() {
-			var val = this.model.get('fullSize') ? false : true;
-			this.model.set('fullSize', val);
-
-			return this;
-		}
-	});
-
+define(['backbone'
+	  , 'jquery'
+	  , 'Model/ScreenshotDataSource'
+	  , 'backbone.kendowidget'], function(Backbone, $, ScreenshotDataSource) {
 	var FramerateFlipper = Backbone.KendoWidget.extend({
 		el: '#framerate-selector',
 		options: {
@@ -185,14 +136,10 @@ function(Backbone, $, ScreenshotDataSource) {
 
 	return {
 		initialize: function(model) {
-
-			StatefulControls.playButton   = new PlayButton({ model: model });
-			StatefulControls.fullScreenButton  = new FullSizeButton({ model: model });
 			StatefulControls.framerateFlipper  = new FramerateFlipper({ model: model });
 			StatefulControls.snapshotTool = new SnapshotTool({ model: model }).render();
 			NonStatefulControls.Download = NonStatefulControls.Download || new DownloadSnapshots({ model: model }).render();
 			NonStatefulControls.Snapshot = NonStatefulControls.Snapshot || new ScreenshotGrid({ model: model });
-
 
 			return StatefulControls;
 		},
@@ -201,5 +148,5 @@ function(Backbone, $, ScreenshotDataSource) {
 				control.remove();
 			});
 		}
-	}
+	};
 });

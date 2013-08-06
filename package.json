@@ -1,0 +1,34 @@
+{
+  "name": "telepresence",
+  "version": "2.0.3",
+  "description": "An AXIS video feed portal for NEES @ UCSB",
+  "main": "Gruntfile.js",
+  "dependencies": {
+    "grunt": "~0.4.1",
+    "prompt": "~0.2.11",
+    "grunt-contrib-requirejs": "~0.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zigzackattack/NEES-Telepresence-Portal.git"
+  },
+  "keywords": [
+    "AXIS",
+    "TPM",
+    "NEES",
+    "UCSB",
+    "webcam",
+    "telepresence"
+  ],
+  "author": "Zachary Babtkis <zackbabtkis@gmail.com>",
+  "license": "MIT",
+  "gitHead": "0123b09faa92774eb9edd9d99aad913459adf788",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/zigzackattack/NEES-Telepresence-Portal/issues"
+  }
+}

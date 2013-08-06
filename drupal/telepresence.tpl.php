@@ -1,4 +1,6 @@
-<script data-main="/<?php print $module_path; ?>/public/js/app" src="/<?php print $module_path; ?>/public/bower_components/requirejs/require.js"></script>
+<?php $app_path = /** GRUNT:APP_PATH */ '/public/src/app' /** ENDGRUNT */; ?>
+
+<script data-main="/<?php print $module_path . $app_path; ?>" src="/<?php print $module_path; ?>/public/bower_components/requirejs/require.js"></script>
 
 <div id="telepresence-wrap">
 	<header class='app-header'>

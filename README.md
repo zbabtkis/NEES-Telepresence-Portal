@@ -72,6 +72,7 @@ To keep the camera position up to date in the browser, the node.js server employ
 Todo
 ----
 
+- [ ] remove all extra css
 - [ ] find a better way to keep focus/iris sliders in sync after autofocus/autoiris
 - [ ] make global Telepresence variable a module.
 
